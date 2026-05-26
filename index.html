@@ -275,19 +275,33 @@ function generateCode() {
 function getPesertaList() {
     return JSON.parse(localStorage.getItem('pkl_peserta') || '[]');
 }
-
+   
 function savePesertaList(list) {
     localStorage.setItem('pkl_peserta', JSON.stringify(list));
 }
-
 function getHistory(code) {
     return JSON.parse(localStorage.getItem(`pkl_history_${code}`) || '[]');
 }
-
 function saveHistory(code, history) {
     localStorage.setItem(`pkl_history_${code}`, JSON.stringify(history));
 }
-
+async function sendToSpreadsheet(data) {
+    try {
+        const response = await fetch(APPS_SCRIPT_URL, {
+            method: 'POST',
+            body: JSON.stringify(data),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        const result = await response.text();
+        console.log('Spreadsheet response:', result);
+    } catch (err) {
+        console.error('Spreadsheet Error:', err);
+        showToast('Gagal kirim ke spreadsheet', 'error');
+    }
+}
+   
 // ===================== CLOCK =====================
 function updateClock() {
     const now = new Date();
