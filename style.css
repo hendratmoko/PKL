@@ -1,0 +1,261 @@
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:Arial, sans-serif;
+}
+
+body{
+  background:#eef3ff;
+  color:#1e293b;
+}
+
+.hidden{
+  display:none;
+}
+
+/* LOGIN */
+
+.login-page{
+  height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background:linear-gradient(135deg,#0f172a,#1d4ed8);
+}
+
+.login-card{
+  width:90%;
+  max-width:400px;
+  background:white;
+  border-radius:20px;
+  padding:40px;
+  text-align:center;
+  box-shadow:0 10px 30px rgba(0,0,0,0.2);
+}
+
+.logo{
+  font-size:70px;
+  color:#1d4ed8;
+  margin-bottom:20px;
+}
+
+.login-card h1{
+  margin-bottom:15px;
+  font-size:28px;
+}
+
+.login-card p{
+  color:gray;
+  margin-bottom:20px;
+}
+
+.login-card input{
+  width:100%;
+  padding:15px;
+  border-radius:12px;
+  border:none;
+  background:#f1f5f9;
+  margin-bottom:20px;
+  font-size:18px;
+  text-align:center;
+}
+
+.login-card button{
+  width:100%;
+  padding:15px;
+  border:none;
+  border-radius:12px;
+  background:#2563eb;
+  color:white;
+  font-size:16px;
+  cursor:pointer;
+  transition:0.3s;
+}
+
+.login-card button:hover{
+  background:#1e40af;
+}
+
+.footer-login{
+  margin-top:20px;
+  color:#64748b;
+}
+
+/* DASHBOARD */
+
+.topbar{
+  background:#0f172a;
+  color:white;
+  padding:20px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.topbar button{
+  padding:10px 18px;
+  border:none;
+  border-radius:10px;
+  background:#ef4444;
+  color:white;
+  cursor:pointer;
+}
+
+.grid-container{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:20px;
+  padding:20px;
+}
+
+.card{
+  background:white;
+  border-radius:20px;
+  padding:20px;
+  box-shadow:0 5px 20px rgba(0,0,0,0.1);
+}
+
+.clock-card{
+  margin:20px;
+}
+
+#clock{
+  font-size:40px;
+  font-weight:bold;
+  color:#2563eb;
+}
+
+#date{
+  margin-top:10px;
+}
+
+#remainingDays{
+  margin-top:10px;
+  color:#16a34a;
+  font-weight:bold;
+}
+
+.camera-box{
+  display:flex;
+  flex-direction:column;
+  gap:15px;
+}
+
+video,
+#photoPreview{
+  width:100%;
+  border-radius:15px;
+  background:black;
+}
+
+textarea{
+  width:100%;
+  min-height:120px;
+  margin-top:15px;
+  padding:15px;
+  border-radius:12px;
+  border:1px solid #cbd5e1;
+}
+
+.button-group{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  margin-top:15px;
+}
+
+.button-group button,
+#gpsBtn,
+#takePhotoBtn,
+#printBtn,
+#tambahPesertaBtn{
+  border:none;
+  padding:12px 18px;
+  border-radius:12px;
+  cursor:pointer;
+  transition:0.3s;
+}
+
+.green{
+  background:#16a34a;
+  color:white;
+}
+
+.blue{
+  background:#2563eb;
+  color:white;
+}
+
+.orange{
+  background:#f59e0b;
+  color:white;
+}
+
+.history-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:15px;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+}
+
+table th,
+table td{
+  border:1px solid #cbd5e1;
+  padding:10px;
+  text-align:center;
+}
+
+table th{
+  background:#1d4ed8;
+  color:white;
+}
+
+table img{
+  width:60px;
+  border-radius:10px;
+}
+
+.kop-surat{
+  text-align:center;
+  margin-bottom:20px;
+}
+
+.signature{
+  margin-top:50px;
+  text-align:right;
+}
+
+.admin-card{
+  margin:20px;
+}
+
+.admin-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:15px;
+  margin-top:20px;
+}
+
+.admin-grid input{
+  padding:12px;
+  border-radius:10px;
+  border:1px solid #cbd5e1;
+}
+
+@media(max-width:900px){
+
+  .grid-container{
+    grid-template-columns:1fr;
+  }
+
+  .admin-grid{
+    grid-template-columns:1fr;
+  }
+
+  }
