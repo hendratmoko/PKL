@@ -279,12 +279,15 @@ function getPesertaList() {
 function savePesertaList(list) {
     localStorage.setItem('pkl_peserta', JSON.stringify(list));
 }
+   
 function getHistory(code) {
     return JSON.parse(localStorage.getItem(`pkl_history_${code}`) || '[]');
 }
+   
 function saveHistory(code, history) {
     localStorage.setItem(`pkl_history_${code}`, JSON.stringify(history));
 }
+   
 async function sendToSpreadsheet(data) {
     try {
         const response = await fetch(APPS_SCRIPT_URL, {
@@ -503,7 +506,17 @@ function absenMasuk() {
     const history = getHistory(currentUser.code);
     history.push(record);
     saveHistory(currentUser.code, history);
-    
+
+ sendToSpreadsheet({
+    nama: currentUser.nama,
+    kelas: currentUser.kelas,
+    perusahaan: currentUser.perusahaan,
+    status: 'Masuk',
+    kegiatan: '',
+    gps: `${currentGPS.lat}, ${currentGPS.lng}`,
+    code: currentUser.code
+});
+ 
     attendanceState = 'masuk';
     document.getElementById('btn-masuk').style.display = 'none';
     document.getElementById('kegiatan-section').style.display = 'block';
@@ -520,7 +533,7 @@ function submitKegiatan() {
     const idx = history.findIndex(h => h.date === today && h.status === 'Masuk' && !h.kegiatan);
     if (idx !== -1) { history[idx].kegiatan = kegiatan; }
     saveHistory(currentUser.code, history);
-    
+ 
     attendanceState = 'kegiatan_written';
     document.getElementById('kegiatan-section').style.display = 'none';
     document.getElementById('btn-pulang').style.display = 'inline-flex';
@@ -542,7 +555,16 @@ function absenPulang() {
     const history = getHistory(currentUser.code);
     history.push(record);
     saveHistory(currentUser.code, history);
-    
+
+ sendToSpreadsheet({
+    nama: currentUser.nama,
+    kelas: currentUser.kelas,
+    perusahaan: currentUser.perusahaan,
+    status: 'Pulang',
+    kegiatan: '-',
+    gps: `${currentGPS.lat}, ${currentGPS.lng}`,
+    code: currentUser.code
+});
     document.getElementById('btn-pulang').style.display = 'none';
     document.getElementById('btn-izin').style.display = 'none';
     renderHistory();
@@ -568,7 +590,17 @@ function submitIzin() {
     const history = getHistory(currentUser.code);
     history.push(record);
     saveHistory(currentUser.code, history);
-    
+
+ sendToSpreadsheet({
+    nama: currentUser.nama,
+    kelas: currentUser.kelas,
+    perusahaan: currentUser.perusahaan,
+    status: 'Izin',
+    kegiatan: keterangan,
+    gps: '-',
+    code: currentUser.code
+});
+ 
     document.getElementById('izin-section').style.display = 'none';
     document.getElementById('btn-masuk').style.display = 'none';
     document.getElementById('btn-izin').style.display = 'none';
