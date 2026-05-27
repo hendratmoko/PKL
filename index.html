@@ -114,7 +114,8 @@ M  M    O     K     K   OOOOO
      </div><button onclick="getLocation()" class="btn-primary text-sm py-2 px-3 mt-2"><i data-lucide="map-pin" style="width:14px;height:14px;display:inline"></i> Ambil Lokasi</button>
     </div><!-- Attendance Buttons -->
     <div class="flex flex-wrap gap-2 mb-4"><button onclick="absenMasuk()" id="btn-masuk" class="btn-success flex items-center gap-1"> <i data-lucide="log-in" style="width:16px;height:16px"></i> Absen Masuk </button> <button onclick="absenPulang()" id="btn-pulang" class="btn-primary flex items-center gap-1" style="display:none"> <i data-lucide="log-out" style="width:16px;height:16px"></i> Absen Pulang </button> <button onclick="showIzinForm()" id="btn-izin" class="btn-warning flex items-center gap-1"> <i data-lucide="file-text" style="width:16px;height:16px"></i> Izin tidak PKL </button>
-    </div><!-- Kegiatan textarea (shown after absen masuk) -->
+    </div>
+    <!-- Kegiatan textarea (shown after absen masuk) -->
     <div id="kegiatan-section" style="display:none" class="mb-4"><label class="block text-sm font-medium text-gray-600 mb-2">Kegiatan Hari Ini</label> <textarea id="kegiatan-input" rows="3" class="input-field" placeholder="Tuliskan kegiatan yang dilakukan hari ini..."></textarea> <button onclick="submitKegiatan()" class="btn-success text-sm py-2 px-4 mt-2">Simpan Kegiatan</button>
     </div><!-- Izin textarea -->
     <div id="izin-section" style="display:none" class="mb-4"><label class="block text-sm font-medium text-gray-600 mb-2">Keterangan Izin</label> <textarea id="izin-input" rows="3" class="input-field" placeholder="Tuliskan alasan izin tidak PKL..."></textarea> <button onclick="submitIzin()" class="btn-warning text-sm py-2 px-4 mt-2">Kirim Izin</button>
@@ -160,7 +161,8 @@ M  M    O     K     K   OOOOO
      </div>
     </div>
    </div>
-  </div><!-- ADMIN PAGE -->
+  </div>
+  <!-- ADMIN PAGE -->
   <div id="page-admin" class="h-full hidden p-4 max-w-5xl mx-auto w-full fade-in">
    <div class="flex items-center justify-between mb-4">
     <h2 class="text-lg font-bold text-gray-800">Admin Panel</h2><button onclick="handleLogout()" class="btn-danger text-sm py-2 px-4 flex items-center gap-1"> <i data-lucide="log-out" style="width:16px;height:16px"></i> Keluar </button>
@@ -172,8 +174,43 @@ M  M    O     K     K   OOOOO
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
      <div><label class="block text-sm font-medium text-gray-600 mb-1">Nama Lengkap</label> <input id="admin-nama" class="input-field" placeholder="Nama Lengkap Siswa">
      </div>
-     <div><label class="block text-sm font-medium text-gray-600 mb-1">Kelas</label> <input id="admin-kelas" class="input-field" placeholder="Contoh: XII RPL 1">
-     </div>
+ <div>
+<label class="block text-sm font-medium text-gray-600 mb-1">
+Jurusan
+</label>
+
+<select id="admin-jurusan" class="input-field">
+
+<option value="">Pilih Jurusan</option>
+
+<option value="Teknik Kendaraan Ringan (TKR)">
+Teknik Kendaraan Ringan (TKR)
+</option>
+
+<option value="Teknik Komputer dan Jaringan (TKJ)">
+Teknik Komputer dan Jaringan (TKJ)
+</option>
+
+<option value="Teknik Pemesinan">
+Teknik Pemesinan
+</option>
+
+<option value="Akuntansi dan Keuangan Lembaga">
+Akuntansi dan Keuangan Lembaga
+</option>
+
+</select>
+</div>
+<div>
+<label class="block text-sm font-medium text-gray-600 mb-1">
+Kelas
+</label>
+<input id="admin-kelas"
+class="input-field"
+placeholder="Contoh: XII TKJ 1">
+</div>    
+  <!--   <div><label class="block text-sm font-medium text-gray-600 mb-1">Kelas</label> <input id="admin-kelas" class="input-field" placeholder="Contoh: XII RPL 1">
+     </div> -->
      <div><label class="block text-sm font-medium text-gray-600 mb-1">Nama Perusahaan (DUDI)</label> <input id="admin-perusahaan" class="input-field" placeholder="Nama Perusahaan">
      </div>
      <div><label class="block text-sm font-medium text-gray-600 mb-1">Koordinat GPS Perusahaan</label> <input id="admin-koordinat" class="input-field" placeholder="Lat, Lng (contoh: -6.200,106.816)">
@@ -204,6 +241,7 @@ M  M    O     K     K   OOOOO
         <th>No</th>
         <th>Nama</th>
         <th>Kelas</th>
+        <th>Jurusan</th>
         <th>Perusahaan</th>
         <th>Kode</th>
         <th>Mulai</th>
@@ -798,6 +836,85 @@ function switchAdminTab(tab) {
 }
 
 function addPeserta() {
+
+    const nama = document.getElementById('admin-nama').value.trim();
+
+    const jurusan =
+    document.getElementById('admin-jurusan').value;
+
+    const kelas =
+    document.getElementById('admin-kelas').value.trim();
+
+    const perusahaan =
+    document.getElementById('admin-perusahaan').value.trim();
+
+    const koordinat =
+    document.getElementById('admin-koordinat').value.trim();
+
+    const bpjs =
+    document.getElementById('admin-bpjs').value.trim();
+
+    const mulai =
+    document.getElementById('admin-mulai').value;
+
+    const selesai =
+    document.getElementById('admin-selesai').value;
+
+    if (
+        !nama ||
+        !jurusan ||
+        !kelas ||
+        !perusahaan ||
+        !mulai ||
+        !selesai
+    ) {
+        showToast('Lengkapi semua data wajib', 'error');
+        return;
+    }
+
+    const code = generateCode();
+
+    const peserta = {
+        nama,
+        jurusan,
+        kelas,
+        perusahaan,
+        koordinat,
+        bpjs,
+        mulai,
+        selesai,
+        code,
+        createdAt: new Date().toISOString()
+    };
+
+    const list = getPesertaList();
+
+    list.push(peserta);
+
+    savePesertaList(list);
+
+    document.getElementById('generated-code').textContent = code;
+
+    document.getElementById('generated-code-section').style.display = 'block';
+
+    showToast(`Peserta ${nama} berhasil ditambahkan!`);
+
+    [
+        'admin-nama',
+        'admin-jurusan',
+        'admin-kelas',
+        'admin-perusahaan',
+        'admin-koordinat',
+        'admin-bpjs',
+        'admin-mulai',
+        'admin-selesai'
+    ].forEach(id => {
+        document.getElementById(id).value = '';
+    });
+
+     }   
+/*
+function addPeserta() {
     const nama = document.getElementById('admin-nama').value.trim();
     const kelas = document.getElementById('admin-kelas').value.trim();
     const perusahaan = document.getElementById('admin-perusahaan').value.trim();
@@ -825,7 +942,8 @@ function addPeserta() {
     // Clear form
     ['admin-nama','admin-kelas','admin-perusahaan','admin-koordinat','admin-bpjs','admin-mulai','admin-selesai'].forEach(id => document.getElementById(id).value = '');
 }
-
+*/
+   
 function copyCode() {
     const code = document.getElementById('generated-code').textContent;
     navigator.clipboard.writeText(code).then(() => showToast('Kode berhasil dicopy!'));
@@ -849,6 +967,7 @@ function renderAdminReport() {
             <td>${i+1}</td>
             <td>${p.nama}</td>
             <td>${p.kelas}</td>
+            <td>${p.jurusan}</td>
             <td>${p.perusahaan}</td>
             <td class="font-mono font-bold">${p.code}</td>
             <td>${p.mulai}</td>
