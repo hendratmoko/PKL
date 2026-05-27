@@ -400,9 +400,25 @@ function showPage(page) {
     document.getElementById('page-dashboard').classList.add('hidden');
     document.getElementById('page-admin').classList.add('hidden');
     document.getElementById(`page-${page}`).classList.remove('hidden');
+    // RESET DASHBOARD
+    if (page === 'dashboard') {
+        document.getElementById('btn-masuk').style.display = 'inline-flex';
+        document.getElementById('btn-pulang').style.display = 'none';
+        document.getElementById('btn-izin').style.display = 'inline-flex';
+        document.getElementById('kegiatan-section').style.display = 'none';
+        document.getElementById('izin-section').style.display = 'none';
+    }
+    lucide.createIcons();
+    }   
+ /*  
+function showPage(page) {
+    document.getElementById('page-login').classList.add('hidden');
+    document.getElementById('page-dashboard').classList.add('hidden');
+    document.getElementById('page-admin').classList.add('hidden');
+    document.getElementById(`page-${page}`).classList.remove('hidden');
     lucide.createIcons();
 }
-
+*/
 // ===================== CAMERA =====================
 async function startCamera() {
     try {
