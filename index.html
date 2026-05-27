@@ -422,7 +422,7 @@ function showPage(page) {
 // ===================== CAMERA =====================
 async function startCamera() {
     try {
-        const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user', width: 320, height: 240 } });
+        const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user', width: 240, height: 240 } });
         cameraStream = stream;
         const video = document.getElementById('camera-feed');
         video.srcObject = stream;
@@ -437,10 +437,10 @@ async function startCamera() {
 function capturePhoto() {
     const video = document.getElementById('camera-feed');
     const canvas = document.getElementById('camera-canvas');
-    canvas.width = 320;
+    canvas.width = 240;
     canvas.height = 240;
     const ctx = canvas.getContext('2d');
-    ctx.drawImage(video, 0, 0, 320, 240);
+    ctx.drawImage(video, 0, 0, 240, 240);
     capturedPhotoData = canvas.toDataURL('image/jpeg', 0.6);
     
     const img = document.getElementById('captured-photo');
@@ -605,8 +605,8 @@ function validatePresensi() {
         const [compLat, compLng] = currentUser.koordinat.split(',').map(Number);
         if (compLat && compLng) {
             const dist = checkDistance(currentGPS.lat, currentGPS.lng, compLat, compLng);
-            if (dist > 50) {
-                showModal('Lokasi Tidak Sesuai', `Anda berada ${Math.round(dist)} meter dari lokasi perusahaan. Jarak maksimal yang diperbolehkan adalah 15 meter.`);
+            if (dist > 100) {
+                showModal('Lokasi Tidak Sesuai', `Anda berada ${Math.round(dist)} meter dari lokasi perusahaan. Jarak maksimal yang diperbolehkan adalah 100 meter.`);
                 return false;
             }
         }
