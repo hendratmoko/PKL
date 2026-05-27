@@ -492,57 +492,71 @@ function checkDistance(lat1, lon1, lat2, lon2) {
 // ===================== ATTENDANCE =====================
 
 function checkAttendanceState() {
-    // RESET SEMUA TOMBOL & SECTION DULU
+    // RESET TOMBOL
     document.getElementById('btn-masuk').style.display = 'inline-flex';
     document.getElementById('btn-pulang').style.display = 'none';
     document.getElementById('btn-izin').style.display = 'inline-flex';
-
     document.getElementById('kegiatan-section').style.display = 'none';
     document.getElementById('izin-section').style.display = 'none';
-
     const history = getHistory(currentUser.code);
-
     const today = new Date().toLocaleDateString('id-ID');
-
     const todayRecords = history.filter(h => h.date === today);
-
     const hasMasuk = todayRecords.some(h => h.status === 'Masuk');
     const hasPulang = todayRecords.some(h => h.status === 'Pulang');
     const hasKegiatan = todayRecords.some(
         h => h.status === 'Masuk' && h.kegiatan
     );
-
-    // SUDAH ABSEN MASUK + ISI KEGIATAN
     if (hasMasuk && hasKegiatan && !hasPulang) {
-
-        attendanceState = 'kegiatan_written';
-
         document.getElementById('btn-masuk').style.display = 'none';
-
         document.getElementById('btn-pulang').style.display = 'inline-flex';
-
         document.getElementById('btn-izin').style.display = 'none';
     }
-
-    // SUDAH MASUK TAPI BELUM ISI KEGIATAN
     else if (hasMasuk && !hasKegiatan) {
-
-        attendanceState = 'masuk';
-
         document.getElementById('btn-masuk').style.display = 'none';
-
         document.getElementById('btn-pulang').style.display = 'none';
-
         document.getElementById('btn-izin').style.display = 'none';
-
         document.getElementById('kegiatan-section').style.display = 'block';
     }
-
+    else if (hasPulang) {
+        document.getElementById('btn-masuk').style.display = 'none';
+        document.getElementById('btn-pulang').style.display = 'none';
+        document.getElementById('btn-izin').style.display = 'none';
+    }
+   }   
+   /*
+function checkAttendanceState() {
+    // RESET SEMUA TOMBOL & SECTION DULU
+    document.getElementById('btn-masuk').style.display = 'inline-flex';
+    document.getElementById('btn-pulang').style.display = 'none';
+    document.getElementById('btn-izin').style.display = 'inline-flex';
+    document.getElementById('kegiatan-section').style.display = 'none';
+    document.getElementById('izin-section').style.display = 'none';
+    const history = getHistory(currentUser.code);
+    const today = new Date().toLocaleDateString('id-ID');
+    const todayRecords = history.filter(h => h.date === today);
+    const hasMasuk = todayRecords.some(h => h.status === 'Masuk');
+    const hasPulang = todayRecords.some(h => h.status === 'Pulang');
+    const hasKegiatan = todayRecords.some(
+        h => h.status === 'Masuk' && h.kegiatan
+    );
+    // SUDAH ABSEN MASUK + ISI KEGIATAN
+    if (hasMasuk && hasKegiatan && !hasPulang) {
+        attendanceState = 'kegiatan_written';
+        document.getElementById('btn-masuk').style.display = 'none';
+        document.getElementById('btn-pulang').style.display = 'inline-flex';
+        document.getElementById('btn-izin').style.display = 'none';
+    }
+    // SUDAH MASUK TAPI BELUM ISI KEGIATAN
+    else if (hasMasuk && !hasKegiatan) {
+        attendanceState = 'masuk';
+        document.getElementById('btn-masuk').style.display = 'none';
+        document.getElementById('btn-pulang').style.display = 'none';
+        document.getElementById('btn-izin').style.display = 'none';
+        document.getElementById('kegiatan-section').style.display = 'block';
+    }
     // SUDAH PULANG
     else if (hasPulang) {
-
         attendanceState = 'selesai';
-
         document.getElementById('btn-masuk').style.display = 'none';
         document.getElementById('btn-pulang').style.display = 'none';
         document.getElementById('btn-izin').style.display = 'none';
@@ -550,7 +564,7 @@ function checkAttendanceState() {
     }
    }
    
-/*   
+   
    function checkAttendanceState() {
     const history = getHistory(currentUser.code);
     const today = new Date().toLocaleDateString('id-ID');
