@@ -8,6 +8,15 @@
   <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
   
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet">
+
+<!--
+M  M  OOOOO   K     K   O      
+M  M    O     KK   KK   O      
+MMMM    O     K K K K   O      
+M  M    O     K  K  K   O      
+M  M    O     K     K   OOOOO
+-->
+  
   <style>
         * { font-family: 'Plus Jakarta Sans', sans-serif; }
         html, body { height: 100%; margin: 0; }
@@ -206,6 +215,16 @@
    </div>
   </div>
   <script>
+
+   /*
+ MMM      OOOO       KKKK
+M   M    O    O     K    K
+M        O          K
+M         OOO        KKK
+M             O          K
+M   M    O    O     K    K
+ MMM      OOOO       KKKK
+*/
 // ===================== STATE =====================
 let currentUser = null;
 let isAdmin = false;
@@ -226,7 +245,7 @@ const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxP-R_yFzPwiMlv
 const defaultConfig = {
     app_title: 'Presensi Praktik Kerja Industri',
     school_name: 'SMK Prestasi Prima',
-    footer_text: '© Lybra 2026',
+    footer_text: '©Moidea-Lybra 2026',
     background_color: '#f8fafc',
     surface_color: '#ffffff',
     text_color: '#1e293b',
@@ -234,6 +253,15 @@ const defaultConfig = {
     accent_color: '#10b981'
 };
 
+
+/*HH     EEEE   NNNN    DDD   RRRR    AAAAA         TT  MMMM
+H       E       N   N    D    R   R     A            T  M
+ HH     E       NNNN     D    RRRR      A            T  MMM
+   H    E       N N      D    R         A            T     M
+   H    E       N  N     D    R         A     []     T      M
+HHH      EEEE   N   N   DDD   R         A        TTTT   MM*/
+
+   
 function applyConfig(config) {
     const t = (k) => config[k] || defaultConfig[k];
     document.getElementById('login-title').textContent = t('app_title');
