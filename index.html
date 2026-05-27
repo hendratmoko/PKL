@@ -162,6 +162,7 @@ M  M    O     K     K   OOOOO
     </div>
    </div>
   </div>
+  
   <!-- ADMIN PAGE -->
   <div id="page-admin" class="h-full hidden p-4 max-w-5xl mx-auto w-full fade-in">
    <div class="flex items-center justify-between mb-4">
@@ -209,9 +210,94 @@ Kelas
 <input id="admin-kelas"
 class="input-field"
 placeholder="Contoh: XII TKJ 1">
-</div>    -->
+</div>    
+   SAMPAI DISINI 
   <div><label class="block text-sm font-medium text-gray-600 mb-1">Kelas</label> <input id="admin-kelas" class="input-field" placeholder="Contoh: XII RPL 1">
-     </div> 
+     </div> -->
+<div>
+
+<label class="block text-sm font-medium text-gray-600 mb-1">
+Kelas & Jurusan
+</label>
+
+<select id="admin-kelas" class="input-field">
+
+<option value="">
+Pilih Kelas
+</option>
+
+<!-- TKR -->
+<option value="XI TKR 1|Teknik Kendaraan Ringan">
+XI TKR 1 (Teknik Kendaraan Ringan)
+</option>
+
+<option value="XI TKR 2|Teknik Kendaraan Ringan">
+XI TKR 2 (Teknik Kendaraan Ringan)
+</option>
+
+<option value="XII TKR 1|Teknik Kendaraan Ringan">
+XII TKR 1 (Teknik Kendaraan Ringan)
+</option>
+
+<option value="XII TKR 2|Teknik Kendaraan Ringan">
+XII TKR 2 (Teknik Kendaraan Ringan)
+</option>
+
+<!-- TKJ -->
+<option value="XI TKJ 1|Teknik Komputer & Jaringan">
+XI TKJ 1 (Teknik Komputer & Jaringan)
+</option>
+
+<option value="XI TKJ 2|Teknik Komputer & Jaringan">
+XI TKJ 2 (Teknik Komputer & Jaringan)
+</option>
+
+<option value="XII TKJ 1|Teknik Komputer & Jaringan">
+XII TKJ 1 (Teknik Komputer & Jaringan)
+</option>
+
+<option value="XII TKJ 2|Teknik Komputer & Jaringan">
+XII TKJ 2 (Teknik Komputer & Jaringan)
+</option>
+
+<!-- TP -->
+<option value="XI TP 1|Teknik Pemesinan">
+XI TP 1 (Teknik Pemesinan)
+</option>
+
+<option value="XI TP 2|Teknik Pemesinan">
+XI TP 2 (Teknik Pemesinan)
+</option>
+
+<option value="XII TP 1|Teknik Pemesinan">
+XII TP 1 (Teknik Pemesinan)
+</option>
+
+<option value="XII TP 2|Teknik Pemesinan">
+XII TP 2 (Teknik Pemesinan)
+</option>
+
+<!-- AKL -->
+<option value="XI AKL 1|Akuntansi & Keuangan Lembaga">
+XI AKL 1 (Akuntansi & Keuangan Lembaga)
+</option>
+
+<option value="XI AKL 2|Akuntansi & Keuangan Lembaga">
+XI AKL 2 (Akuntansi & Keuangan Lembaga)
+</option>
+
+<option value="XII AKL 1|Akuntansi & Keuangan Lembaga">
+XII AKL 1 (Akuntansi & Keuangan Lembaga)
+</option>
+
+<option value="XII AKL 2|Akuntansi & Keuangan Lembaga">
+XII AKL 2 (Akuntansi & Keuangan Lembaga)
+</option>
+
+</select>
+
+</div>
+     
      <div><label class="block text-sm font-medium text-gray-600 mb-1">Nama Perusahaan (DUDI)</label> <input id="admin-perusahaan" class="input-field" placeholder="Nama Perusahaan">
      </div>
      <div><label class="block text-sm font-medium text-gray-600 mb-1">Koordinat GPS Perusahaan</label> <input id="admin-koordinat" class="input-field" placeholder="Lat, Lng (contoh: -6.200,106.816)">
@@ -914,7 +1000,9 @@ function addPeserta() {
     });
 
      }   
-*/
+
+ASLI:
+
 function addPeserta() {
     const nama = document.getElementById('admin-nama').value.trim();
     const kelas = document.getElementById('admin-kelas').value.trim();
@@ -943,7 +1031,98 @@ function addPeserta() {
     // Clear form
     ['admin-nama','admin-kelas','admin-perusahaan','admin-koordinat','admin-bpjs','admin-mulai','admin-selesai'].forEach(id => document.getElementById(id).value = '');
 }
+*/
+function addPeserta() {
 
+    const nama =
+    document.getElementById('admin-nama').value.trim();
+
+    const kelasData =
+    document.getElementById('admin-kelas').value;
+
+    if (!kelasData) {
+        showToast('Pilih kelas terlebih dahulu', 'error');
+        return;
+    }
+
+    const splitData = kelasData.split('|');
+
+    const kelas = splitData[0];
+
+    const jurusan = splitData[1];
+
+    const perusahaan =
+    document.getElementById('admin-perusahaan').value.trim();
+
+    const koordinat =
+    document.getElementById('admin-koordinat').value.trim();
+
+    const bpjs =
+    document.getElementById('admin-bpjs').value.trim();
+
+    const mulai =
+    document.getElementById('admin-mulai').value;
+
+    const selesai =
+    document.getElementById('admin-selesai').value;
+
+    if (
+        !nama ||
+        !kelas ||
+        !perusahaan ||
+        !mulai ||
+        !selesai
+    ) {
+
+        showToast('Lengkapi semua data wajib', 'error');
+
+        return;
+    }
+
+    const code = generateCode();
+
+    const peserta = {
+
+        nama,
+        kelas,
+        jurusan,
+        perusahaan,
+        koordinat,
+        bpjs,
+        mulai,
+        selesai,
+        code,
+        createdAt: new Date().toISOString()
+
+    };
+
+    const list = getPesertaList();
+
+    list.push(peserta);
+
+    savePesertaList(list);
+
+    document.getElementById('generated-code').textContent = code;
+
+    document.getElementById('generated-code-section').style.display = 'block';
+
+    showToast(`Peserta ${nama} berhasil ditambahkan!`);
+
+    [
+        'admin-nama',
+        'admin-kelas',
+        'admin-perusahaan',
+        'admin-koordinat',
+        'admin-bpjs',
+        'admin-mulai',
+        'admin-selesai'
+    ].forEach(id => {
+
+        document.getElementById(id).value = '';
+
+    });
+
+}
    
 function copyCode() {
     const code = document.getElementById('generated-code').textContent;
