@@ -671,8 +671,13 @@ function submitIzin() {
     if (!keterangan) { showToast('Tuliskan keterangan izin', 'error'); return; }
     
     const record = {
+date: new Date().toLocaleDateString('id-ID'),
+time: new Date().toLocaleTimeString('id-ID'),    
+/*     
         date: new Date().toISOString().split('T')[0],
         time: new Date().toISOString().split('T')[0],
+*/
+        
         status: 'Izin',
         gps: '-',
         photo: null,
