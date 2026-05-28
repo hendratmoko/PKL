@@ -1270,13 +1270,13 @@ tr.innerHTML = `
  
 
     <td>${p.perusahaan}</td>
-
     <td class="text-xs">
         ${p.koordinat || '-'}
     </td>
-<td>
-
-    <span class="
+    <td class="text-xs">
+        ${lastGPS}
+    </td>
+    <td><span class="
         ${
             jarakPresensi.includes('meter')
             ? 'text-green-600'
@@ -1292,9 +1292,7 @@ ${
 }
     </span>
 </td>
-    <td class="text-xs">
-        ${lastGPS}
-    </td>
+
     <td class="font-mono font-bold">
         ${p.code}
     </td>
