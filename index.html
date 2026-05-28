@@ -59,26 +59,38 @@ M  M    O     K     K   OOOOO
         position: relative;
     }
 
-    /* WATERMARK */
+    /* WATERMARK 
+    .print-watermark {/* WATERMARK DISEMBUNYIKAN NORMAL */
+.print-watermark {
+    display: none;
+}
+/* HANYA MUNCUL SAAT PRINT */
+@media print {
     .print-watermark {
-
+        display: block;
         position: fixed;
-
         top: 50%;
         left: 50%;
-
+        transform:
+        translate(-50%, -50%)
+        rotate(-20deg);
+        width: 420px;
+        opacity: 0.06;
+        z-index: 0;
+        pointer-events: none;
+    }
+}
+        position: fixed;
+        top: 50%;
+        left: 50%;
         transform:
         translate(-50%, -50%);
-
         width: 350px;
-
         opacity: 0.08;
-
         z-index: 0;
-
         pointer-events: none;
 
-    }
+    } */
 
     /* SEMUA KONTEN DI ATAS WATERMARK */
     table,
