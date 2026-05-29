@@ -1211,9 +1211,12 @@ time: new Date().toLocaleTimeString('id-ID'),
         date: new Date().toISOString().split('T')[0],
         time: new Date().toISOString().split('T')[0],
 */
-        
         status: 'Izin',
-        gps: '-',
+ /*       gps: '-',*/
+          gps: currentGPS
+          ? `${currentGPS.lat.toFixed(6)},
+             ${currentGPS.lng.toFixed(6)}`
+          : 'Lokasi tidak tersedia',    
         photo: null,
         kegiatan: keterangan
     };
