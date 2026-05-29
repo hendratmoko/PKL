@@ -180,10 +180,17 @@ M  M    O     K     K   OOOOO
      <div class="flex gap-2 mt-2 justify-center"><button onclick="startCamera()" class="btn-primary text-sm py-2 px-4"><i data-lucide="camera" style="width:14px;height:14px;display:inline"></i> Buka Kamera</button> <button onclick="capturePhoto()" id="btn-capture" class="btn-success text-sm py-2 px-4" style="display:none"><i data-lucide="check-circle" style="width:14px;height:14px;display:inline"></i> Ambil Foto</button>
      </div>
     </div><!-- GPS Section -->
-    <div class="mb-4"><label class="block text-sm font-medium text-gray-600 mb-2">Lokasi GPS</label>
-     <div id="gps-status" class="text-sm text-gray-400 bg-gray-50 p-3 rounded-xl">
+    <div class="mb-4 text-center"><label class="block text-sm font-medium text-gray-600 mb-2 text-center">Lokasi GPS</label>
+     <div id="gps-status" class="text-sm text-gray-400 bg-gray-50 p-3 rounded-xl text-center">
       Belum mendapatkan lokasi
-     </div><button onclick="getLocation()" class="btn-primary text-sm py-2 px-3 mt-2"><i data-lucide="map-pin" style="width:14px;height:14px;display:inline"></i> Ambil Lokasi</button>
+     </div>
+     <button
+onclick="getLocation()"
+class="btn-primary text-sm py-2 px-3 mt-2 mx-auto flex items-center gap-2">
+      <!--
+     <button onclick="getLocation()" class="btn-primary text-sm py-2 px-3 mt-2">
+      -->
+      <i data-lucide="map-pin" style="width:14px;height:14px;display:inline"></i> Ambil Lokasi</button>
     </div><!-- Attendance Buttons -->
     <div class="flex flex-wrap gap-2 mb-4 justify-center"><button onclick="absenMasuk()" id="btn-masuk" class="btn-success flex items-center gap-1"> <i data-lucide="log-in" style="width:16px;height:16px"></i> Absen Masuk </button> <button onclick="absenPulang()" id="btn-pulang" class="btn-primary flex items-center gap-1" style="display:none"> <i data-lucide="log-out" style="width:16px;height:16px"></i> Absen Pulang </button> <button onclick="showIzinForm()" id="btn-izin" class="btn-warning flex items-center gap-1"> <i data-lucide="file-text" style="width:16px;height:16px"></i> Izin tidak PKL </button>
     </div>
