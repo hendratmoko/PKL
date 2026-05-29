@@ -1202,6 +1202,16 @@ function showIzinForm() {
 
 function submitIzin() {
     const keterangan = document.getElementById('izin-input').value.trim();
+if (!currentGPS) {
+
+    showModal(
+        'Lokasi Diperlukan',
+        'Silakan ambil lokasi GPS sebelum mengirim izin.'
+    );
+
+    return;
+
+} 
     if (!keterangan) { showToast('Tuliskan keterangan izin', 'error'); return; }
     
     const record = {
@@ -1230,7 +1240,11 @@ time: new Date().toLocaleTimeString('id-ID'),
     perusahaan: currentUser.perusahaan,
     status: 'Izin',
     kegiatan: keterangan,
-    gps: '-',
+    gps: currentGPS
+         ? `${currentGPS.lat},
+            ${currentGPS.lng}`
+         : 'Lokasi tidak tersedia',
+ /*   gps: '-',*/
     code: currentUser.code
 });
  
