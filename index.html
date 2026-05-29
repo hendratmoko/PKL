@@ -716,6 +716,103 @@ function updateClock() {
 
 // ===================== LOGIN =====================
 function handleLogin() {
+
+    const code =
+    document
+    .getElementById('login-code')
+    .value
+    .trim()
+    .toUpperCase();
+
+    // VALIDASI KOSONG
+    if (!code) {
+
+        showModal(
+            'Kode Kosong',
+            'Silakan masukkan kode login terlebih dahulu.'
+        );
+
+        return;
+
+    }
+
+    // VALIDASI PANJANG KODE
+    if (code.length !== 6) {
+
+        showModal(
+            'Kode Tidak Valid',
+            'Format kode harus terdiri dari 3 huruf dan 3 angka.'
+        );
+
+        return;
+
+    }
+
+    // LOGIN ADMIN
+    if (code === ADMIN_CODE) {
+
+        isAdmin = true;
+
+        showToast(
+            'Login Admin Berhasil'
+        );
+
+        showPage('admin');
+
+        renderAdminReport();
+
+        return;
+
+    }
+
+    // CEK PESERTA
+    const peserta =
+    getPesertaList()
+    .find(
+        p => p.code === code
+    );
+
+    // JIKA KODE SALAH
+    if (!peserta) {
+
+        showModal(
+            'Kode Tidak Ditemukan',
+            'Kode login tidak terdaftar.\n\nSilakan segera menghubungi admin PKL atau pembimbing sekolah.'
+        );
+
+        document
+        .getElementById('login-code')
+        .value = '';
+
+        return;
+
+    }
+
+    // LOGIN BERHASIL
+    currentUser = peserta;
+
+    isAdmin = false;
+
+    document
+    .getElementById('user-info')
+    .textContent =
+    `${peserta.nama} | ${peserta.kelas} | ${peserta.perusahaan}`;
+
+    showToast(
+        `Selamat datang ${peserta.nama}`
+    );
+
+    // LANGSUNG MASUK DASHBOARD
+    showPage('dashboard');
+
+    renderHistory();
+
+    checkAttendanceState();
+
+}
+   
+/* asli, harus klik login
+function handleLogin() {
     const code = document.getElementById('login-code').value.trim().toUpperCase();
     if (!code || code.length !== 6) {
         showToast('Masukkan kode', 'error');
@@ -739,7 +836,8 @@ function handleLogin() {
     renderHistory();
     checkAttendanceState();
 }
-
+*/
+   
 function showAdminLogin() {
     document.getElementById('login-code').value = '';
     document.getElementById('login-code').placeholder = 'Masukkan Kode Admin';
