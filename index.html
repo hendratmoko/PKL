@@ -1042,10 +1042,11 @@ sendToSpreadsheet({
     perusahaan: currentUser.perusahaan,
     koordinatPerusahaan: currentUser.koordinat,
     koordinatPresensi: `${currentGPS.lat},${currentGPS.lng}`,
-    jarak: calculateDistanceText(
+    jarak: jarak, 
+ /*calculateDistanceText(
         currentUser.koordinat,
         `${currentGPS.lat},${currentGPS.lng}`
-    ),
+    ), */
     status: 'Masuk',
     kegiatan: '-',
     code: currentUser.code
@@ -1111,6 +1112,18 @@ function submitKegiatan() {
 }
 
 function absenPulang() {
+let jarak = 0;
+if (currentUser.koordinat) {
+    const [compLat, compLng] =
+ currentUser.koordinat.split(',').map(Number);
+    jarak = Math.round(
+        checkDistance(
+            currentGPS.lat,
+            currentGPS.lng,
+            compLat,
+            compLng
+        )
+    );
     if (!validatePresensi()) return;
     const record = {
         date: new Date().toLocaleDateString('id-ID'),
@@ -1133,42 +1146,47 @@ calculateDistanceText(
 );
 
 sendToSpreadsheet({
-
+    tanggal: new Date().toLocaleDateString('id-ID'),
+    waktu: new Date().toLocaleTimeString('id-ID'),
+    nama: currentUser.nama,
+    kelas: currentUser.kelas,
+    perusahaan: currentUser.perusahaan,
+    koordinatPerusahaan:
+        currentUser.koordinat || '',
+    koordinatPresensi:
+        `${currentGPS.lat},${currentGPS.lng}`,
+    jarak: jarak,
+    status: 'Pulang',
+    kegiatan: '-',
+    code: currentUser.code
+});
+ 
+/*
+sendToSpreadsheet({
     tanggal:
     new Date().toLocaleDateString('id-ID'),
-
     waktu:
     new Date().toLocaleTimeString('id-ID'),
-
     nama:
     currentUser.nama,
-
     kelas:
     currentUser.kelas,
-
     perusahaan:
     currentUser.perusahaan,
-
     koordinatPerusahaan:
     currentUser.koordinat,
-
     koordinatPresensi:
     koordinatPresensi,
-
     jarak:
     jarak,
-
     status:
     'Pulang',
-
     kegiatan:
     '-',
-
     code:
     currentUser.code
-
 });
- /*
+ 
  
 */
     document.getElementById('btn-pulang').style.display = 'none';
