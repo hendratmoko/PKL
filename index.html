@@ -1527,7 +1527,18 @@ function renderHistory() {
         tbody.appendChild(tr);
     });
 }
+async function loadHistoryFromSheet() {
 
+    const response =
+      await fetch(APPS_SCRIPT_URL);
+
+    const data =
+      await response.json();
+
+    console.log(data);
+
+}
+   
 function printHistory() {
     document.getElementById('print-header').style.display = 'block';
     document.getElementById('print-footer').style.display = 'block';
