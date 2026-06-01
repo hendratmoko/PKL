@@ -720,16 +720,17 @@ async function sendToSpreadsheet(data) {
          body: JSON.stringify(data)
         });
      const result = await response.json();
-    console.log(result);
+/*    console.log(result);*/
     if (result.success) {
         showToast('Data berhasil disimpan');
     } else {
-        showToast('Spreadsheet error', 'error');
-        console.error(result.error);
+     throw new Error(result.error);
+  /*      showToast('Spreadsheet error', 'error');
+        console.error(result.error);  */
     }
 } catch(err) {
     console.error(err);
-    showToast('Gagal menyimpan di spreadsheet', 'error');
+    showToast('Gagal menyimpan di data Log', 'error');
       /*  */
     }
 }
