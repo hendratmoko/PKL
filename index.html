@@ -1202,14 +1202,11 @@ function showIzinForm() {
 function submitIzin() {
     const keterangan = document.getElementById('izin-input').value.trim();
 if (!currentGPS) {
-
     showModal(
         'Lokasi Diperlukan',
         'Silakan ambil lokasi GPS sebelum mengirim izin.'
     );
-
     return;
-
 } 
     if (!keterangan) { showToast('Tuliskan keterangan izin', 'error'); return; }
     
@@ -1233,42 +1230,27 @@ time: new Date().toLocaleTimeString('id-ID'),
     history.push(record);
     saveHistory(currentUser.code, history);
  sendToSpreadsheet({
-
     tanggal:
     new Date().toLocaleDateString('id-ID'),
-
     waktu:
     new Date().toLocaleTimeString('id-ID'),
-
     nama:
     currentUser.nama,
-
     kelas:
     currentUser.kelas,
-
     perusahaan:
     currentUser.perusahaan,
-
     koordinatPerusahaan:
-    currentUser.koordinat,
-
-    koordinatPresensi:
-    currentGPS
-      ? `${currentGPS.lat},${currentGPS.lng}`
-      : '-',
-
+    currentUser.koordinat || '',
+    koordinatPresensi:  '-',
     jarak:
     '-',
-
     status:
     'Izin',
-
     kegiatan:
     keterangan,
-
     code:
     currentUser.code
-
 });
 /*
  
