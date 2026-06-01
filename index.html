@@ -1291,7 +1291,42 @@ function submitKegiatan() {
     const idx = history.findIndex(h => h.date === today && h.status === 'Masuk' && !h.kegiatan);
     if (idx !== -1) { history[idx].kegiatan = kegiatan; }
     saveHistory(currentUser.code, history);
- 
+ sendToSpreadsheet({
+
+    tanggal:
+    new Date().toLocaleDateString('id-ID'),
+
+    waktu:
+    new Date().toLocaleTimeString('id-ID'),
+
+    nama:
+    currentUser.nama,
+
+    kelas:
+    currentUser.kelas,
+
+    perusahaan:
+    currentUser.perusahaan,
+
+    koordinatPerusahaan:
+    currentUser.koordinat,
+
+    koordinatPresensi:
+    '-',
+
+    jarak:
+    '-',
+
+    status:
+    'Kegiatan',
+
+    kegiatan:
+    kegiatan,
+
+    code:
+    currentUser.code
+
+});
     attendanceState = 'kegiatan_written';
     document.getElementById('kegiatan-section').style.display = 'none';
     document.getElementById('btn-pulang').style.display = 'inline-flex';
@@ -1313,7 +1348,52 @@ function absenPulang() {
     const history = getHistory(currentUser.code);
     history.push(record);
     saveHistory(currentUser.code, history);
+const koordinatPresensi =
+`${currentGPS.lat},${currentGPS.lng}`;
 
+const jarak =
+calculateDistanceText(
+    currentUser.koordinat,
+    koordinatPresensi
+);
+
+sendToSpreadsheet({
+
+    tanggal:
+    new Date().toLocaleDateString('id-ID'),
+
+    waktu:
+    new Date().toLocaleTimeString('id-ID'),
+
+    nama:
+    currentUser.nama,
+
+    kelas:
+    currentUser.kelas,
+
+    perusahaan:
+    currentUser.perusahaan,
+
+    koordinatPerusahaan:
+    currentUser.koordinat,
+
+    koordinatPresensi:
+    koordinatPresensi,
+
+    jarak:
+    jarak,
+
+    status:
+    'Pulang',
+
+    kegiatan:
+    '-',
+
+    code:
+    currentUser.code
+
+});
+ /*
  sendToSpreadsheet({
     nama: currentUser.nama,
     kelas: currentUser.kelas,
@@ -1323,6 +1403,7 @@ function absenPulang() {
     gps: `${currentGPS.lat}, ${currentGPS.lng}`,
     code: currentUser.code
 });
+*/
     document.getElementById('btn-pulang').style.display = 'none';
     document.getElementById('btn-izin').style.display = 'none';
     renderHistory();
@@ -1366,7 +1447,45 @@ time: new Date().toLocaleTimeString('id-ID'),
     const history = getHistory(currentUser.code);
     history.push(record);
     saveHistory(currentUser.code, history);
+ sendToSpreadsheet({
 
+    tanggal:
+    new Date().toLocaleDateString('id-ID'),
+
+    waktu:
+    new Date().toLocaleTimeString('id-ID'),
+
+    nama:
+    currentUser.nama,
+
+    kelas:
+    currentUser.kelas,
+
+    perusahaan:
+    currentUser.perusahaan,
+
+    koordinatPerusahaan:
+    currentUser.koordinat,
+
+    koordinatPresensi:
+    currentGPS
+      ? `${currentGPS.lat},${currentGPS.lng}`
+      : '-',
+
+    jarak:
+    '-',
+
+    status:
+    'Izin',
+
+    kegiatan:
+    keterangan,
+
+    code:
+    currentUser.code
+
+});
+/*
  sendToSpreadsheet({
     nama: currentUser.nama,
     kelas: currentUser.kelas,
@@ -1377,10 +1496,10 @@ time: new Date().toLocaleTimeString('id-ID'),
          ? `${currentGPS.lat},
             ${currentGPS.lng}`
          : 'Lokasi tidak tersedia',
- /*   gps: '-',*/
+ /*   gps: '-',
     code: currentUser.code
 });
- 
+ */
     document.getElementById('izin-section').style.display = 'none';
     document.getElementById('btn-masuk').style.display = 'none';
     document.getElementById('btn-izin').style.display = 'none';
