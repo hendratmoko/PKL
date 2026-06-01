@@ -1561,115 +1561,6 @@ function switchAdminTab(tab) {
     if (tab === 'report') renderAdminReport();
 }
 /*
-function addPeserta() {
-
-    const nama = document.getElementById('admin-nama').value.trim();
-
-    const jurusan =
-    document.getElementById('admin-jurusan').value;
-
-    const kelas =
-    document.getElementById('admin-kelas').value.trim();
-
-    const perusahaan =
-    document.getElementById('admin-perusahaan').value.trim();
-
-    const koordinat =
-    document.getElementById('admin-koordinat').value.trim();
-
-    const bpjs =
-    document.getElementById('admin-bpjs').value.trim();
-
-    const mulai =
-    document.getElementById('admin-mulai').value;
-
-    const selesai =
-    document.getElementById('admin-selesai').value;
-
-    if (
-        !nama ||
-        !jurusan ||
-        !kelas ||
-        !perusahaan ||
-        !mulai ||
-        !selesai
-    ) {
-        showToast('Lengkapi semua data wajib', 'error');
-        return;
-    }
-
-    const code = generateCode();
-
-    const peserta = {
-        nama,
-        jurusan,
-        kelas,
-        perusahaan,
-        koordinat,
-        bpjs,
-        mulai,
-        selesai,
-        code,
-        createdAt: new Date().toISOString()
-    };
-
-    const list = getPesertaList();
-
-    list.push(peserta);
-
-    savePesertaList(list);
-
-    document.getElementById('generated-code').textContent = code;
-
-    document.getElementById('generated-code-section').style.display = 'block';
-
-    showToast(`Peserta ${nama} berhasil ditambahkan!`);
-
-    [
-        'admin-nama',
-        'admin-jurusan',
-        'admin-kelas',
-        'admin-perusahaan',
-        'admin-koordinat',
-        'admin-bpjs',
-        'admin-mulai',
-        'admin-selesai'
-    ].forEach(id => {
-        document.getElementById(id).value = '';
-    });
-
-     }   
-
-ASLI:
-
-function addPeserta() {
-    const nama = document.getElementById('admin-nama').value.trim();
-    const kelas = document.getElementById('admin-kelas').value.trim();
-    const perusahaan = document.getElementById('admin-perusahaan').value.trim();
-    const koordinat = document.getElementById('admin-koordinat').value.trim();
-    const bpjs = document.getElementById('admin-bpjs').value.trim();
-    const mulai = document.getElementById('admin-mulai').value;
-    const selesai = document.getElementById('admin-selesai').value;
-
-    if (!nama || !kelas || !perusahaan || !mulai || !selesai) {
-        showToast('Lengkapi semua data wajib', 'error');
-        return;
-    }
-
-    const code = generateCode();
-    const peserta = { nama, kelas, perusahaan, koordinat, bpjs, mulai, selesai, code, createdAt: new Date().toISOString() };
-    
-    const list = getPesertaList();
-    list.push(peserta);
-    savePesertaList(list);
-
-    document.getElementById('generated-code').textContent = code;
-    document.getElementById('generated-code-section').style.display = 'block';
-    showToast(`Peserta ${nama} berhasil ditambahkan!`);
-
-    // Clear form
-    ['admin-nama','admin-kelas','admin-perusahaan','admin-koordinat','admin-bpjs','admin-mulai','admin-selesai'].forEach(id => document.getElementById(id).value = '');
-}
 */
 function addPeserta() {
 
@@ -1850,17 +1741,7 @@ ${
      
      
 /*     
-        tr.innerHTML = `
-            <td>${i+1}</td>
-            <td>${p.nama}</td>
-            <td>${p.kelas}</td>
-            <td>${p.perusahaan}</td>
-            <td class="font-mono font-bold">${p.code}</td>
-            <td>${p.mulai}</td>
-            <td>${p.selesai}</td>
-            <td><span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs font-medium">${masukCount} hari</span></td>
-            <td class="no-print"><button onclick="resetPeserta('${p.code}')" class="text-red-500 hover:underline text-xs">Reset</button></td>
-        `;
+
         */
         tbody.appendChild(tr);
     });
