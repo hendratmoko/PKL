@@ -765,38 +765,27 @@ function handleLogin() {
             'Kode Kosong',
             'Silakan masukkan kode login terlebih dahulu.'
         );
-
         return;
-
     }
 
     // VALIDASI PANJANG KODE
     if (code.length !== 6) {
-
         showModal(
             'Kode Tidak Valid',
             'Format kode harus terdiri dari 3 huruf dan 3 angka.'
         );
-
         return;
-
     }
 
     // LOGIN ADMIN
     if (code === ADMIN_CODE) {
-
         isAdmin = true;
-
         showToast(
             'Login Admin Berhasil'
         );
-
         showPage('admin');
-
         renderAdminReport();
-
         return;
-
     }
 
     // CEK PESERTA
@@ -805,44 +794,32 @@ function handleLogin() {
     .find(
         p => p.code === code
     );
-
     // JIKA KODE SALAH
     if (!peserta) {
-
         showModal(
             'Kode Tidak Ditemukan',
             'Kode login tidak terdaftar.\n\nSilakan segera menghubungi admin PKL atau pembimbing sekolah.'
         );
-
         document
         .getElementById('login-code')
         .value = '';
-
         return;
-
     }
 
     // LOGIN BERHASIL
     currentUser = peserta;
-
     isAdmin = false;
-
     document
     .getElementById('user-info')
     .textContent =
     `${peserta.nama} | ${peserta.kelas} | ${peserta.perusahaan}`;
-
     showToast(
         `Selamat datang ${peserta.nama}`
     );
-
     // LANGSUNG MASUK DASHBOARD
     showPage('dashboard');
-
     renderHistory();
-
     checkAttendanceState();
-
 }
    
 /* 
@@ -1065,7 +1042,7 @@ function absenMasuk() {
     const history = getHistory(currentUser.code);
     history.push(record);
     saveHistory(currentUser.code, history);
-
+/*
  async function sendToSpreadsheet(data) {
 
     try {
@@ -1112,7 +1089,7 @@ function absenMasuk() {
     }
 
  }
- /*
+ 
  sendToSpreadsheet({
     nama: currentUser.nama,
     kelas: currentUser.kelas,
@@ -1123,6 +1100,22 @@ function absenMasuk() {
     code: currentUser.code
 });
  */
+sendToSpreadsheet({
+    tanggal: new Date().toLocaleDateString('id-ID'),
+    waktu: new Date().toLocaleTimeString('id-ID'),
+    nama: currentUser.nama,
+    kelas: currentUser.kelas,
+    perusahaan: currentUser.perusahaan,
+    koordinatPerusahaan: currentUser.koordinat,
+    koordinatPresensi: `${currentGPS.lat},${currentGPS.lng}`,
+    jarak: calculateDistanceText(
+        currentUser.koordinat,
+        `${currentGPS.lat},${currentGPS.lng}`
+    ),
+    status: 'Masuk',
+    kegiatan: '-',
+    code: currentUser.code
+});
     attendanceState = 'masuk';
     document.getElementById('btn-masuk').style.display = 'none';
     document.getElementById('kegiatan-section').style.display = 'block';
