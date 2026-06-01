@@ -1218,6 +1218,53 @@ function absenMasuk() {
     history.push(record);
     saveHistory(currentUser.code, history);
 
+ async function sendToSpreadsheet(data) {
+
+    try {
+
+        const response =
+        await fetch(
+            APPS_SCRIPT_URL,
+            {
+                method:'POST',
+                headers:{
+                    'Content-Type':'application/json'
+                },
+                body:JSON.stringify(data)
+            }
+        );
+
+        const result =
+        await response.json();
+
+        if(result.success){
+
+            showToast(
+                'Data berhasil disimpan'
+            );
+
+        }else{
+
+            showToast(
+                result.error,
+                'error'
+            );
+
+        }
+
+    } catch(err){
+
+        console.error(err);
+
+        showToast(
+            'Gagal menyimpan ke Spreadsheet',
+            'error'
+        );
+
+    }
+
+ }
+ /*
  sendToSpreadsheet({
     nama: currentUser.nama,
     kelas: currentUser.kelas,
@@ -1227,7 +1274,7 @@ function absenMasuk() {
     gps: `${currentGPS.lat}, ${currentGPS.lng}`,
     code: currentUser.code
 });
- 
+ */
     attendanceState = 'masuk';
     document.getElementById('btn-masuk').style.display = 'none';
     document.getElementById('kegiatan-section').style.display = 'block';
