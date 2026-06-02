@@ -404,19 +404,14 @@
     </div>
 </div>
 
-<div class="flex justify-end mb-3 no-print">
+<div class="flex flex-wrap justify-between items-center gap-2 mb-3 no-print">
+
     <button onclick="printAdminReport()"
         class="btn-3d btn-3d-primary">
         <i data-lucide="printer"></i>
         Cetak Laporan
     </button>
-</div>     
-
-<button onclick="resetAllData()"
-    class="btn-3d btn-3d-danger">
-    <i data-lucide="trash-2"></i>
-    Hapus Semua Data
-</button>
+</div>
      
      <table id="admin-table">
       <thead>
@@ -444,6 +439,11 @@
         <i data-lucide="printer"></i>
         Cetak Laporan
     </button>
+     <button onclick="resetAllData()"
+        class="btn-3d btn-3d-danger">
+        <i data-lucide="trash-2"></i>
+        Hapus Semua Data
+     </button>
 </div>
      
     </div>
