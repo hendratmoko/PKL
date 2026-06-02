@@ -490,9 +490,7 @@
 
         <div style="text-align:center;width:40%">
             <p>Kepala Sekolah</p>
-
             <br><br><br>
-
             <p id="print-kepsek-name"></p>
             <p id="print-kepsek-nip"></p>
         </div>
@@ -1112,7 +1110,30 @@ function addPeserta() {
         document.getElementById(id).value = '';
     });
 }
-   
+
+
+function deletePeserta(code){
+
+    if(!confirm(
+        "Hapus peserta beserta seluruh riwayatnya?"
+    )) return;
+
+    let peserta = getPesertaList();
+
+    peserta = peserta.filter(
+        p => p.code !== code
+    );
+
+    savePesertaList(peserta);
+
+    localStorage.removeItem(
+        `pkl_history_${code}`
+    );
+
+    renderAdminReport();
+
+    showToast("Peserta berhasil dihapus");
+}   
 function copyCode() {
     const code = document.getElementById('generated-code').textContent;
     navigator.clipboard.writeText(code).then(() => showToast('Kode berhasil dicopy!'));
