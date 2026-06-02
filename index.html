@@ -174,7 +174,7 @@ M  M    O     K     K   OOOOO
     <!-- Logo Sekolah -->
 <div class="mx-auto mb-4">
    <img src="LOGO NGLIPAR.png"
-        alt=LOGO"
+        alt="LOGO"
         class="w-24 h-24 object-contain mx-auto">
 </div>
     <!-- School Logo SVG 
@@ -1124,7 +1124,7 @@ if (currentUser.koordinat) {
             compLat,
             compLng
         )
-    );
+     });
     if (!validatePresensi()) return;
     const record = {
         date: new Date().toLocaleDateString('id-ID'),
@@ -1144,7 +1144,7 @@ const jarak =
 calculateDistanceText(
     currentUser.koordinat,
     koordinatPresensi
-);
+   });
 
 sendToSpreadsheet({
     tanggal: new Date().toLocaleDateString('id-ID'),
