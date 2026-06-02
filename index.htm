@@ -403,6 +403,20 @@
         </div>
     </div>
 </div>
+
+<div class="flex justify-end mb-3 no-print">
+    <button onclick="printAdminReport()"
+        class="btn-3d btn-3d-primary">
+        <i data-lucide="printer"></i>
+        Cetak Laporan
+    </button>
+</div>     
+
+<button onclick="resetAllData()"
+    class="btn-3d btn-3d-danger">
+    <i data-lucide="trash-2"></i>
+    Hapus Semua Data
+</button>
      
      <table id="admin-table">
       <thead>
@@ -423,7 +437,69 @@
       </thead>
       <tbody id="admin-table-body"></tbody>
      </table>
+
+<div class="flex justify-end mt-3 no-print">
+    <button onclick="printAdminReport()"
+        class="btn-3d btn-3d-primary">
+        <i data-lucide="printer"></i>
+        Cetak Laporan
+    </button>
+</div>
+     
     </div>
+
+<div id="admin-print-header" style="display:none">
+
+    <img src="LOGO NGLIPAR.png"
+        class="print-watermark"
+        alt="logo">
+
+    <div style="
+        text-align:center;
+        border-bottom:3px double #000;
+        padding-bottom:10px;
+        margin-bottom:20px">
+
+        <h2 style="margin:0">
+            LAPORAN PRESENSI PRAKTIK KERJA INDUSTRI
+        </h2>
+
+        <h3 style="margin:5px 0">
+            SMK NEGERI 1 NGLIPAR
+        </h3>
+
+    </div>
+
+</div>
+
+<div id="admin-print-footer" style="display:none">
+
+    <div style="
+        margin-top:60px;
+        display:flex;
+        justify-content:space-between">
+
+        <div style="text-align:center;width:40%">
+            <p>Admin PKL</p>
+
+            <br><br><br>
+
+            <p id="print-admin-name"></p>
+            <p id="print-admin-nip"></p>
+        </div>
+
+        <div style="text-align:center;width:40%">
+            <p>Kepala Sekolah</p>
+
+            <br><br><br>
+
+            <p id="print-kepsek-name"></p>
+            <p id="print-kepsek-nip"></p>
+        </div>
+    </div>
+
+ </div>
+    
    </div>
   </div>
 
@@ -1088,6 +1164,37 @@ function renderAdminReport() {
     });
 }
 
+function printAdminReport() {
+
+    document.getElementById("print-admin-name").innerHTML =
+        "<b>" +
+        document.getElementById("admin-ttd-nama").value +
+        "</b>";
+
+    document.getElementById("print-admin-nip").innerHTML =
+        "NIP. " +
+        document.getElementById("admin-ttd-nip").value;
+
+    document.getElementById("print-kepsek-name").innerHTML =
+        "<b>" +
+        document.getElementById("kepsek-nama").value +
+        "</b>";
+
+    document.getElementById("print-kepsek-nip").innerHTML =
+        "NIP. " +
+        document.getElementById("kepsek-nip").value;
+
+    document.getElementById("admin-print-header").style.display = "block";
+    document.getElementById("admin-print-footer").style.display = "block";
+
+    window.print();
+
+    setTimeout(() => {
+        document.getElementById("admin-print-header").style.display = "none";
+        document.getElementById("admin-print-footer").style.display = "none";
+    }, 500);
+}
+ 
 function resetPeserta(code) {
     if(confirm('Apakah Anda yakin ingin menghapus seluruh riwayat presensi siswa ini?')) {
         localStorage.removeItem(`pkl_history_${code}`);
@@ -1096,6 +1203,27 @@ function resetPeserta(code) {
     }
 }
 
+function resetAllData() {
+
+    if(!confirm(
+        "Yakin menghapus seluruh peserta dan seluruh riwayat presensi?"
+    )) return;
+
+    localStorage.removeItem("pkl_peserta");
+
+    Object.keys(localStorage).forEach(key => {
+
+        if(key.startsWith("pkl_history_")) {
+            localStorage.removeItem(key);
+        }
+
+    });
+
+    renderAdminReport();
+
+    showToast("Semua data berhasil dihapus");
+}
+   
 // ===================== EVENT LISTENERS & INITIALIZATION =====================
 setInterval(updateClock, 1000);
 updateClock();
