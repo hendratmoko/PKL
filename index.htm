@@ -1113,7 +1113,6 @@ function addPeserta() {
 
 
 function deletePeserta(code){
-
     if(!confirm(
         "Hapus peserta beserta seluruh riwayatnya?"
     )) return;
@@ -1177,9 +1176,20 @@ function renderAdminReport() {
                     ${masukCount} hari
                 </span>
             </td>
-            <td class="no-print">
-                <button onclick="resetPeserta('${p.code}')" class="text-red-500 font-semibold hover:underline text-xs">Reset</button>
-            </td>
+           
+<td class="no-print">
+    <div class="flex gap-2">
+        <button onclick="resetPeserta('${p.code}')"
+            class="text-orange-500 font-semibold hover:underline text-xs">
+            Reset Riwayat
+        </button>
+        <button onclick="deletePeserta('${p.code}')"
+            class="text-red-500 font-semibold hover:underline text-xs">
+            Hapus Peserta
+        </button>
+    </div>
+</td>
+            
         `;
         tbody.appendChild(tr);
     });
@@ -1224,6 +1234,22 @@ function resetPeserta(code) {
     }
 }
 
+function deletePeserta(code){
+    if(!confirm(
+        "Yakin menghapus peserta beserta seluruh riwayatnya?"
+    )) return;
+    let peserta = getPesertaList();
+    peserta = peserta.filter(
+        p => p.code !== code
+    );
+    savePesertaList(peserta);
+    localStorage.removeItem(
+        `pkl_history_${code}`
+    );
+    renderAdminReport();
+    showToast("Peserta berhasil dihapus");
+   }
+   
 function resetAllData() {
 
     if(!confirm(
