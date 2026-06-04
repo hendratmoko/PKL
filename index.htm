@@ -1251,7 +1251,7 @@ function addPeserta() {
     document.getElementById('generated-code-section').style.display = 'block';
     showToast(`Peserta ${nama} berhasil ditambahkan!`);
 
-    ['admin-nama', 'admin-kelas', 'admin-perusahaan', 'admin-koordinat', 'admin-bpjs', 'admin-mulai', 'admin-selesai'].forEach(id => {
+    ['admin-nama', 'admin-kelas', 'admin-hp', 'admin-perusahaan', 'admin-koordinat', 'admin-bpjs', 'admin-mulai', 'admin-selesai'].forEach(id => {
         document.getElementById(id).value = '';
     });
 }
