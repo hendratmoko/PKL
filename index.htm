@@ -1241,7 +1241,7 @@ function addPeserta() {
     }
 
     const code = generateCode();
-    const peserta = { nama, kelas, jurusan, perusahaan, koordinat, bpjs, mulai, selesai, code, createdAt: new Date().toISOString() };
+    const peserta = { nama, kelas, hp, jurusan, perusahaan, koordinat, bpjs, mulai, selesai, code, createdAt: new Date().toISOString() };
 
     const list = getPesertaList();
     list.push(peserta);
