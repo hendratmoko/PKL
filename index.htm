@@ -718,6 +718,7 @@ async function loadReportData() {
             APPS_SCRIPT_URL + '?action=getReport'
         );
         const data = await response.json();
+        console.log(data);
         renderAdminTable(data);
     } catch (err) {
         console.error(err);
