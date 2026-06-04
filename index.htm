@@ -724,6 +724,40 @@ async function loadReportData() {
         showToast('Gagal mengambil data laporan', 'error');
     }
 }
+
+async function addPeserta() {
+    const nama =
+        document.getElementById('admin-nama').value;
+    const kelas =
+        document.getElementById('admin-kelas').value;
+    const perusahaan =
+        document.getElementById('admin-perusahaan').value;
+
+    const koordinat =
+        document.getElementById('admin-koordinat').value;
+    const bpjs =
+        document.getElementById('admin-bpjs').value;
+    const mulai =
+        document.getElementById('admin-mulai').value;
+    const selesai =
+        document.getElementById('admin-selesai').value;
+    const code = generateCode();
+    await fetch(APPS_SCRIPT_URL,{
+        method:'POST',
+        body:JSON.stringify({
+            action:'addPeserta',
+            nama,
+            kelas,
+            perusahaan,
+            koordinat,
+            bpjs,
+            mulai,
+            selesai,
+            code
+        })
+    });
+    showToast('Peserta berhasil ditambahkan');
+}
    
 // ===================== CLOCK WIDGET =====================
 function updateClock() {
