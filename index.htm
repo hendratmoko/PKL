@@ -1245,6 +1245,7 @@ function addPeserta() {
     }
 
     const code = generateCode();
+  lastGeneratedPhone = hp;
     const peserta = { nama, kelas, hp, jurusan, perusahaan, koordinat, bpjs, mulai, selesai, code, createdAt: new Date().toISOString() };
 
     const list = getPesertaList();
