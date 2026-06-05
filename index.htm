@@ -1113,6 +1113,7 @@ function submitIzin() {
         waktu: new Date().toLocaleTimeString('id-ID'),
         nama: currentUser.nama,
         kelas: currentUser.kelas,
+     hp: currentUser.hp,
         perusahaan: currentUser.perusahaan,
         koordinatPerusahaan: currentUser.koordinat || '',
         koordinatPresensi: '-',
@@ -1234,9 +1235,9 @@ function addPeserta() {
 
     const splitData = kelasData.split('|');
     const kelas = splitData[0];
+ const hp = document.getElementById('admin-hp').value.trim();
     const jurusan = splitData[1];
     const perusahaan = document.getElementById('admin-perusahaan').value.trim();
- const hp = document.getElementById('admin-hp').value.trim();
     const koordinat = document.getElementById('admin-koordinat').value.trim();
     const bpjs = document.getElementById('admin-bpjs').value.trim();
     const mulai = document.getElementById('admin-mulai').value;
