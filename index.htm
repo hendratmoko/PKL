@@ -1289,11 +1289,43 @@ function copyCode() {
 }
 
 function shareWhatsApp() {
+    const code =
+        document.getElementById('generated-code').textContent;
+    if (!lastGeneratedPhone) {
+        showToast('Nomor HP peserta tidak ditemukan', 'error');
+        return;
+    }
+    let nomor = lastGeneratedPhone
+        .replace(/\D/g, '');
+    if (nomor.startsWith('0')) {
+        nomor = '62' + nomor.substring(1);
+    }
+    const pesan = encodeURIComponent(
+`Assalamu'alaikum wr.wb.
+Selamat pagi...
+
+Berikut kode login Presensi PKL Anda:
+
+*${code}*
+
+Silakan login pada aplikasi Presensi PKL menggunakan kode tersebut.
+
+Terima kasih.`
+    );
+    window.open(
+        `https://wa.me/${nomor}?text=${pesan}`,
+        '_blank'
+    );
+}
+   
+ /*  
+function shareWhatsApp() {
     const code = document.getElementById('generated-code').textContent;
     const msg = encodeURIComponent(`Berikut kode login Presensi PKL Anda: *${code}*\n\nSilakan login di aplikasi Presensi PKL.`);
     window.open(`https://wa.me/?text=${msg}`, '_blank');
 }
-
+*/
+   
 function renderAdminReport() {
     const list = getPesertaList();
     const tbody = document.getElementById('admin-table-body');
