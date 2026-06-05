@@ -1292,6 +1292,37 @@ function copyCode() {
 function shareWhatsApp() {
     const code =
         document.getElementById('generated-code').textContent;
+    let nomor =
+        document.getElementById('generated-code').dataset.hp;
+    if (!nomor) {
+        showToast('Nomor HP peserta tidak tersedia', 'error');
+        return;
+    }
+    nomor = nomor.replace(/\D/g,'');
+    if (nomor.startsWith('0')) {
+        nomor = '62' + nomor.substring(1);
+    }
+    const pesan = encodeURIComponent(
+`Assalamu'alaikum.
+
+Berikut kode login Presensi PKL Anda:
+
+*${code}*
+
+Silakan login pada aplikasi Presensi PKL menggunakan kode tersebut.
+
+SMKN 1 Nglipar`
+    );
+    window.open(
+        `https://wa.me/${nomor}?text=${pesan}`,
+        '_blank'
+    );
+}
+   
+/*   
+function shareWhatsApp() {
+    const code =
+        document.getElementById('generated-code').textContent;
     if (!lastGeneratedPhone) {
         showToast('Nomor HP peserta tidak ditemukan', 'error');
         return;
@@ -1318,7 +1349,7 @@ Terima kasih.`
         '_blank'
     );
 }
-   
+*/   
  /*  
 function shareWhatsApp() {
     const code = document.getElementById('generated-code').textContent;
