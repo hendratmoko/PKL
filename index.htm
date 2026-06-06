@@ -804,7 +804,19 @@ async function loadReportData() {
         showToast('Gagal mengambil data laporan', 'error');
     }
 }
-
+   
+async function getKodeFromSpreadsheet() {
+    try {
+        const response = await fetch(
+            APPS_SCRIPT_URL + '?action=getReport'
+        );
+        const data = await response.json();
+        return data;
+    } catch(err) {
+        console.error(err);
+        return [];
+    }
+   }
 
    
 // ===================== CLOCK WIDGET =====================
