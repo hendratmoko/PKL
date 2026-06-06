@@ -208,20 +208,26 @@ tbody tr:hover {
         .tab-btn { padding: 8px 16px; border-radius: 10px; cursor: pointer; font-weight: 600; font-size: 13px; transition: all 0.2s; border: none; background: #e2e8f0; color: #4a5568; }
         .tab-btn.active { background: #1e3a5f; color: white; box-shadow: 0 4px 12px rgba(30,58,95,0.15); }
    
-        @media print {
-            .no-print { display: none !important; }
-            body { background: white !important; }
-            body::before { display: none; }
-            .print-watermark {
-                display: block !important; position: fixed; top: 50%; left: 50%;
-                transform: translate(-50%, -50%); width: 420px; opacity: 0.06; z-index: 0; pointer-events: none;
-            }
-            table, h1, h2, h3, p, div { position: relative; z-index: 2; }
-        }
-   @media print {
+   /* ================= PRINT ADMIN REPORT ================= */
+
+@media print {
+    /* Sembunyikan semua tombol */
+    .no-print {
+        display: none !important;
+    }
+    /* Background putih */
+    body {
+        background: white !important;
+    }
+    /* Hilangkan background halaman */
+    body::before {
+        display: none !important;
+    }
+    /* Sembunyikan seluruh halaman */
     body * {
         visibility: hidden;
     }
+    /* Tampilkan area laporan admin saja */
     #print-area-admin,
     #print-area-admin * {
         visibility: visible;
@@ -231,22 +237,75 @@ tbody tr:hover {
         left: 0;
         top: 0;
         width: 100%;
+        padding: 0;
+        margin: 0;
         background: white;
     }
-    #print-admin-table {
+    /* Watermark */
+    .print-watermark {
+        display: block !important;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 420px;
+        opacity: 0.06;
+        z-index: 0;
+        pointer-events: none;
+    }
+    /* Header dan Footer cetak */
+    #admin-print-header,
+    #admin-print-footer {
+        display: block !important;
+    }
+    /* Area konten di atas watermark */
+    #print-area-admin table,
+    #print-area-admin h1,
+    #print-area-admin h2,
+    #print-area-admin h3,
+    #print-area-admin p,
+    #print-area-admin div {
+        position: relative;
+        z-index: 2;
+    }
+    /* Hilangkan scroll saat print */
+    .overflow-x-auto {
+        overflow: visible !important;
+    }
+    /* Tabel laporan */
+    #print-admin-table,
+    #admin-table {
         width: 100%;
         border-collapse: collapse;
-        font-size: 11px;
+        table-layout: auto;
+        font-size: 10px;
+    }
     #print-admin-table th,
-    #print-admin-table td {
-        border: 1px solid black;
-        padding: 5px;
+    #print-admin-table td,
+    #admin-table th,
+    #admin-table td {
+        border: 1px solid black !important;
+        padding: 4px !important;
+        white-space: normal !important;
+        word-break: break-word !important;
     }
-    @page {
-        size: A4 landscape;
-        margin: 10mm;
+    /* Hilangkan sticky saat print */
+    #admin-table th:last-child,
+    #admin-table td:last-child {
+        position: static !important;
     }
+    /* Warna tabel tetap tercetak */
+    * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+}
+/* Ukuran kertas */
+@page {
+    size: A4 landscape;
+    margin: 10mm;
    }
+       
     </style>
  </head>
 
