@@ -582,7 +582,51 @@ SMK NEGERI 1 NGLIPAR
 </div>
 
 <!--  CETAK PRINTOUT ADMIN-->
- 
+
+<div id="admin-pdf"
+style="display:none;background:white;padding:20px">
+    <img src="LOGO NGLIPAR.png"
+         style="
+         position:absolute;
+         width:300px;
+         left:50%;
+         top:40%;
+         transform:translate(-50%,-50%);
+         opacity:0.05;">
+    <div style="text-align:center">
+        <img src="LOGO NGLIPAR.png"
+             width="80">
+        <h2>
+            LAPORAN REKAP PRESENSI PKL
+        </h2>
+
+        <h3>
+            SMK NEGERI 1 NGLIPAR
+        </h3>
+    </div>
+    <hr>
+    <div id="admin-pdf-table"></div>
+    <br><br>
+    <div style="
+        display:flex;
+        justify-content:space-between">
+        <div style="text-align:center">
+            <p>Admin PKL</p>
+            <br><br><br>
+            <p id="pdf-admin-nama"></p>
+            <p id="pdf-admin-nip"></p>
+        </div>
+        <div style="text-align:center">
+            <p>Kepala Sekolah</p>
+            <br><br><br>
+            <p id="pdf-kepsek-nama"></p>
+            <p id="pdf-kepsek-nip"></p>
+        </div>
+    </div>
+</div>
+
+    
+    
 <div id="admin-print-header" style="display:none">
 
     <img src="LOGO NGLIPAR.png"
