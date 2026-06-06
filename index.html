@@ -1593,6 +1593,79 @@ function renderAdminReport() {
 }
 
 function printAdminReport() {
+    document.getElementById(
+        "pdf-admin-nama"
+    ).innerHTML =
+        "<b>" +
+        document.getElementById(
+            "admin-ttd-nama"
+        ).value +
+        "</b>";
+    document.getElementById(
+        "pdf-admin-nip"
+    ).innerHTML =
+        "NIP. " +
+        document.getElementById(
+            "admin-ttd-nip"
+        ).value;
+    document.getElementById(
+        "pdf-kepsek-nama"
+    ).innerHTML =
+        "<b>" +
+        document.getElementById(
+            "kepsek-nama"
+        ).value +
+        "</b>";
+    document.getElementById(
+        "pdf-kepsek-nip"
+    ).innerHTML =
+        "NIP. " +
+        document.getElementById(
+            "kepsek-nip"
+        ).value;
+    const table =
+        document.getElementById(
+            "admin-table"
+        ).cloneNode(true);
+    table.querySelectorAll(
+        ".no-print"
+    ).forEach(el=>el.remove());
+    document.getElementById(
+        "admin-pdf-table"
+    ).innerHTML = "";
+    document.getElementById(
+        "admin-pdf-table"
+    ).appendChild(table);
+    const element =
+        document.getElementById(
+            "admin-pdf"
+        );
+    element.style.display =
+        "block";
+    html2pdf()
+        .set({
+            filename:
+            "Rekap_PKL_SMKN1NGLIPAR.pdf",
+            margin:0.2,
+            html2canvas:{
+                scale:2
+            },
+            jsPDF:{
+                unit:'in',
+                format:'a3',
+                orientation:'landscape'
+            }
+        })
+        .from(element)
+        .save()
+        .then(()=>{
+            element.style.display =
+                "none";
+        });
+}
+   
+/*
+function printAdminReport() {
 
     document.getElementById("print-admin-name").innerHTML =
         "<b>" +
@@ -1622,7 +1695,7 @@ function printAdminReport() {
         document.getElementById("admin-print-footer").style.display = "none";
     }, 500);
 }
- 
+ */
 function resetPeserta(code) {
     if(confirm('Apakah Anda yakin ingin menghapus seluruh riwayat presensi siswa ini?')) {
         localStorage.removeItem(`pkl_history_${code}`);
