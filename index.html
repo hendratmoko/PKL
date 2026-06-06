@@ -1635,36 +1635,79 @@ function renderAdminReport() {
 }
 
 function printAdminReport() {
+    const sourceTable =
+        document.getElementById("admin-table");
+    const printTable =
+        document.getElementById("print-admin-table");
+    printTable.innerHTML =
+        sourceTable.innerHTML;
+    document.getElementById(
+        "print-admin-name"
+    ).innerHTML =
+        "<b>" +
+        document.getElementById(
+            "admin-ttd-nama"
+        ).value +
+        "</b>";
+    document.getElementById(
+        "print-admin-nip"
+    ).innerHTML =
+        "NIP. " +
+        document.getElementById(
+            "admin-ttd-nip"
+        ).value;
+    document.getElementById(
+        "print-kepsek-name"
+    ).innerHTML =
+        "<b>" +
+        document.getElementById(
+            "kepsek-nama"
+        ).value +
+        "</b>";
+    document.getElementById(
+        "print-kepsek-nip"
+    ).innerHTML =
+        "NIP. " +
+        document.getElementById(
+            "kepsek-nip"
+        ).value;
+    document.getElementById(
+        "print-area-admin"
+    ).style.display = "block";
+    window.print();
+    setTimeout(() => {
+        document.getElementById(
+            "print-area-admin"
+        ).style.display = "none";
 
+    }, 500);
+}
+   
+   /*
+function printAdminReport() {
     document.getElementById("print-admin-name").innerHTML =
         "<b>" +
         document.getElementById("admin-ttd-nama").value +
         "</b>";
-
     document.getElementById("print-admin-nip").innerHTML =
         "NIP. " +
         document.getElementById("admin-ttd-nip").value;
-
     document.getElementById("print-kepsek-name").innerHTML =
         "<b>" +
         document.getElementById("kepsek-nama").value +
         "</b>";
-
     document.getElementById("print-kepsek-nip").innerHTML =
         "NIP. " +
         document.getElementById("kepsek-nip").value;
-
     document.getElementById("admin-print-header").style.display = "block";
     document.getElementById("admin-print-footer").style.display = "block";
-
     window.print();
-
     setTimeout(() => {
         document.getElementById("admin-print-header").style.display = "none";
         document.getElementById("admin-print-footer").style.display = "none";
     }, 500);
 }
- 
+ */
 function resetPeserta(code) {
     if(confirm('Apakah Anda yakin ingin menghapus seluruh riwayat presensi siswa ini?')) {
         localStorage.removeItem(`pkl_history_${code}`);
