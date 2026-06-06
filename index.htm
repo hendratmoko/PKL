@@ -836,7 +836,7 @@ function updateClock() {
 }
 
 // ===================== SECURITY & AUTH LOGIN =====================
-function handleLogin() {
+/*function handleLogin() {
     const code = document.getElementById('login-code').value.trim().toUpperCase();
 
     if (!code) {
@@ -861,11 +861,69 @@ function handleLogin() {
         document.getElementById('login-code').value = '';
         return;
     }
-
     currentUser = peserta;
     isAdmin = false;
     document.getElementById('user-info').textContent = `${peserta.nama} | ${peserta.kelas} | ${peserta.perusahaan}`;
     showToast(`Selamat datang ${peserta.nama}`);
+    showPage('dashboard');
+    renderHistory();
+    checkAttendanceState();
+}
+   */
+
+async function handleLogin() {
+    const code =
+        document.getElementById('login-code')
+        .value
+        .trim()
+        .toUpperCase();
+    if (!code) {
+        showModal(
+            'Kode Kosong',
+            'Silakan masukkan kode login terlebih dahulu.'
+        );
+        return;
+    }
+    if (code.length !== 6) {
+        showModal(
+            'Kode Tidak Valid',
+            'Format  kode harus sesuai seperti yang diberikan oleh Admin/Petugas'
+        );
+        return;
+    }
+    if (code === ADMIN_CODE) {
+        isAdmin = true;
+        showToast('Login Admin Berhasil');
+        showPage('admin');
+        loadReportData();
+        return;
+    }
+    showToast('Memeriksa kode...');
+    const pesertaSpreadsheet =
+        await getKodeFromSpreadsheet();
+    const peserta =
+        pesertaSpreadsheet.find(
+            p => p.code === code
+        );
+    if (!peserta) {
+        showModal(
+            'Kode Tidak Ditemukan',
+            'Kode login tidak terdaftar.\n\nSilakan hubungi Admin PKL.'
+        );
+        document.getElementById(
+            'login-code'
+        ).value = '';
+        return;
+    }
+    currentUser = peserta;
+    isAdmin = false;
+    document.getElementById(
+        'user-info'
+    ).textContent =
+        `${peserta.nama} | ${peserta.kelas} | ${peserta.perusahaan}`;
+    showToast(
+        `Selamat datang ${peserta.nama}`
+    );
     showPage('dashboard');
     renderHistory();
     checkAttendanceState();
