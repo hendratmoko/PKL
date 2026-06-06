@@ -1635,9 +1635,21 @@ initCompanyMap();
 const loginInput = document.getElementById('login-code');
 loginInput.addEventListener('input', () => {
     loginInput.value = loginInput.value.toUpperCase();
+ if (loginInput.value.length === 6) {
+    handleLogin()
+        .catch(err => {
+            console.error(err);
+            showToast(
+                'Gagal menghubungi server',
+                'error'
+            );
+        });
+ }
+ /*
     if (loginInput.value.length === 6) {
         handleLogin();
-    }
+    } */
+ 
 });
 </script>
 </body>
