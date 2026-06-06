@@ -1667,8 +1667,10 @@ function printAdminReport() {
             "Rekap_PKL_SMKN1NGLIPAR.pdf",
             margin:0.2,
             html2canvas:{
-                scale:2
-            },
+    scale:4,
+    useCORS:true,
+    letterRendering:true
+}
             jsPDF:{
                 unit:'in',
                 format:'a3',
