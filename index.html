@@ -1570,6 +1570,28 @@ loginInput.addEventListener('input', () => {
     }
 });
 </script>
-</body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<div id="student-pdf" style="display:none;background:white;padding:20px">
+    <div style="text-align:center">
+        <img src="LOGO NGLIPAR.png" width="80">
+        <h2>LAPORAN PRAKTIK KERJA INDUSTRI</h2>
+        <h3>SMK NEGERI 1 NGLIPAR</h3>
+    </div>
+    <hr>
+    <p><b>Nama :</b> <span id="pdf-siswa-nama"></span></p>
+    <p><b>Kelas :</b> <span id="pdf-siswa-kelas"></span></p>
+    <p><b>Perusahaan :</b> <span id="pdf-siswa-perusahaan"></span></p>
+    <br>
+    <table id="pdf-siswa-table"
+           style="width:100%;border-collapse:collapse">
+    </table>
+    <br><br>
+    <div style="text-align:right">
+        <p>Peserta PKL</p>
+        <br><br><br>
+        <p id="pdf-siswa-ttd"></p>
+    </div>
+</div>
+ </body>
   </html>
   
