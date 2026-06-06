@@ -1394,6 +1394,23 @@ function addPeserta() {
     list.push(peserta);
     savePesertaList(list);
 
+sendToSpreadsheet({
+    tanggal: '',
+    waktu: '',
+    nama: nama,
+    kelas: kelas,
+    hp: hp,
+    perusahaan: perusahaan,
+    koordinatPerusahaan: koordinat,
+    koordinatPresensi: '',
+    jarak: '',
+    status: 'PESERTA',
+    kegiatan: '',
+    mulai: mulai,
+    selesai: selesai,
+    code: code
+});
+ 
     document.getElementById('generated-code').textContent = code;
  document.getElementById('generated-code').dataset.hp = hp;
     document.getElementById('generated-code-section').style.display = 'block';
