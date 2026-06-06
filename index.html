@@ -218,6 +218,35 @@ tbody tr:hover {
             }
             table, h1, h2, h3, p, div { position: relative; z-index: 2; }
         }
+   @media print {
+    body * {
+        visibility: hidden;
+    }
+    #print-area-admin,
+    #print-area-admin * {
+        visibility: visible;
+    }
+    #print-area-admin {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        background: white;
+    }
+    #print-admin-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 11px;
+    #print-admin-table th,
+    #print-admin-table td {
+        border: 1px solid black;
+        padding: 5px;
+    }
+    @page {
+        size: A4 landscape;
+        margin: 10mm;
+    }
+   }
     </style>
  </head>
 
