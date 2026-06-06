@@ -1358,7 +1358,8 @@ function switchAdminTab(tab) {
     document.getElementById('tab-report').classList.toggle('active', tab === 'report');
     document.getElementById('admin-add').style.display = tab === 'add' ? 'block' : 'none';
     document.getElementById('admin-report').style.display = tab === 'report' ? 'block' : 'none';
-    if (tab === 'report') renderAdminReport();
+    //if (tab === 'report') renderAdminReport();
+ if (tab === 'report') loadReportData();
 }
 
 function addPeserta() {
