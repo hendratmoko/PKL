@@ -1562,20 +1562,19 @@ function renderAdminReport() {
                     ${masukCount} hari
                 </span>
             </td>
-           
+         
 <td class="no-print">
-    <div class="flex gap-2">
-        <button onclick="resetPeserta('${p.code}')"
-            class="text-orange-500 font-semibold hover:underline text-xs">
-            Reset Riwayat
-        </button>
-        <button onclick="deletePeserta('${p.code}')"
-            class="text-red-500 font-semibold hover:underline text-xs">
-            Hapus Peserta
-        </button>
-    </div>
+    <button onclick="resetPeserta('${item.code}')"
+        class="text-orange-500 text-xs">
+        Reset
+    </button>
+
+    <button onclick="deletePeserta('${item.code}')"
+        class="text-red-500 text-xs ml-2">
+        Hapus
+    </button>
 </td>
-            
+           
         `;
         tbody.appendChild(tr);
     });
