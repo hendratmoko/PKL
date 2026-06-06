@@ -1267,7 +1267,76 @@ function renderHistory() {
         tbody.appendChild(tr);
     });
 }
-   
+
+function printHistory() {
+
+    document.getElementById("pdf-siswa-nama")
+        .innerText = currentUser.nama;
+
+    document.getElementById("pdf-siswa-kelas")
+        .innerText = currentUser.kelas;
+
+    document.getElementById("pdf-siswa-perusahaan")
+        .innerText = currentUser.perusahaan;
+
+    document.getElementById("pdf-siswa-ttd")
+        .innerText = currentUser.nama;
+
+    let html = `
+        <tr>
+            <th>Tanggal</th>
+            <th>Waktu</th>
+            <th>Status</th>
+            <th>Kegiatan</th>
+        </tr>
+    `;
+
+    const history =
+        getHistory(currentUser.code);
+
+    history.forEach(item => {
+
+        html += `
+            <tr>
+                <td>${item.date}</td>
+                <td>${item.time}</td>
+                <td>${item.status}</td>
+                <td>${item.kegiatan || '-'}</td>
+            </tr>
+        `;
+
+    });
+
+    document.getElementById(
+        "pdf-siswa-table"
+    ).innerHTML = html;
+
+    const element =
+        document.getElementById(
+            "student-pdf"
+        );
+
+    element.style.display = "block";
+
+    html2pdf()
+        .set({
+            filename:
+                `Laporan_${currentUser.nama}.pdf`,
+            margin:0.3,
+            jsPDF:{
+                unit:'in',
+                format:'a4',
+                orientation:'portrait'
+            }
+        })
+        .from(element)
+        .save()
+        .then(()=>{
+            element.style.display='none';
+        });
+
+   }   
+/*   
 function printHistory() {
     document.getElementById('print-header').style.display = 'block';
     document.getElementById('print-footer').style.display = 'block';
@@ -1279,7 +1348,7 @@ function printHistory() {
         document.getElementById('print-footer').style.display = 'none';
     }, 500);
 }
-
+*/
 // ===================== PANEL KONTROL ADMIN =====================
 function switchAdminTab(tab) {
     document.getElementById('tab-add').classList.toggle('active', tab === 'add');
