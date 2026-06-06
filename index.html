@@ -1305,7 +1305,19 @@ function renderAdminTable(data) {
             <td>${item.mulai || '-'}</td>
             <td>${item.selesai || '-'}</td>
             <td>${item.status}</td>
-            <td class="no-print">-</td>
+
+<td class="no-print">
+    <button onclick="resetPeserta('${item.code}')"
+        class="text-orange-500 text-xs">
+        Reset
+    </button>
+
+    <button onclick="deletePeserta('${item.code}')"
+        class="text-red-500 text-xs ml-2">
+        Hapus
+    </button>
+</td>
+            
         </tr>
         `;
     });
