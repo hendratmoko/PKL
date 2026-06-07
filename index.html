@@ -1718,7 +1718,24 @@ function renderAdminReport() {
         tbody.appendChild(tr);
     });
 }
+   
+function printAdminReport() {
+    const table = document.getElementById("admin-report-table");
 
+    if (!table) {
+        alert("Tabel laporan tidak ditemukan");
+        return;
+    }
+    const cloneTable = table.cloneNode(true);
+    document.getElementById("print-table-container").innerHTML = "";
+    document.getElementById("print-table-container").appendChild(cloneTable);
+    document.getElementById("print-area-admin").style.display = "block";
+    window.print();
+    document.getElementById("print-area-admin").style.display = "none";
+   
+
+   
+/*
 function printAdminReport() {
     const sourceTable =
         document.getElementById("admin-table");
@@ -1767,7 +1784,7 @@ function printAdminReport() {
 
     }, 500);
 }
-   
+   */
    /*
 function printAdminReport() {
     document.getElementById("print-admin-name").innerHTML =
