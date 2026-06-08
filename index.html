@@ -1,0 +1,1131 @@
+<!doctype html>
+<html lang="id" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Presensi Praktik Kerja Industri - SMKN 1 Nglipar</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+  
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  
+  <style>
+        * { font-family: 'Plus Jakarta Sans', sans-serif; transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease; }
+        html, body { height: 100%; margin: 0; }
+        
+        body {
+            position: relative;
+            background-color: #f0f4f8;
+        }
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background-image: url('Frontschool.jpg');
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: 40%;
+            opacity: 0.05;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .card { 
+            background: rgba(255, 255, 255, 0.85); 
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            border-radius: 20px; 
+            box-shadow: 0 10px 30px rgba(30, 58, 95, 0.05); 
+            padding: 24px; 
+        }
+        .card:hover { 
+            box-shadow: 0 15px 35px rgba(30, 58, 95, 0.1); 
+        }
+
+        .btn-3d {
+            position: relative;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 13px;
+            padding: 8px 16px;
+            cursor: pointer;
+            outline: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.1s ease;
+        }
+        .btn-3d:active {
+            transform: translateY(3px);
+        }
+
+        .btn-3d-primary { 
+            background: #2563eb; 
+            color: white; 
+            box-shadow: 0 4px 0 #1d4ed8, 0 6px 10px rgba(37, 99, 235, 0.2);
+        }
+        .btn-3d-primary:active { box-shadow: 0 1px 0 #1d4ed8; }
+
+        .btn-3d-success { 
+            background: #10b981; 
+            color: white; 
+            box-shadow: 0 4px 0 #059669, 0 6px 10px rgba(16, 185, 129, 0.2);
+        }
+        .btn-3d-success:active { box-shadow: 0 1px 0 #059669; }
+
+        .btn-3d-danger { 
+            background: #ef4444; 
+            color: white; 
+            box-shadow: 0 4px 0 #dc2626, 0 6px 10px rgba(239, 68, 68, 0.2);
+        }
+        .btn-3d-danger:active { box-shadow: 0 1px 0 #dc2626; }
+
+        .btn-3d-warning { 
+            background: #f59e0b; 
+            color: white; 
+            box-shadow: 0 4px 0 #d97706, 0 6px 10px rgba(245, 158, 11, 0.2);
+        }
+        .btn-3d-warning:active { box-shadow: 0 1px 0 #d97706; }
+
+        body.dark-mode {
+            background-color: #0f172a;
+            color: #f1f5f9;
+        }
+        body.dark-mode::before {
+            opacity: 0.03;
+            filter: invert(1);
+        }
+        .dark-mode .card {
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        .dark-mode .input-field {
+            background: #334155;
+            border-color: #475569;
+            color: white;
+        }
+        .dark-mode .input-field:focus { border-color: #3b82f6; }
+        .dark-mode th { background: #0f172a; color: #3b82f6; }
+        .dark-mode td { border-bottom-color: #334155; color: #cbd5e1; }
+        .dark-mode tr:hover { background: rgba(255,255,255,0.02); }
+        .dark-mode .tab-btn { background: #334155; color: #cbd5e1; }
+        .dark-mode .tab-btn.active { background: #2563eb; color: white; }
+
+        .fade-in { animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .input-field { width: 100%; padding: 10px 14px; border: 2px solid #e2e8f0; border-radius: 12px; font-size: 14px; transition: all 0.3s; outline: none; background: white; }
+        .input-field:focus { border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
+   
+        .toast {
+            position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+            padding: 10px 20px; border-radius: 12px; color: white; font-size: 13px;
+            font-weight: 600; z-index: 9999; animation: toastFade 0.3s ease;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2); max-width: 85%; text-align: center;
+        }
+        @keyframes toastFade { from { opacity: 0; transform: translateX(-50%) translateY(-10px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
+        .toast-error { background: #ef4444; }
+        .toast-success { background: #10b981; }
+        
+        .modal-overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 9998; }
+        .modal-content { background: white; border-radius: 20px; padding: 28px; max-width: 400px; width: 90%; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
+        .dark-mode .modal-content { background: #1e293b; color: white; }
+        
+        video, canvas { border-radius: 14px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+
+        .table-container {
+            width: 100%;
+            overflow-x: auto;
+            overflow-y: auto;
+            max-height: 70vh;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            background: white;
+        }
+        .dark-mode .table-container {
+            border-color: #334155;
+            background: #1e293b;
+        }
+        .table-container::-webkit-scrollbar {
+            height: 10px;
+            width: 10px;
+        }
+        .table-container::-webkit-scrollbar-thumb {
+            background: #94a3b8;
+            border-radius: 10px;
+        }
+        .table-container::-webkit-scrollbar-track {
+            background: #e2e8f0;
+        }
+        table {
+            border-collapse: collapse;
+            font-size: 13px;
+            white-space: nowrap;
+        }
+
+        thead th {
+            position: sticky;
+            top: 0;
+            z-index: 20;
+        }
+   
+        th { background: #1e3a5f; color: white; padding: 12px 10px; text-align: left; font-weight: 600; }
+        td { padding: 10px 8px; border-bottom: 1px solid #edf2f7; }
+
+        tbody tr {
+            transition: all .2s ease;
+        }
+        tbody tr:hover {
+            background: rgba(37,99,235,.05);
+        }
+        .dark-mode tbody tr:hover {
+            background: rgba(59,130,246,.08);
+        }
+   
+        .tab-btn { padding: 8px 16px; border-radius: 10px; cursor: pointer; font-weight: 600; font-size: 13px; transition: all 0.2s; border: none; background: #e2e8f0; color: #4a5568; }
+        .tab-btn.active { background: #1e3a5f; color: white; box-shadow: 0 4px 12px rgba(30,58,95,0.15); }
+
+        @media print {
+            .no-print { display: none !important; }
+            body { background: white !important; color: black !important; }
+            body::before { display: none !important; }
+            body * { visibility: hidden; }
+            #print-area-student, #print-area-student * { visibility: visible; }
+            #print-area-admin, #print-area-admin * { visibility: visible; }
+            #print-area-student {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: auto;
+                padding: 20mm;
+                margin: 0;
+                background: white;
+            }
+            #print-area-admin {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: auto;
+                padding: 20mm;
+                margin: 0;
+                background: white;
+            }
+            * {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+        }
+
+        @page {
+            size: A4 portrait;
+            margin: 15mm;
+        }
+  </style>
+ </head>
+
+ <body class="h-full text-slate-800 overflow-auto">
+  <div class="fixed top-4 right-4 z-[9999] no-print">
+      <button onclick="toggleTheme()" id="theme-toggle-btn" class="btn-3d btn-3d-primary !p-2 !rounded-full shadow-lg" title="Ubah Mode Layar">
+          <i data-lucide="moon" class="w-5 h-5"></i>
+      </button>
+  </div>
+  <div id="toast-container"></div>
+
+  <div id="page-login" class="h-full flex flex-col items-center justify-center p-4">
+   <div class="card text-center max-w-sm w-full fade-in">
+    <div class="mx-auto mb-4">
+       <img src="LOGO NGLIPAR.png" alt="LOGO" class="w-24 h-24 object-contain mx-auto drop-shadow-md" onerror="this.style.background='#e5e7eb';">
+    </div>
+    <h1 id="login-title" class="text-xl font-bold text-blue-900 dark:text-blue-400 mb-1">Presensi Praktik Kerja Industri</h1>
+    <p id="login-school" class="text-xs font-semibold text-gray-500 dark:text-gray-400 mb-6 tracking-wide">SMK NEGERI 1 NGLIPAR</p>
+    <div class="mb-4">
+        <input id="login-code" type="text" maxlength="6" placeholder="INPUT KODE" 
+               class="input-field text-center text-xl font-bold tracking-widest uppercase text-blue-900"
+               onkeyup="autoLogin()">
+    </div>
+    <div class="mt-4 pt-4 border-t border-gray-200 dark:border-slate-700">
+        <button onclick="showAdminLogin()" class="text-xs text-blue-600 dark:text-blue-400 hover:underline cursor-pointer font-medium">Versi Beta. Hubungi Admin untuk mendapatkan Kode</button>
+    </div>
+   </div>
+   <p id="footer-text" class="text-gray-400 text-xs mt-6">©Moidea-Lybra 2026</p>
+  </div>
+
+  <div id="page-dashboard" class="h-full hidden p-4 max-w-4xl mx-auto w-full fade-in">
+   <div class="flex items-center justify-between mb-4 no-print">
+    <div>
+     <h2 class="text-lg font-bold text-blue-900 dark:text-white">Dashboard PKL</h2>
+     <p id="user-info" class="text-xs font-medium text-gray-500 dark:text-slate-400"></p>
+    </div>
+    <button onclick="handleLogout()" class="btn-3d btn-3d-danger text-xs"> <i data-lucide="log-out" class="w-4 h-4"></i> Keluar </button>
+   </div>
+
+   <div class="card mb-4 text-center sm:text-left">  
+    <div class="flex flex-col sm:flex-row items-center justify-between gap-2">
+     <div>
+      <div id="clock" class="text-4xl font-extrabold text-blue-900 dark:text-blue-400 tracking-tight">00:00:00</div>
+      <div id="date-display" class="text-xs font-medium text-gray-500 dark:text-slate-400 mt-1"></div>
+     </div>
+     <div id="days-remaining" class="text-xs font-bold text-blue-700 bg-blue-50 dark:bg-blue-950/50 dark:text-blue-300 px-4 py-2 rounded-full border border-blue-100 dark:border-blue-900"></div>
+    </div>
+   </div>
+
+   <div class="card mb-4 no-print">
+    <h3 class="font-bold text-blue-950 dark:text-white text-sm mb-4 flex items-center gap-2"><i data-lucide="clipboard-check" class="w-5 h-5 text-blue-600"></i> Form Presensi</h3>
+    
+    <div class="mb-5 text-center">
+     <label class="block text-xs font-bold text-gray-600 dark:text-slate-300 mb-2 text-left">Foto Selfie Verifikasi</label>
+     <div class="relative bg-slate-100 dark:bg-slate-800 rounded-xl overflow-hidden inline-block p-1">
+      <video id="camera-feed" autoplay playsinline class="w-full max-w-xs mx-auto block" style="display:none"></video>
+      <canvas id="camera-canvas" class="w-full max-w-xs mx-auto block" style="display:none"></canvas>
+      <img id="captured-photo" class="w-full max-w-xs mx-auto rounded-xl" style="display:none">
+     </div>
+     <div class="flex gap-2 mt-3 justify-center">
+         <button onclick="startCamera()" class="btn-3d btn-3d-primary"><i data-lucide="camera" class="w-4 h-4"></i> Buka Kamera</button> 
+         <button onclick="capturePhoto()" id="btn-capture" class="btn-3d btn-3d-success" style="display:none"><i data-lucide="check-circle" class="w-4 h-4"></i> Ambil Foto</button>
+     </div>
+    </div>
+
+    <div class="mb-5 text-center border-t border-b border-gray-100 dark:border-slate-700 py-4">
+     <label class="block text-xs font-bold text-gray-600 dark:text-slate-300 mb-2">Lokasi GPS</label>
+     <div id="gps-status" class="text-xs text-gray-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-800/50 p-3 rounded-xl max-w-xs mx-auto">
+      Belum mendapatkan lokasi
+     </div>
+     <button onclick="getLocation()" class="btn-3d btn-3d-primary mt-3"> <i data-lucide="map-pin" class="w-4 h-4"></i> Ambil Lokasi</button>
+    </div>
+
+    <div class="flex flex-wrap gap-2 mb-2 justify-center">
+        <button onclick="absenMasuk()" id="btn-masuk" class="btn-3d btn-3d-success"> <i data-lucide="log-in" class="w-4 h-4"></i> Absen Masuk </button> 
+        <button onclick="absenPulang()" id="btn-pulang" class="btn-3d btn-3d-primary" style="display:none"> <i data-lucide="log-out" class="w-4 h-4"></i> Absen Pulang </button> 
+    </div>
+    
+    <div id="kegiatan-section" style="display:none" class="mb-4 mt-4 fade-in">
+        <label class="block text-xs font-bold text-gray-600 dark:text-slate-300 mb-2">Kegiatan Hari Ini</label> 
+        <textarea id="kegiatan-input" rows="3" class="input-field" placeholder="Tuliskan jurnal kegiatan..."></textarea> 
+        <button onclick="submitKegiatan()" class="btn-3d btn-3d-success mt-2">Simpan Kegiatan</button>
+    </div>
+    
+    <div class="flex flex-wrap gap-2 mb-2 justify-center">
+        <button onclick="showIzinForm()" id="btn-izin" class="btn-3d btn-3d-warning"> <i data-lucide="file-text" class="w-4 h-4"></i> Izin tidak PKL </button>
+    </div>
+    
+    <div id="izin-section" style="display:none" class="mb-4 mt-4 fade-in">
+        <label class="block text-xs font-bold text-gray-600 dark:text-slate-300 mb-2">Keterangan Izin</label> 
+        <textarea id="izin-input" rows="3" class="input-field" placeholder="Alasan tidak masuk PKL..."></textarea> 
+        <button onclick="submitIzin()" class="btn-3d btn-3d-warning mt-2">Kirim Izin</button>
+    </div>
+   </div>
+
+   <div class="card mb-4">
+    <div class="flex items-center justify-between mb-4">
+     <h3 class="font-bold text-blue-950 dark:text-white text-sm flex items-center gap-2 no-print"><i data-lucide="history" class="w-5 h-5 text-blue-600"></i> Riwayat Presensi</h3>
+     <button onclick="printStudentReport()" class="btn-3d btn-3d-primary text-xs no-print"> <i data-lucide="printer" class="w-4 h-4"></i> Cetak Laporan </button>
+    </div>
+
+    <!-- Print Area untuk Siswa -->
+    <div id="print-area-student" style="display:none;">
+     <div style="text-align:center; margin-bottom:20px;">
+      <img src="LOGO NGLIPAR.png" style="width:60px; height:60px; object-fit:contain; margin-bottom:10px;">
+      <p style="font-size:11px; font-weight:bold; color:#1e3a5f; margin:0;">PEMERINTAH DAERAH DAERAH ISTIMEWA YOGYAKARTA</p>
+      <p style="font-size:13px; font-weight:bold; color:#1e3a5f; margin:5px 0;">SMK NEGERI 1 NGLIPAR</p>
+      <p style="font-size:10px; color:#666; margin:0;">Jl. Tentara Pelajar, Nglipar, Gunungkidul</p>
+      <p style="font-size:10px; color:#666; margin:0;">Daerah Istimewa Yogyakarta 55881</p>
+      <hr style="border:1px solid #1e3a5f; margin:10px 0;">
+     </div>
+
+     <div style="text-align:center; margin-bottom:20px;">
+      <h2 style="font-size:14px; font-weight:bold; margin:0; color:#1e3a5f;">LAPORAN PRESENSI PRAKTIK KERJA INDUSTRI</h2>
+      <p id="print-student-header" style="font-size:11px; margin:8px 0; color:#333;"></p>
+     </div>
+
+     <div style="margin-bottom:15px; font-size:10px;">
+      <p style="margin:3px 0;"><strong>Nama:</strong> <span id="print-nama"></span></p>
+      <p style="margin:3px 0;"><strong>Kelas:</strong> <span id="print-kelas"></span></p>
+      <p style="margin:3px 0;"><strong>Perusahaan:</strong> <span id="print-perusahaan"></span></p>
+      <p style="margin:3px 0;"><strong>Periode:</strong> <span id="print-periode"></span></p>
+     </div>
+
+     <table id="print-student-table" style="width:100%; border-collapse:collapse; font-size:9px; margin-bottom:20px;">
+      <thead>
+       <tr style="background-color:#1e3a5f; color:white;">
+        <th style="border:1px solid #333; padding:6px; text-align:center; font-weight:bold;">No</th>
+        <th style="border:1px solid #333; padding:6px; text-align:center; font-weight:bold;">Tanggal</th>
+        <th style="border:1px solid #333; padding:6px; text-align:center; font-weight:bold;">Waktu</th>
+        <th style="border:1px solid #333; padding:6px; text-align:center; font-weight:bold;">Status</th>
+        <th style="border:1px solid #333; padding:6px; text-align:left; font-weight:bold;">Kegiatan</th>
+        <th style="border:1px solid #333; padding:6px; text-align:center; font-weight:bold;">Koordinat</th>
+       </tr>
+      </thead>
+      <tbody id="print-student-body"></tbody>
+     </table>
+
+     <div style="margin-top:30px; display:flex; justify-content:space-between; padding:0 20px;">
+      <div style="text-align:center; width:30%;">
+       <p style="font-size:10px; margin:0; font-weight:bold;">Pembimbing Industri</p>
+       <div style="height:60px; margin-top:10px;"></div>
+       <p style="font-size:9px; margin:0; border-top:1px solid #333; padding-top:4px;">__________________</p>
+       <p id="print-mentor-name" style="font-size:9px; margin:2px 0;"></p>
+      </div>
+      <div style="text-align:center; width:30%;">
+       <p style="font-size:10px; margin:0; font-weight:bold;">Peserta PKL</p>
+       <div style="height:60px; margin-top:10px;"></div>
+       <p style="font-size:9px; margin:0; border-top:1px solid #333; padding-top:4px;">__________________</p>
+       <p style="font-size:9px; margin:2px 0;" id="print-student-name"></p>
+      </div>
+     </div>
+    </div>
+
+    <!-- Display Table -->
+    <div class="overflow-x-auto">
+     <table id="history-table">
+      <thead>
+       <tr>
+        <th>Waktu</th>
+        <th>Status</th>
+        <th>Kegiatan</th>
+        <th>Koordinat</th>
+       </tr>
+      </thead>
+      <tbody id="history-body"></tbody>
+     </table>
+    </div>
+   </div>
+  </div>
+
+  <div id="page-admin" class="h-full hidden p-4 max-w-6xl mx-auto w-full fade-in">
+   <div class="flex items-center justify-between mb-4 no-print">
+    <h2 class="text-lg font-bold text-blue-900 dark:text-white">Admin Panel</h2>
+    <button onclick="handleLogout()" class="btn-3d btn-3d-danger text-xs no-print"> <i data-lucide="log-out" class="w-4 h-4"></i> Keluar </button>
+   </div>
+   
+   <div class="flex gap-2 mb-4 flex-wrap no-print">
+       <button onclick="switchAdminTab('add')" class="tab-btn active" id="tab-add">Tambah Peserta</button> 
+       <button onclick="switchAdminTab('report')" class="tab-btn" id="tab-report">Laporan</button>
+   </div>
+
+   <div id="admin-add" class="card mb-4 no-print">
+    <h3 class="font-bold text-sm text-gray-800 dark:text-slate-200 mb-4">Tambah Peserta PKL Baru</h3>
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+     <div>
+         <label class="block text-xs font-semibold text-gray-600 dark:text-slate-300 mb-1">Nama Lengkap</label> 
+         <input id="admin-nama" class="input-field" placeholder="Nama Lengkap Siswa">
+     </div>
+     <div>
+        <label class="block text-xs font-semibold text-gray-600 dark:text-slate-300 mb-1">Kelas</label>
+        <select id="admin-kelas" class="input-field">
+            <option value="">Pilih Kelas</option>
+            <option value="XI TKR 1">XI TKR 1</option>
+            <option value="XI TKR 2">XI TKR 2</option>
+            <option value="XII TKR 1">XII TKR 1</option>
+            <option value="XII TKR 2">XII TKR 2</option>
+            <option value="XI TKJ 1">XI TKJ 1</option>
+            <option value="XI TKJ 2">XI TKJ 2</option>
+            <option value="XII TKJ 1">XII TKJ 1</option>
+            <option value="XII TKJ 2">XII TKJ 2</option>
+            <option value="XI TP 1">XI TP 1</option>
+            <option value="XI TP 2">XI TP 2</option>
+            <option value="XII TP 1">XII TP 1</option>
+            <option value="XII TP 2">XII TP 2</option>
+            <option value="XI AKL 1">XI AKL 1</option>
+            <option value="XI AKL 2">XI AKL 2</option>
+            <option value="XII AKL 1">XII AKL 1</option>
+            <option value="XII AKL 2">XII AKL 2</option>
+        </select>
+     </div>
+     <div>
+        <label class="block text-xs font-semibold text-gray-600 dark:text-slate-300 mb-1">Nomor HP</label>
+        <input id="admin-hp" class="input-field" placeholder="08xxxxxxxxxx">
+     </div>
+     <div>
+        <label class="block text-xs font-semibold text-gray-600 dark:text-slate-300 mb-1">Perusahaan (DUDI)</label>
+        <input id="admin-perusahaan" class="input-field" placeholder="Nama perusahaan">
+     </div>
+     <div>
+       <label class="block text-xs font-semibold text-gray-600 dark:text-slate-300 mb-1">Koordinat GPS Perusahaan</label> 
+       <input id="admin-koordinat" class="input-field" placeholder="Lat, Lng">
+     </div>
+     <div>
+          <label class="block text-xs font-semibold text-gray-600 dark:text-slate-300 mb-1">Tanggal Mulai</label> 
+          <input id="admin-mulai" type="date" class="input-field">
+     </div>
+     <div>
+          <label class="block text-xs font-semibold text-gray-600 dark:text-slate-300 mb-1">Tanggal Selesai</label> 
+          <input id="admin-selesai" type="date" class="input-field">
+     </div>
+    </div>
+    <button onclick="addPeserta()" class="btn-3d btn-3d-primary mt-5"> <i data-lucide="user-plus" class="w-4 h-4"></i> Tambah Peserta </button>
+    
+    <div id="generated-code-section" style="display:none" class="mt-4 p-4 bg-green-50 dark:bg-green-950/30 border border-green-200 rounded-xl">
+     <p class="text-xs text-green-800 font-bold mb-2">Kode Login Berhasil Dibuat:</p>
+     <div class="flex items-center gap-2">
+         <span id="generated-code" class="text-2xl font-mono font-extrabold tracking-widest text-green-900"></span> 
+         <button onclick="copyCode()" class="btn-3d btn-3d-success text-xs">Copy</button> 
+     </div>
+    </div>
+   </div>
+
+   <div id="admin-report" class="card mb-4" style="display:none">
+    <h3 class="font-bold text-sm mb-4">Data Peserta PKL</h3>
+    <div class="overflow-x-auto">
+     <table id="admin-table">
+      <thead>
+       <tr>
+        <th>No</th>
+        <th>Nama</th>
+        <th>Kelas</th>
+        <th>HP</th>
+        <th>Perusahaan</th>
+        <th>Kode</th>
+        <th>Mulai</th>
+        <th>Selesai</th>
+        <th>Aksi</th>
+       </tr>
+      </thead>
+      <tbody id="admin-table-body"></tbody>
+     </table>
+    </div>
+    <div class="flex gap-2 mt-4 flex-wrap">
+     <button onclick="printAdminReport()" class="btn-3d btn-3d-primary"><i data-lucide="printer" class="w-4 h-4"></i> Cetak Laporan</button>
+     <button onclick="showDeleteConfirm()" class="btn-3d btn-3d-danger"><i data-lucide="trash-2" class="w-4 h-4"></i> Hapus Semua Data</button> 
+    </div>
+
+    <!-- Print Area untuk Admin -->
+    <div id="print-area-admin" style="display:none; margin-top:20px;">
+     <div style="text-align:center; margin-bottom:20px;">
+      <img src="LOGO NGLIPAR.png" style="width:60px; height:60px; object-fit:contain; margin-bottom:10px;">
+      <p style="font-size:11px; font-weight:bold; color:#1e3a5f; margin:0;">PEMERINTAH DAERAH DAERAH ISTIMEWA YOGYAKARTA</p>
+      <p style="font-size:13px; font-weight:bold; color:#1e3a5f; margin:5px 0;">SMK NEGERI 1 NGLIPAR</p>
+      <p style="font-size:10px; color:#666; margin:0;">Jl. Tentara Pelajar, Nglipar, Gunungkidul</p>
+      <p style="font-size:10px; color:#666; margin:0;">Daerah Istimewa Yogyakarta 55881</p>
+      <hr style="border:1px solid #1e3a5f; margin:10px 0;">
+     </div>
+
+     <div style="text-align:center; margin-bottom:15px;">
+      <h2 style="font-size:12px; font-weight:bold; margin:0; color:#1e3a5f;">DATA PESERTA PRAKTIK KERJA INDUSTRI TAHUN 2026</h2>
+     </div>
+
+     <table id="print-admin-table" style="width:100%; border-collapse:collapse; font-size:8px;">
+      <thead>
+       <tr style="background-color:#1e3a5f; color:white;">
+        <th style="border:1px solid #333; padding:4px; text-align:center; font-weight:bold;">No</th>
+        <th style="border:1px solid #333; padding:4px; text-align:left; font-weight:bold;">Nama</th>
+        <th style="border:1px solid #333; padding:4px; text-align:center; font-weight:bold;">Kelas</th>
+        <th style="border:1px solid #333; padding:4px; text-align:center; font-weight:bold;">HP</th>
+        <th style="border:1px solid #333; padding:4px; text-align:left; font-weight:bold;">Perusahaan</th>
+        <th style="border:1px solid #333; padding:4px; text-align:center; font-weight:bold;">Koordinat</th>
+        <th style="border:1px solid #333; padding:4px; text-align:center; font-weight:bold;">Kode</th>
+        <th style="border:1px solid #333; padding:4px; text-align:center; font-weight:bold;">Mulai</th>
+        <th style="border:1px solid #333; padding:4px; text-align:center; font-weight:bold;">Selesai</th>
+        <th style="border:1px solid #333; padding:4px; text-align:center; font-weight:bold;">Status</th>
+        <th style="border:1px solid #333; padding:4px; text-align:center; font-weight:bold;">Kegiatan</th>
+        <th style="border:1px solid #333; padding:4px; text-align:center; font-weight:bold;">Presensi</th>
+        <th style="border:1px solid #333; padding:4px; text-align:center; font-weight:bold;">Jarak</th>
+        <th style="border:1px solid #333; padding:4px; text-align:center; font-weight:bold;">Ket</th>
+       </tr>
+      </thead>
+      <tbody id="print-admin-body"></tbody>
+     </table>
+
+     <div style="margin-top:25px; display:flex; justify-content:space-between; padding:0 30px;">
+      <div style="text-align:center; width:25%;">
+       <p style="font-size:9px; margin:0; font-weight:bold;">Kepala Sekolah</p>
+       <div style="height:50px; margin-top:8px;"></div>
+       <p style="font-size:8px; margin:0; border-top:1px solid #333; padding-top:3px;">__________________</p>
+      </div>
+      <div style="text-align:center; width:25%;">
+       <p style="font-size:9px; margin:0; font-weight:bold;">Admin PKL</p>
+       <div style="height:50px; margin-top:8px;"></div>
+       <p style="font-size:8px; margin:0; border-top:1px solid #333; padding-top:3px;">__________________</p>
+      </div>
+     </div>
+    </div>
+   </div>
+  </div>
+
+  <div id="modal" class="modal-overlay" style="display:none">
+   <div class="modal-content fade-in">
+    <h3 id="modal-title" class="font-bold text-base text-blue-950 dark:text-white mb-2"></h3>
+    <p id="modal-message" class="text-xs text-gray-600 dark:text-gray-300 mb-4 whitespace-pre-line"></p>
+    <button onclick="closeModal()" class="btn-3d btn-3d-primary w-full justify-center">Tutup</button>
+   </div>
+  </div>
+
+  <div id="confirm-modal" class="modal-overlay" style="display:none">
+   <div class="modal-content fade-in">
+    <h3 id="confirm-title" class="font-bold text-base text-blue-950 dark:text-white mb-2"></h3>
+    <p id="confirm-message" class="text-xs text-gray-600 dark:text-gray-300 mb-4"></p>
+    <div class="flex gap-2 justify-center">
+     <button onclick="confirmDeleteAll()" class="btn-3d btn-3d-danger">Hapus Semua</button>
+     <button onclick="closeConfirmModal()" class="btn-3d btn-3d-primary">Batal</button>
+    </div>
+   </div>
+  </div>
+
+  <p class="text-center text-gray-400 text-xs mt-8 mb-6">©Moidea-Lybra 2026</p>
+
+  <script>
+// ==================== STATE ====================
+let currentUser = null;
+let isAdmin = false;
+let cameraStream = null;
+let capturedPhotoData = null;
+let currentGPS = null;
+
+// ==================== THEME ====================
+function toggleTheme() {
+    const body = document.body;
+    const btn = document.getElementById('theme-toggle-btn');
+    body.classList.toggle('dark-mode');
+    
+    if(body.classList.contains('dark-mode')) {
+        btn.innerHTML = '<i data-lucide="sun" class="w-5 h-5"></i>';
+        localStorage.setItem('pkl_theme', 'dark');
+    } else {
+        btn.innerHTML = '<i data-lucide="moon" class="w-5 h-5"></i>';
+        localStorage.setItem('pkl_theme', 'light');
+    }
+    lucide.createIcons();
+}
+
+if(localStorage.getItem('pkl_theme') === 'dark') {
+    document.body.classList.add('dark-mode');
+    document.getElementById('theme-toggle-btn').innerHTML = '<i data-lucide="sun" class="w-5 h-5"></i>';
+}
+
+// ==================== UTILITIES ====================
+function showToast(message, type = 'success') {
+    const container = document.getElementById('toast-container');
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${type}`;
+    toast.textContent = message;
+    container.appendChild(toast);
+    setTimeout(() => toast.remove(), 3500);
+}
+
+function showModal(title, message) {
+    document.getElementById('modal-title').textContent = title;
+    document.getElementById('modal-message').textContent = message;
+    document.getElementById('modal').style.display = 'flex';
+}
+
+function closeModal() {
+    document.getElementById('modal').style.display = 'none';
+}
+
+function showConfirmModal(title, message) {
+    document.getElementById('confirm-title').textContent = title;
+    document.getElementById('confirm-message').textContent = message;
+    document.getElementById('confirm-modal').style.display = 'flex';
+}
+
+function closeConfirmModal() {
+    document.getElementById('confirm-modal').style.display = 'none';
+}
+
+function generateCode() {
+    let code = '';
+    for (let i = 0; i < 3; i++) code += String.fromCharCode(65 + Math.floor(Math.random() * 26));
+    for (let i = 0; i < 3; i++) code += Math.floor(Math.random() * 10);
+    return code;
+}
+
+function getPesertaList() { return JSON.parse(localStorage.getItem('pkl_peserta') || '[]'); }
+function savePesertaList(list) { localStorage.setItem('pkl_peserta', JSON.stringify(list)); }
+function getHistory(code) { return JSON.parse(localStorage.getItem(`pkl_history_${code}`) || '[]'); }
+function saveHistory(code, history) { localStorage.setItem(`pkl_history_${code}`, JSON.stringify(history)); }
+
+const ADMIN_CODE = 'AAA000';
+
+// ==================== AUTO-LOGIN ✨ ====================
+function autoLogin() {
+    const code = document.getElementById('login-code').value.trim().toUpperCase();
+    const inputField = document.getElementById('login-code');
+    
+    if (code.length > 0 && code.length < 6) {
+        inputField.style.borderColor = '#f59e0b';
+        return;
+    }
+    
+    if (code.length !== 6) {
+        inputField.style.borderColor = '#e2e8f0';
+        return;
+    }
+    
+    if (code === ADMIN_CODE) {
+        inputField.style.borderColor = '#10b981';
+        isAdmin = true;
+        showToast('Login Admin Berhasil');
+        setTimeout(() => {
+            showPage('admin');
+            loadReportData();
+        }, 300);
+        return;
+    }
+
+    const peserta = getPesertaList().find(p => p.code === code);
+    if (!peserta) {
+        showToast('Kode tidak valid', 'error');
+        inputField.style.borderColor = '#ef4444';
+        setTimeout(() => {
+            document.getElementById('login-code').value = '';
+            inputField.style.borderColor = '#e2e8f0';
+        }, 1500);
+        return;
+    }
+
+    inputField.style.borderColor = '#10b981';
+    currentUser = peserta;
+    isAdmin = false;
+    document.getElementById('user-info').textContent = `${peserta.nama} | ${peserta.kelas}`;
+    showToast(`Selamat datang ${peserta.nama}`);
+    
+    setTimeout(() => {
+        showPage('dashboard');
+        renderHistory();
+        updateClock();
+        setInterval(updateClock, 1000);
+    }, 300);
+}
+
+function showAdminLogin() {
+    document.getElementById('login-code').value = '';
+    document.getElementById('login-code').placeholder = 'ADMIN';
+    document.getElementById('login-code').focus();
+}
+
+function handleLogout() {
+    currentUser = null;
+    isAdmin = false;
+    stopCamera();
+    capturedPhotoData = null;
+    currentGPS = null;
+    document.getElementById('login-code').value = '';
+    document.getElementById('login-code').placeholder = 'INPUT KODE';
+    document.getElementById('login-code').style.borderColor = '#e2e8f0';
+    showPage('login');
+}
+
+function showPage(page) {
+    document.getElementById('page-login').classList.add('hidden');
+    document.getElementById('page-dashboard').classList.add('hidden');
+    document.getElementById('page-admin').classList.add('hidden');
+    document.getElementById(`page-${page}`).classList.remove('hidden');
+    
+    if (page === 'admin') {
+        switchAdminTab('add');
+    }
+    lucide.createIcons();
+}
+
+function switchAdminTab(tab) {
+    document.getElementById('admin-add').style.display = tab === 'add' ? 'block' : 'none';
+    document.getElementById('admin-report').style.display = tab === 'report' ? 'block' : 'none';
+    
+    document.getElementById('tab-add').classList.toggle('active', tab === 'add');
+    document.getElementById('tab-report').classList.toggle('active', tab === 'report');
+    
+    if (tab === 'report') {
+        loadReportData();
+    }
+}
+
+// ==================== CLOCK ====================
+function updateClock() {
+    const now = new Date();
+    const days = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
+    const months = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+    
+    if (document.getElementById('clock')) {
+        document.getElementById('clock').textContent = now.toLocaleTimeString('id-ID');
+        document.getElementById('date-display').textContent = `${days[now.getDay()]}, ${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()}`;
+    }
+    
+    if (currentUser && document.getElementById('days-remaining')) {
+        const endDate = new Date(currentUser.selesai);
+        const diff = Math.ceil((endDate - now) / (1000*60*60*24));
+        document.getElementById('days-remaining').textContent = diff > 0 ? `Sisa ${diff} hari` : 'Selesai';
+    }
+}
+
+// ==================== CAMERA ====================
+async function startCamera() {
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({ 
+            video: { facingMode: 'user', width: 240, height: 240 } 
+        });
+        cameraStream = stream;
+        const video = document.getElementById('camera-feed');
+        video.srcObject = stream;
+        video.style.display = 'block';
+        document.getElementById('btn-capture').style.display = 'inline-flex';
+    } catch (e) {
+        showToast('Tidak bisa akses kamera', 'error');
+    }
+}
+
+function capturePhoto() {
+    const video = document.getElementById('camera-feed');
+    const canvas = document.getElementById('camera-canvas');
+    canvas.width = 240;
+    canvas.height = 240;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(video, 0, 0, 240, 240);
+    capturedPhotoData = canvas.toDataURL('image/jpeg', 0.6);
+    
+    const img = document.getElementById('captured-photo');
+    img.src = capturedPhotoData;
+    img.style.display = 'block';
+    video.style.display = 'none';
+    document.getElementById('btn-capture').style.display = 'none';
+    stopCamera();
+    showToast('Foto berhasil');
+}
+
+function stopCamera() {
+    if (cameraStream) {
+        cameraStream.getTracks().forEach(t => t.stop());
+        cameraStream = null;
+    }
+}
+
+// ==================== GPS ====================
+function getLocation() {
+    if (!navigator.geolocation) {
+        showToast('GPS tidak didukung', 'error');
+        return;
+    }
+    document.getElementById('gps-status').textContent = 'Mengambil lokasi...';
+    navigator.geolocation.getCurrentPosition(
+        (pos) => {
+            currentGPS = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+            document.getElementById('gps-status').innerHTML = `<span class="text-green-600 font-bold">✓ ${currentGPS.lat.toFixed(6)}, ${currentGPS.lng.toFixed(6)}</span>`;
+            showToast('Lokasi berhasil');
+        },
+        () => {
+            document.getElementById('gps-status').textContent = 'Gagal mendapat lokasi';
+            showToast('Gagal ambil lokasi', 'error');
+        },
+        { enableHighAccuracy: true }
+    );
+}
+
+// ==================== ATTENDANCE ====================
+function absenMasuk() {
+    if (!capturedPhotoData) {
+        showModal('Foto Diperlukan', 'Ambil foto selfie terlebih dahulu.');
+        return;
+    }
+    if (!currentGPS) {
+        showModal('Lokasi Diperlukan', 'Ambil lokasi terlebih dahulu.');
+        return;
+    }
+
+    const record = {
+        date: new Date().toLocaleDateString('id-ID'),
+        time: new Date().toLocaleTimeString('id-ID'),
+        status: 'Masuk',
+        gps: `${currentGPS.lat.toFixed(6)}, ${currentGPS.lng.toFixed(6)}`,
+        kegiatan: ''
+    };
+    
+    const history = getHistory(currentUser.code);
+    history.push(record);
+    saveHistory(currentUser.code, history);
+    
+    showToast('Absen masuk berhasil');
+    document.getElementById('btn-masuk').style.display = 'none';
+    document.getElementById('kegiatan-section').style.display = 'block';
+    renderHistory();
+}
+
+function submitKegiatan() {
+    const kegiatan = document.getElementById('kegiatan-input').value.trim();
+    if (!kegiatan) {
+        showToast('Kegiatan kosong', 'error');
+        return;
+    }
+    
+    const history = getHistory(currentUser.code);
+    const today = new Date().toLocaleDateString('id-ID');
+    const masukRecord = history.find(h => h.date === today && h.status === 'Masuk');
+    
+    if (masukRecord) {
+        masukRecord.kegiatan = kegiatan;
+        saveHistory(currentUser.code, history);
+        showToast('Kegiatan tersimpan');
+        document.getElementById('kegiatan-section').style.display = 'none';
+        document.getElementById('kegiatan-input').value = '';
+        document.getElementById('btn-pulang').style.display = 'inline-flex';
+    }
+}
+
+function absenPulang() {
+    if (!currentGPS) {
+        showModal('Lokasi Diperlukan', 'Ambil lokasi terlebih dahulu.');
+        return;
+    }
+
+    const record = {
+        date: new Date().toLocaleDateString('id-ID'),
+        time: new Date().toLocaleTimeString('id-ID'),
+        status: 'Pulang',
+        gps: `${currentGPS.lat.toFixed(6)}, ${currentGPS.lng.toFixed(6)}`,
+        kegiatan: ''
+    };
+    
+    const history = getHistory(currentUser.code);
+    history.push(record);
+    saveHistory(currentUser.code, history);
+    
+    showToast('Absen pulang berhasil');
+    document.getElementById('btn-pulang').style.display = 'none';
+    renderHistory();
+}
+
+function showIzinForm() {
+    document.getElementById('izin-section').style.display = 'block';
+    document.getElementById('btn-izin').style.display = 'none';
+}
+
+function submitIzin() {
+    const izin = document.getElementById('izin-input').value.trim();
+    if (!izin) {
+        showToast('Keterangan izin kosong', 'error');
+        return;
+    }
+    
+    const record = {
+        date: new Date().toLocaleDateString('id-ID'),
+        time: new Date().toLocaleTimeString('id-ID'),
+        status: 'Izin',
+        gps: '-',
+        kegiatan: izin
+    };
+    
+    const history = getHistory(currentUser.code);
+    history.push(record);
+    saveHistory(currentUser.code, history);
+    
+    showToast('Izin terkirim');
+    document.getElementById('izin-section').style.display = 'none';
+    document.getElementById('izin-input').value = '';
+    renderHistory();
+}
+
+function renderHistory() {
+    if (!currentUser) return;
+    const history = getHistory(currentUser.code);
+    const tbody = document.getElementById('history-body');
+    tbody.innerHTML = '';
+    
+    history.forEach(h => {
+        const tr = tbody.insertRow();
+        tr.innerHTML = `
+            <td>${h.date} ${h.time}</td>
+            <td><span class="font-bold ${h.status === 'Masuk' ? 'text-green-600' : h.status === 'Pulang' ? 'text-blue-600' : 'text-orange-600'}">${h.status}</span></td>
+            <td>${h.kegiatan || '-'}</td>
+            <td class="text-xs">${h.gps}</td>
+        `;
+    });
+}
+
+// ==================== PRINT STUDENT ====================
+function printStudentReport() {
+    const mentorName = prompt('Masukkan nama Pembimbing Industri:', 'Pembimbing');
+    if (!mentorName) return;
+
+    if (!currentUser) return;
+    const history = getHistory(currentUser.code);
+
+    document.getElementById('print-nama').textContent = currentUser.nama;
+    document.getElementById('print-kelas').textContent = currentUser.kelas;
+    document.getElementById('print-perusahaan').textContent = currentUser.perusahaan;
+    document.getElementById('print-periode').textContent = `${currentUser.mulai} s/d ${currentUser.selesai}`;
+    document.getElementById('print-student-name').textContent = currentUser.nama;
+    document.getElementById('print-mentor-name').textContent = mentorName;
+
+    const tbody = document.getElementById('print-student-body');
+    tbody.innerHTML = '';
+    history.forEach((h, idx) => {
+        const tr = tbody.insertRow();
+        tr.innerHTML = `
+            <td style="border:1px solid #333; padding:4px; text-align:center;">${idx + 1}</td>
+            <td style="border:1px solid #333; padding:4px; text-align:center;">${h.date}</td>
+            <td style="border:1px solid #333; padding:4px; text-align:center;">${h.time}</td>
+            <td style="border:1px solid #333; padding:4px; text-align:center;">${h.status}</td>
+            <td style="border:1px solid #333; padding:4px; text-align:left;">${h.kegiatan || '-'}</td>
+            <td style="border:1px solid #333; padding:4px; text-align:center; font-size:8px;">${h.gps}</td>
+        `;
+    });
+
+    document.getElementById('print-area-student').style.display = 'block';
+    setTimeout(() => {
+        window.print();
+        document.getElementById('print-area-student').style.display = 'none';
+    }, 500);
+}
+
+// ==================== PRINT ADMIN ====================
+function printAdminReport() {
+    const list = getPesertaList();
+
+    const tbody = document.getElementById('print-admin-body');
+    tbody.innerHTML = '';
+    
+    list.forEach((peserta, idx) => {
+        const tr = tbody.insertRow();
+        tr.innerHTML = `
+            <td style="border:1px solid #333; padding:3px; text-align:center;">${idx + 1}</td>
+            <td style="border:1px solid #333; padding:3px; text-align:left;">${peserta.nama}</td>
+            <td style="border:1px solid #333; padding:3px; text-align:center;">${peserta.kelas}</td>
+            <td style="border:1px solid #333; padding:3px; text-align:center;">${peserta.hp}</td>
+            <td style="border:1px solid #333; padding:3px; text-align:left;">${peserta.perusahaan}</td>
+            <td style="border:1px solid #333; padding:3px; text-align:center; font-size:7px;">${peserta.koordinat || '-'}</td>
+            <td style="border:1px solid #333; padding:3px; text-align:center;">${peserta.code}</td>
+            <td style="border:1px solid #333; padding:3px; text-align:center;">${peserta.mulai}</td>
+            <td style="border:1px solid #333; padding:3px; text-align:center;">${peserta.selesai}</td>
+            <td style="border:1px solid #333; padding:3px; text-align:center;">PESERTA</td>
+            <td style="border:1px solid #333; padding:3px; text-align:center;">-</td>
+            <td style="border:1px solid #333; padding:3px; text-align:center;">-</td>
+            <td style="border:1px solid #333; padding:3px; text-align:center;">-</td>
+            <td style="border:1px solid #333; padding:3px; text-align:center;">-</td>
+        `;
+    });
+
+    document.getElementById('print-area-admin').style.display = 'block';
+    setTimeout(() => {
+        window.print();
+        document.getElementById('print-area-admin').style.display = 'none';
+    }, 500);
+}
+
+// ==================== ADMIN ====================
+function addPeserta() {
+    const nama = document.getElementById('admin-nama').value.trim();
+    const kelas = document.getElementById('admin-kelas').value;
+    const hp = document.getElementById('admin-hp').value.trim();
+    const perusahaan = document.getElementById('admin-perusahaan').value.trim();
+    const mulai = document.getElementById('admin-mulai').value;
+    const selesai = document.getElementById('admin-selesai').value;
+
+    if (!nama || !kelas || !hp || !perusahaan || !mulai || !selesai) {
+        showToast('Semua field harus diisi', 'error');
+        return;
+    }
+
+    const code = generateCode();
+    
+    const peserta = {
+        tanggal: new Date().toLocaleDateString('id-ID'),
+        waktu: new Date().toLocaleTimeString('id-ID'),
+        nama: nama,
+        kelas: kelas,
+        hp: hp,
+        perusahaan: perusahaan,
+        koordinatPerusahaan: document.getElementById('admin-koordinat').value,
+        koordinatPresensi: '',
+        jarak: '',
+        status: 'PESERTA',
+        kegiatan: '',
+        mulai: mulai,
+        selesai: selesai,
+        code: code
+    };
+
+    const list = getPesertaList();
+    list.push(peserta);
+    savePesertaList(list);
+
+    document.getElementById('generated-code').textContent = code;
+    document.getElementById('generated-code-section').style.display = 'block';
+    
+    document.getElementById('admin-nama').value = '';
+    document.getElementById('admin-kelas').value = '';
+    document.getElementById('admin-hp').value = '';
+    document.getElementById('admin-perusahaan').value = '';
+    document.getElementById('admin-koordinat').value = '';
+    document.getElementById('admin-mulai').value = '';
+    document.getElementById('admin-selesai').value = '';
+
+    showToast('Peserta ditambahkan');
+}
+
+function copyCode() {
+    const code = document.getElementById('generated-code').textContent;
+    navigator.clipboard.writeText(code);
+    showToast('Kode disalin');
+}
+
+function loadReportData() {
+    const list = getPesertaList();
+    renderAdminTable(list);
+}
+
+function renderAdminTable(data) {
+    const tbody = document.getElementById('admin-table-body');
+    tbody.innerHTML = '';
+    
+    data.forEach((peserta, index) => {
+        const tr = tbody.insertRow();
+        tr.innerHTML = `
+            <td>${index + 1}</td>
+            <td>${peserta.nama}</td>
+            <td>${peserta.kelas}</td>
+            <td>${peserta.hp}</td>
+            <td>${peserta.perusahaan}</td>
+            <td class="font-bold text-blue-600">${peserta.code}</td>
+            <td>${peserta.mulai}</td>
+            <td>${peserta.selesai}</td>
+            <td>
+                <button onclick="resetPeserta('${peserta.code}')" class="btn-3d btn-3d-warning text-xs" style="padding:4px 8px;"><i data-lucide="refresh-cw" class="w-3 h-3"></i></button>
+                <button onclick="deletePeserta('${peserta.code}')" class="btn-3d btn-3d-danger text-xs" style="padding:4px 8px;"><i data-lucide="trash-2" class="w-3 h-3"></i></button>
+            </td>
+        `;
+    });
+    lucide.createIcons();
+}
+
+function resetPeserta(code) {
+    if (confirm(`Reset data untuk peserta dengan kode ${code}?`)) {
+        localStorage.removeItem(`pkl_history_${code}`);
+        showToast('Data presensi direset');
+        loadReportData();
+    }
+}
+
+function deletePeserta(code) {
+    if (confirm(`Hapus peserta dengan kode ${code}?`)) {
+        let list = getPesertaList();
+        list = list.filter(p => p.code !== code);
+        savePesertaList(list);
+        localStorage.removeItem(`pkl_history_${code}`);
+        showToast('Peserta dihapus');
+        loadReportData();
+    }
+}
+
+function showDeleteConfirm() {
+    showConfirmModal('Hapus Semua Data?', 'Tindakan ini TIDAK BISA dibatalkan. Semua data peserta dan presensi akan dihapus.');
+}
+
+function confirmDeleteAll() {
+    localStorage.clear();
+    showToast('Semua data dihapus');
+    closeConfirmModal();
+    loadReportData();
+}
+
+// ==================== INIT ====================
+document.addEventListener('DOMContentLoaded', function() {
+    updateClock();
+    setInterval(updateClock, 1000);
+});
+  </script>
+ </body>
+  </html>
