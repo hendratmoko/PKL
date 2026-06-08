@@ -163,7 +163,6 @@
             background: #e2e8f0;
         }
         table {
-            min-width: 1800px;
             border-collapse: collapse;
             font-size: 13px;
             white-space: nowrap;
@@ -196,7 +195,28 @@
             body { background: white !important; color: black !important; }
             body::before { display: none !important; }
             body * { visibility: hidden; }
-            #print-area, #print-area * { visibility: visible; }
+            #print-area-student, #print-area-student * { visibility: visible; }
+            #print-area-admin, #print-area-admin * { visibility: visible; }
+            #print-area-student {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: auto;
+                padding: 20mm;
+                margin: 0;
+                background: white;
+            }
+            #print-area-admin {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: auto;
+                padding: 20mm;
+                margin: 0;
+                background: white;
+            }
             * {
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
@@ -305,9 +325,63 @@
    <div class="card mb-4">
     <div class="flex items-center justify-between mb-4">
      <h3 class="font-bold text-blue-950 dark:text-white text-sm flex items-center gap-2 no-print"><i data-lucide="history" class="w-5 h-5 text-blue-600"></i> Riwayat Presensi</h3>
-     <button onclick="window.print()" class="btn-3d btn-3d-primary text-xs no-print"> <i data-lucide="printer" class="w-4 h-4"></i> Cetak </button>
+     <button onclick="printStudentReport()" class="btn-3d btn-3d-primary text-xs no-print"> <i data-lucide="printer" class="w-4 h-4"></i> Cetak Laporan </button>
     </div>
 
+    <!-- Print Area untuk Siswa -->
+    <div id="print-area-student" style="display:none;">
+     <div style="text-align:center; margin-bottom:20px;">
+      <img src="LOGO NGLIPAR.png" style="width:60px; height:60px; object-fit:contain; margin-bottom:10px;">
+      <p style="font-size:11px; font-weight:bold; color:#1e3a5f; margin:0;">PEMERINTAH DAERAH DAERAH ISTIMEWA YOGYAKARTA</p>
+      <p style="font-size:13px; font-weight:bold; color:#1e3a5f; margin:5px 0;">SMK NEGERI 1 NGLIPAR</p>
+      <p style="font-size:10px; color:#666; margin:0;">Jl. Tentara Pelajar, Nglipar, Gunungkidul</p>
+      <p style="font-size:10px; color:#666; margin:0;">Daerah Istimewa Yogyakarta 55881</p>
+      <hr style="border:1px solid #1e3a5f; margin:10px 0;">
+     </div>
+
+     <div style="text-align:center; margin-bottom:20px;">
+      <h2 style="font-size:14px; font-weight:bold; margin:0; color:#1e3a5f;">LAPORAN PRESENSI PRAKTIK KERJA INDUSTRI</h2>
+      <p id="print-student-header" style="font-size:11px; margin:8px 0; color:#333;"></p>
+     </div>
+
+     <div style="margin-bottom:15px; font-size:10px;">
+      <p style="margin:3px 0;"><strong>Nama:</strong> <span id="print-nama"></span></p>
+      <p style="margin:3px 0;"><strong>Kelas:</strong> <span id="print-kelas"></span></p>
+      <p style="margin:3px 0;"><strong>Perusahaan:</strong> <span id="print-perusahaan"></span></p>
+      <p style="margin:3px 0;"><strong>Periode:</strong> <span id="print-periode"></span></p>
+     </div>
+
+     <table id="print-student-table" style="width:100%; border-collapse:collapse; font-size:9px; margin-bottom:20px;">
+      <thead>
+       <tr style="background-color:#1e3a5f; color:white;">
+        <th style="border:1px solid #333; padding:6px; text-align:center; font-weight:bold;">No</th>
+        <th style="border:1px solid #333; padding:6px; text-align:center; font-weight:bold;">Tanggal</th>
+        <th style="border:1px solid #333; padding:6px; text-align:center; font-weight:bold;">Waktu</th>
+        <th style="border:1px solid #333; padding:6px; text-align:center; font-weight:bold;">Status</th>
+        <th style="border:1px solid #333; padding:6px; text-align:left; font-weight:bold;">Kegiatan</th>
+        <th style="border:1px solid #333; padding:6px; text-align:center; font-weight:bold;">Koordinat</th>
+       </tr>
+      </thead>
+      <tbody id="print-student-body"></tbody>
+     </table>
+
+     <div style="margin-top:30px; display:flex; justify-content:space-between; padding:0 20px;">
+      <div style="text-align:center; width:30%;">
+       <p style="font-size:10px; margin:0; font-weight:bold;">Pembimbing Industri</p>
+       <div style="height:60px; margin-top:10px;"></div>
+       <p style="font-size:9px; margin:0; border-top:1px solid #333; padding-top:4px;">__________________</p>
+       <p id="print-mentor-name" style="font-size:9px; margin:2px 0;"></p>
+      </div>
+      <div style="text-align:center; width:30%;">
+       <p style="font-size:10px; margin:0; font-weight:bold;">Peserta PKL</p>
+       <div style="height:60px; margin-top:10px;"></div>
+       <p style="font-size:9px; margin:0; border-top:1px solid #333; padding-top:4px;">__________________</p>
+       <p style="font-size:9px; margin:2px 0;" id="print-student-name"></p>
+      </div>
+     </div>
+    </div>
+
+    <!-- Display Table -->
     <div class="overflow-x-auto">
      <table id="history-table">
       <thead>
@@ -324,7 +398,7 @@
    </div>
   </div>
 
-  <div id="page-admin" class="h-full hidden p-4 max-w-5xl mx-auto w-full fade-in">
+  <div id="page-admin" class="h-full hidden p-4 max-w-6xl mx-auto w-full fade-in">
    <div class="flex items-center justify-between mb-4 no-print">
     <h2 class="text-lg font-bold text-blue-900 dark:text-white">Admin Panel</h2>
     <button onclick="handleLogout()" class="btn-3d btn-3d-danger text-xs no-print"> <i data-lucide="log-out" class="w-4 h-4"></i> Keluar </button>
@@ -369,20 +443,20 @@
         <input id="admin-hp" class="input-field" placeholder="08xxxxxxxxxx">
      </div>
      <div>
-        <label class="block text-xs font-semibold text-gray-600 dark:text-slate-300 mb-1">Perusahaan</label>
+        <label class="block text-xs font-semibold text-gray-600 dark:text-slate-300 mb-1">Perusahaan (DUDI)</label>
         <input id="admin-perusahaan" class="input-field" placeholder="Nama perusahaan">
      </div>
      <div>
-      <label class="block text-xs font-semibold text-gray-600 dark:text-slate-300 mb-1">Koordinat GPS</label> 
-      <input id="admin-koordinat" class="input-field" placeholder="Lat, Lng">
+       <label class="block text-xs font-semibold text-gray-600 dark:text-slate-300 mb-1">Koordinat GPS Perusahaan</label> 
+       <input id="admin-koordinat" class="input-field" placeholder="Lat, Lng">
      </div>
      <div>
-         <label class="block text-xs font-semibold text-gray-600 dark:text-slate-300 mb-1">Tanggal Mulai</label> 
-         <input id="admin-mulai" type="date" class="input-field">
+          <label class="block text-xs font-semibold text-gray-600 dark:text-slate-300 mb-1">Tanggal Mulai</label> 
+          <input id="admin-mulai" type="date" class="input-field">
      </div>
      <div>
-         <label class="block text-xs font-semibold text-gray-600 dark:text-slate-300 mb-1">Tanggal Selesai</label> 
-         <input id="admin-selesai" type="date" class="input-field">
+          <label class="block text-xs font-semibold text-gray-600 dark:text-slate-300 mb-1">Tanggal Selesai</label> 
+          <input id="admin-selesai" type="date" class="input-field">
      </div>
     </div>
     <button onclick="addPeserta()" class="btn-3d btn-3d-primary mt-5"> <i data-lucide="user-plus" class="w-4 h-4"></i> Tambah Peserta </button>
@@ -397,7 +471,7 @@
    </div>
 
    <div id="admin-report" class="card mb-4" style="display:none">
-    <h3 class="font-bold text-sm mb-4">Data Peserta</h3>
+    <h3 class="font-bold text-sm mb-4">Data Peserta PKL</h3>
     <div class="overflow-x-auto">
      <table id="admin-table">
       <thead>
@@ -410,14 +484,66 @@
         <th>Kode</th>
         <th>Mulai</th>
         <th>Selesai</th>
+        <th>Aksi</th>
        </tr>
       </thead>
       <tbody id="admin-table-body"></tbody>
      </table>
     </div>
-    <div class="flex gap-2 mt-4">
-     <button onclick="window.print()" class="btn-3d btn-3d-primary">Cetak</button>
-     <button onclick="resetAllData()" class="btn-3d btn-3d-danger">Hapus Data</button> 
+    <div class="flex gap-2 mt-4 flex-wrap">
+     <button onclick="printAdminReport()" class="btn-3d btn-3d-primary"><i data-lucide="printer" class="w-4 h-4"></i> Cetak Laporan</button>
+     <button onclick="showDeleteConfirm()" class="btn-3d btn-3d-danger"><i data-lucide="trash-2" class="w-4 h-4"></i> Hapus Semua Data</button> 
+    </div>
+
+    <!-- Print Area untuk Admin -->
+    <div id="print-area-admin" style="display:none; margin-top:20px;">
+     <div style="text-align:center; margin-bottom:20px;">
+      <img src="LOGO NGLIPAR.png" style="width:60px; height:60px; object-fit:contain; margin-bottom:10px;">
+      <p style="font-size:11px; font-weight:bold; color:#1e3a5f; margin:0;">PEMERINTAH DAERAH DAERAH ISTIMEWA YOGYAKARTA</p>
+      <p style="font-size:13px; font-weight:bold; color:#1e3a5f; margin:5px 0;">SMK NEGERI 1 NGLIPAR</p>
+      <p style="font-size:10px; color:#666; margin:0;">Jl. Tentara Pelajar, Nglipar, Gunungkidul</p>
+      <p style="font-size:10px; color:#666; margin:0;">Daerah Istimewa Yogyakarta 55881</p>
+      <hr style="border:1px solid #1e3a5f; margin:10px 0;">
+     </div>
+
+     <div style="text-align:center; margin-bottom:15px;">
+      <h2 style="font-size:12px; font-weight:bold; margin:0; color:#1e3a5f;">DATA PESERTA PRAKTIK KERJA INDUSTRI TAHUN 2026</h2>
+     </div>
+
+     <table id="print-admin-table" style="width:100%; border-collapse:collapse; font-size:8px;">
+      <thead>
+       <tr style="background-color:#1e3a5f; color:white;">
+        <th style="border:1px solid #333; padding:4px; text-align:center; font-weight:bold;">No</th>
+        <th style="border:1px solid #333; padding:4px; text-align:left; font-weight:bold;">Nama</th>
+        <th style="border:1px solid #333; padding:4px; text-align:center; font-weight:bold;">Kelas</th>
+        <th style="border:1px solid #333; padding:4px; text-align:center; font-weight:bold;">HP</th>
+        <th style="border:1px solid #333; padding:4px; text-align:left; font-weight:bold;">Perusahaan</th>
+        <th style="border:1px solid #333; padding:4px; text-align:center; font-weight:bold;">Koordinat</th>
+        <th style="border:1px solid #333; padding:4px; text-align:center; font-weight:bold;">Kode</th>
+        <th style="border:1px solid #333; padding:4px; text-align:center; font-weight:bold;">Mulai</th>
+        <th style="border:1px solid #333; padding:4px; text-align:center; font-weight:bold;">Selesai</th>
+        <th style="border:1px solid #333; padding:4px; text-align:center; font-weight:bold;">Status</th>
+        <th style="border:1px solid #333; padding:4px; text-align:center; font-weight:bold;">Kegiatan</th>
+        <th style="border:1px solid #333; padding:4px; text-align:center; font-weight:bold;">Presensi</th>
+        <th style="border:1px solid #333; padding:4px; text-align:center; font-weight:bold;">Jarak</th>
+        <th style="border:1px solid #333; padding:4px; text-align:center; font-weight:bold;">Ket</th>
+       </tr>
+      </thead>
+      <tbody id="print-admin-body"></tbody>
+     </table>
+
+     <div style="margin-top:25px; display:flex; justify-content:space-between; padding:0 30px;">
+      <div style="text-align:center; width:25%;">
+       <p style="font-size:9px; margin:0; font-weight:bold;">Kepala Sekolah</p>
+       <div style="height:50px; margin-top:8px;"></div>
+       <p style="font-size:8px; margin:0; border-top:1px solid #333; padding-top:3px;">__________________</p>
+      </div>
+      <div style="text-align:center; width:25%;">
+       <p style="font-size:9px; margin:0; font-weight:bold;">Admin PKL</p>
+       <div style="height:50px; margin-top:8px;"></div>
+       <p style="font-size:8px; margin:0; border-top:1px solid #333; padding-top:3px;">__________________</p>
+      </div>
+     </div>
     </div>
    </div>
   </div>
@@ -427,6 +553,17 @@
     <h3 id="modal-title" class="font-bold text-base text-blue-950 dark:text-white mb-2"></h3>
     <p id="modal-message" class="text-xs text-gray-600 dark:text-gray-300 mb-4 whitespace-pre-line"></p>
     <button onclick="closeModal()" class="btn-3d btn-3d-primary w-full justify-center">Tutup</button>
+   </div>
+  </div>
+
+  <div id="confirm-modal" class="modal-overlay" style="display:none">
+   <div class="modal-content fade-in">
+    <h3 id="confirm-title" class="font-bold text-base text-blue-950 dark:text-white mb-2"></h3>
+    <p id="confirm-message" class="text-xs text-gray-600 dark:text-gray-300 mb-4"></p>
+    <div class="flex gap-2 justify-center">
+     <button onclick="confirmDeleteAll()" class="btn-3d btn-3d-danger">Hapus Semua</button>
+     <button onclick="closeConfirmModal()" class="btn-3d btn-3d-primary">Batal</button>
+    </div>
    </div>
   </div>
 
@@ -481,6 +618,16 @@ function closeModal() {
     document.getElementById('modal').style.display = 'none';
 }
 
+function showConfirmModal(title, message) {
+    document.getElementById('confirm-title').textContent = title;
+    document.getElementById('confirm-message').textContent = message;
+    document.getElementById('confirm-modal').style.display = 'flex';
+}
+
+function closeConfirmModal() {
+    document.getElementById('confirm-modal').style.display = 'none';
+}
+
 function generateCode() {
     let code = '';
     for (let i = 0; i < 3; i++) code += String.fromCharCode(65 + Math.floor(Math.random() * 26));
@@ -500,20 +647,18 @@ function autoLogin() {
     const code = document.getElementById('login-code').value.trim().toUpperCase();
     const inputField = document.getElementById('login-code');
     
-    // Visual feedback - Loading
     if (code.length > 0 && code.length < 6) {
-        inputField.style.borderColor = '#f59e0b'; // Orange
+        inputField.style.borderColor = '#f59e0b';
         return;
     }
     
     if (code.length !== 6) {
-        inputField.style.borderColor = '#e2e8f0'; // Default
+        inputField.style.borderColor = '#e2e8f0';
         return;
     }
     
-    // Admin Login
     if (code === ADMIN_CODE) {
-        inputField.style.borderColor = '#10b981'; // Green
+        inputField.style.borderColor = '#10b981';
         isAdmin = true;
         showToast('Login Admin Berhasil');
         setTimeout(() => {
@@ -523,11 +668,10 @@ function autoLogin() {
         return;
     }
 
-    // Cari Peserta
     const peserta = getPesertaList().find(p => p.code === code);
     if (!peserta) {
         showToast('Kode tidak valid', 'error');
-        inputField.style.borderColor = '#ef4444'; // Red
+        inputField.style.borderColor = '#ef4444';
         setTimeout(() => {
             document.getElementById('login-code').value = '';
             inputField.style.borderColor = '#e2e8f0';
@@ -535,8 +679,7 @@ function autoLogin() {
         return;
     }
 
-    // Login Berhasil
-    inputField.style.borderColor = '#10b981'; // Green
+    inputField.style.borderColor = '#10b981';
     currentUser = peserta;
     isAdmin = false;
     document.getElementById('user-info').textContent = `${peserta.nama} | ${peserta.kelas}`;
@@ -621,7 +764,6 @@ async function startCamera() {
         video.srcObject = stream;
         video.style.display = 'block';
         document.getElementById('btn-capture').style.display = 'inline-flex';
-        document.getElementById('captured-photo').style.display = 'none';
     } catch (e) {
         showToast('Tidak bisa akses kamera', 'error');
     }
@@ -793,6 +935,76 @@ function renderHistory() {
     });
 }
 
+// ==================== PRINT STUDENT ====================
+function printStudentReport() {
+    const mentorName = prompt('Masukkan nama Pembimbing Industri:', 'Pembimbing');
+    if (!mentorName) return;
+
+    if (!currentUser) return;
+    const history = getHistory(currentUser.code);
+
+    document.getElementById('print-nama').textContent = currentUser.nama;
+    document.getElementById('print-kelas').textContent = currentUser.kelas;
+    document.getElementById('print-perusahaan').textContent = currentUser.perusahaan;
+    document.getElementById('print-periode').textContent = `${currentUser.mulai} s/d ${currentUser.selesai}`;
+    document.getElementById('print-student-name').textContent = currentUser.nama;
+    document.getElementById('print-mentor-name').textContent = mentorName;
+
+    const tbody = document.getElementById('print-student-body');
+    tbody.innerHTML = '';
+    history.forEach((h, idx) => {
+        const tr = tbody.insertRow();
+        tr.innerHTML = `
+            <td style="border:1px solid #333; padding:4px; text-align:center;">${idx + 1}</td>
+            <td style="border:1px solid #333; padding:4px; text-align:center;">${h.date}</td>
+            <td style="border:1px solid #333; padding:4px; text-align:center;">${h.time}</td>
+            <td style="border:1px solid #333; padding:4px; text-align:center;">${h.status}</td>
+            <td style="border:1px solid #333; padding:4px; text-align:left;">${h.kegiatan || '-'}</td>
+            <td style="border:1px solid #333; padding:4px; text-align:center; font-size:8px;">${h.gps}</td>
+        `;
+    });
+
+    document.getElementById('print-area-student').style.display = 'block';
+    setTimeout(() => {
+        window.print();
+        document.getElementById('print-area-student').style.display = 'none';
+    }, 500);
+}
+
+// ==================== PRINT ADMIN ====================
+function printAdminReport() {
+    const list = getPesertaList();
+
+    const tbody = document.getElementById('print-admin-body');
+    tbody.innerHTML = '';
+    
+    list.forEach((peserta, idx) => {
+        const tr = tbody.insertRow();
+        tr.innerHTML = `
+            <td style="border:1px solid #333; padding:3px; text-align:center;">${idx + 1}</td>
+            <td style="border:1px solid #333; padding:3px; text-align:left;">${peserta.nama}</td>
+            <td style="border:1px solid #333; padding:3px; text-align:center;">${peserta.kelas}</td>
+            <td style="border:1px solid #333; padding:3px; text-align:center;">${peserta.hp}</td>
+            <td style="border:1px solid #333; padding:3px; text-align:left;">${peserta.perusahaan}</td>
+            <td style="border:1px solid #333; padding:3px; text-align:center; font-size:7px;">${peserta.koordinat || '-'}</td>
+            <td style="border:1px solid #333; padding:3px; text-align:center;">${peserta.code}</td>
+            <td style="border:1px solid #333; padding:3px; text-align:center;">${peserta.mulai}</td>
+            <td style="border:1px solid #333; padding:3px; text-align:center;">${peserta.selesai}</td>
+            <td style="border:1px solid #333; padding:3px; text-align:center;">PESERTA</td>
+            <td style="border:1px solid #333; padding:3px; text-align:center;">-</td>
+            <td style="border:1px solid #333; padding:3px; text-align:center;">-</td>
+            <td style="border:1px solid #333; padding:3px; text-align:center;">-</td>
+            <td style="border:1px solid #333; padding:3px; text-align:center;">-</td>
+        `;
+    });
+
+    document.getElementById('print-area-admin').style.display = 'block';
+    setTimeout(() => {
+        window.print();
+        document.getElementById('print-area-admin').style.display = 'none';
+    }, 500);
+}
+
 // ==================== ADMIN ====================
 function addPeserta() {
     const nama = document.getElementById('admin-nama').value.trim();
@@ -810,14 +1022,20 @@ function addPeserta() {
     const code = generateCode();
     
     const peserta = {
-        code: code,
+        tanggal: new Date().toLocaleDateString('id-ID'),
+        waktu: new Date().toLocaleTimeString('id-ID'),
         nama: nama,
         kelas: kelas,
         hp: hp,
         perusahaan: perusahaan,
-        koordinat: document.getElementById('admin-koordinat').value,
+        koordinatPerusahaan: document.getElementById('admin-koordinat').value,
+        koordinatPresensi: '',
+        jarak: '',
+        status: 'PESERTA',
+        kegiatan: '',
         mulai: mulai,
-        selesai: selesai
+        selesai: selesai,
+        code: code
     };
 
     const list = getPesertaList();
@@ -827,7 +1045,6 @@ function addPeserta() {
     document.getElementById('generated-code').textContent = code;
     document.getElementById('generated-code-section').style.display = 'block';
     
-    // Reset
     document.getElementById('admin-nama').value = '';
     document.getElementById('admin-kelas').value = '';
     document.getElementById('admin-hp').value = '';
@@ -865,16 +1082,43 @@ function renderAdminTable(data) {
             <td class="font-bold text-blue-600">${peserta.code}</td>
             <td>${peserta.mulai}</td>
             <td>${peserta.selesai}</td>
+            <td>
+                <button onclick="resetPeserta('${peserta.code}')" class="btn-3d btn-3d-warning text-xs" style="padding:4px 8px;"><i data-lucide="refresh-cw" class="w-3 h-3"></i></button>
+                <button onclick="deletePeserta('${peserta.code}')" class="btn-3d btn-3d-danger text-xs" style="padding:4px 8px;"><i data-lucide="trash-2" class="w-3 h-3"></i></button>
+            </td>
         `;
     });
+    lucide.createIcons();
 }
 
-function resetAllData() {
-    if (confirm('Hapus semua data?')) {
-        localStorage.clear();
-        showToast('Data dihapus');
+function resetPeserta(code) {
+    if (confirm(`Reset data untuk peserta dengan kode ${code}?`)) {
+        localStorage.removeItem(`pkl_history_${code}`);
+        showToast('Data presensi direset');
         loadReportData();
     }
+}
+
+function deletePeserta(code) {
+    if (confirm(`Hapus peserta dengan kode ${code}?`)) {
+        let list = getPesertaList();
+        list = list.filter(p => p.code !== code);
+        savePesertaList(list);
+        localStorage.removeItem(`pkl_history_${code}`);
+        showToast('Peserta dihapus');
+        loadReportData();
+    }
+}
+
+function showDeleteConfirm() {
+    showConfirmModal('Hapus Semua Data?', 'Tindakan ini TIDAK BISA dibatalkan. Semua data peserta dan presensi akan dihapus.');
+}
+
+function confirmDeleteAll() {
+    localStorage.clear();
+    showToast('Semua data dihapus');
+    closeConfirmModal();
+    loadReportData();
 }
 
 // ==================== INIT ====================
