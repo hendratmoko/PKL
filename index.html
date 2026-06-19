@@ -307,7 +307,6 @@
     <div id="kegiatan-section" style="display:none" class="mb-4 mt-4 fade-in"><label class="block text-xs font-bold text-gray-600 dark:text-slate-300 mb-2">Kegiatan Hari Ini</label> <textarea id="kegiatan-input" rows="3" class="input-field" placeholder="Tuliskan jurnal kegiatan yang Anda lakukan hari ini..."></textarea> <button onclick="submitKegiatan()" class="btn-3d btn-3d-success mt-2">Simpan Kegiatan</button>
     </div>
     <div class="flex flex-wrap gap-2 mb-2 justify-center"><button onclick="showIzinForm()" id="btn-izin" class="btn-3d btn-3d-warning"> <i data-lucide="file-text" class="w-4 h-4"></i> Izin tidak PKL </button>
-     <button onclick="handleLogout()" class="btn-3d btn-3d-danger text-xs"> <i data-lucide="log-out" class="w-4 h-4"></i> Keluar </button>
     </div>
     <div id="izin-section" style="display:none" class="mb-4 mt-4 fade-in"><label class="block text-xs font-bold text-gray-600 dark:text-slate-300 mb-2">Keterangan Izin</label> <textarea id="izin-input" rows="3" class="input-field" placeholder="Tuliskan alasan lengkap tidak masuk PKL..."></textarea> <button onclick="submitIzin()" class="btn-3d btn-3d-warning mt-2">Kirim Surat Izin</button>
     </div>
@@ -315,6 +314,7 @@
    <div class="card mb-4">
     <div class="flex items-center justify-between mb-4">
      <h3 class="font-bold text-blue-950 dark:text-white text-sm flex items-center gap-2 no-print"><i data-lucide="history" class="w-5 h-5 text-blue-600"></i> Riwayat Presensi</h3><button onclick="printHistory()" class="btn-3d btn-3d-primary text-xs no-print"> <i data-lucide="printer" class="w-4 h-4"></i> Cetak Laporan </button>
+         <button onclick="handleLogout()" class="btn-3d btn-3d-danger text-xs"> <i data-lucide="log-out" class="w-4 h-4"></i> Keluar </button>
     </div>
     <div id="print-header" style="display:none">
      <div style="text-align:center;margin-bottom:20px;border-bottom:3px double #1e3a5f;padding-bottom:16px">
