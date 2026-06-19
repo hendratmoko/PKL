@@ -353,7 +353,7 @@
   </div>
   <div id="page-admin" class="h-full hidden p-4 max-w-5xl mx-auto w-full fade-in">
    <div class="flex items-center justify-between mb-4 no-print">
-    <h2 class="text-lg font-bold text-blue-900 dark:text-white">Admin Panel</h2><button onclick="handleLogout()" class="btn-3d btn-3d-danger text-xs no-print"> <i data-lucide="log-out" class="w-4 h-4"></i> Keluar </button>
+    <h2 class="text-lg font-bold text-blue-900 dark:text-white">Admin Panel</h2>
    </div>
    <div class="flex gap-2 mb-4 flex-wrap no-print"><button onclick="switchAdminTab('add')" class="tab-btn active" id="tab-add">Tambah Peserta</button> <button onclick="switchAdminTab('report')" class="tab-btn" id="tab-report">Laporan Peserta</button>
    </div>
@@ -380,6 +380,7 @@
      <div><label class="block text-xs font-semibold text-gray-600 dark:text-slate-300 mb-1">Tanggal Selesai PKL</label> <input id="admin-selesai" type="date" class="input-field">
      </div>
     </div><button onclick="addPeserta()" class="btn-3d btn-3d-primary mt-5"> <i data-lucide="user-plus" class="w-4 h-4"></i> Tambah Peserta &amp; Buat Kode </button>
+    <button onclick="handleLogout()" class="btn-3d btn-3d-danger text-xs no-print"> <i data-lucide="log-out" class="w-4 h-4"></i> Keluar </button>
     <div id="generated-code-section" style="display:none" class="mt-4 p-4 bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-900 rounded-xl">
      <p class="text-xs text-green-800 dark:text-green-400 font-bold mb-2">Kode Login Berhasil Dibuat:</p>
      <div class="flex items-center gap-2"><span id="generated-code" class="text-2xl font-mono font-extrabold tracking-widest text-green-900 dark:text-green-300 mr-2"></span> <button onclick="copyCode()" class="btn-3d btn-3d-success text-xs">Copy</button> <button onclick="shareWhatsApp()" class="btn-3d btn-3d-success text-xs">WhatsApp</button>
