@@ -274,7 +274,7 @@
     <div>
      <h2 class="text-lg font-bold text-blue-900 dark:text-white">Dashboard PKL</h2>
      <p id="user-info" class="text-xs font-medium text-gray-500 dark:text-slate-400"></p>
-    </div><button onclick="handleLogout()" class="btn-3d btn-3d-danger text-xs"> <i data-lucide="log-out" class="w-4 h-4"></i> Keluar </button>
+    </div>
    </div>
    <div class="card mb-4 text-center sm:text-left">
     <div class="flex flex-col sm:flex-row items-center justify-between gap-2">
@@ -307,6 +307,7 @@
     <div id="kegiatan-section" style="display:none" class="mb-4 mt-4 fade-in"><label class="block text-xs font-bold text-gray-600 dark:text-slate-300 mb-2">Kegiatan Hari Ini</label> <textarea id="kegiatan-input" rows="3" class="input-field" placeholder="Tuliskan jurnal kegiatan yang Anda lakukan hari ini..."></textarea> <button onclick="submitKegiatan()" class="btn-3d btn-3d-success mt-2">Simpan Kegiatan</button>
     </div>
     <div class="flex flex-wrap gap-2 mb-2 justify-center"><button onclick="showIzinForm()" id="btn-izin" class="btn-3d btn-3d-warning"> <i data-lucide="file-text" class="w-4 h-4"></i> Izin tidak PKL </button>
+     <button onclick="handleLogout()" class="btn-3d btn-3d-danger text-xs"> <i data-lucide="log-out" class="w-4 h-4"></i> Keluar </button>
     </div>
     <div id="izin-section" style="display:none" class="mb-4 mt-4 fade-in"><label class="block text-xs font-bold text-gray-600 dark:text-slate-300 mb-2">Keterangan Izin</label> <textarea id="izin-input" rows="3" class="input-field" placeholder="Tuliskan alasan lengkap tidak masuk PKL..."></textarea> <button onclick="submitIzin()" class="btn-3d btn-3d-warning mt-2">Kirim Surat Izin</button>
     </div>
