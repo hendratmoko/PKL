@@ -1,0 +1,1303 @@
+<!doctype html>
+<html lang="id" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Presensi Praktik Kerja Industri - SMKN 1 Nglipar</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <style>
+    * { font-family: 'Plus Jakarta Sans', sans-serif; transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease; }
+    html, body { height: 100%; margin: 0; }
+    
+    body {
+        position: relative;
+        background-color: #f0f4f8;
+    }
+    body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background-image: url('Frontschool.jpg');
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: 40%;
+        opacity: 0.05;
+        z-index: -1;
+        pointer-events: none;
+    }
+
+    .card { 
+        background: rgba(255, 255, 255, 0.85); 
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.5);
+        border-radius: 20px; 
+        box-shadow: 0 10px 30px rgba(30, 58, 95, 0.05); 
+        padding: 24px; 
+    }
+    .card:hover { 
+        box-shadow: 0 15px 35px rgba(30, 58, 95, 0.1); 
+    }
+
+    .btn-3d {
+        position: relative;
+        border: none;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 13px;
+        padding: 8px 16px;
+        cursor: pointer;
+        outline: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        transition: all 0.1s ease;
+    }
+    .btn-3d:active {
+        transform: translateY(3px);
+    }
+
+    .btn-3d-primary { 
+        background: #2563eb; 
+        color: white; 
+        box-shadow: 0 4px 0 #1d4ed8, 0 6px 10px rgba(37, 99, 235, 0.2);
+    }
+    .btn-3d-primary:active { box-shadow: 0 1px 0 #1d4ed8; }
+
+    .btn-3d-success { 
+        background: #10b981; 
+        color: white; 
+        box-shadow: 0 4px 0 #059669, 0 6px 10px rgba(16, 185, 129, 0.2);
+    }
+    .btn-3d-success:active { box-shadow: 0 1px 0 #059669; }
+
+    .btn-3d-danger { 
+        background: #ef4444; 
+        color: white; 
+        box-shadow: 0 4px 0 #dc2626, 0 6px 10px rgba(239, 68, 68, 0.2);
+    }
+    .btn-3d-danger:active { box-shadow: 0 1px 0 #dc2626; }
+
+    .btn-3d-warning { 
+        background: #f59e0b; 
+        color: white; 
+        box-shadow: 0 4px 0 #d97706, 0 6px 10px rgba(245, 158, 11, 0.2);
+    }
+    .btn-3d-warning:active { box-shadow: 0 1px 0 #d97706; }
+
+    body.dark-mode {
+        background-color: #0f172a;
+        color: #f1f5f9;
+    }
+    body.dark-mode::before {
+        opacity: 0.03;
+        filter: invert(1);
+    }
+    .dark-mode .card {
+        background: rgba(30, 41, 59, 0.8);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+    .dark-mode .input-field {
+        background: #334155;
+        border-color: #475569;
+        color: white;
+    }
+    .dark-mode .input-field:focus { border-color: #3b82f6; }
+    .dark-mode th { background: #0f172a; color: #3b82f6; }
+    .dark-mode td { border-bottom-color: #334155; color: #cbd5e1; }
+    .dark-mode tr:hover { background: rgba(255,255,255,0.02); }
+    .dark-mode .tab-btn { background: #334155; color: #cbd5e1; }
+    .dark-mode .tab-btn.active { background: #2563eb; color: white; }
+
+    .fade-in { animation: fadeIn 0.4s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    
+    .input-field { width: 100%; padding: 10px 14px; border: 2px solid #e2e8f0; border-radius: 12px; font-size: 14px; transition: all 0.3s; outline: none; background: white; }
+    .input-field:focus { border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
+
+    .toast {
+        position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+        padding: 10px 20px; border-radius: 12px; color: white; font-size: 13px;
+        font-weight: 600; z-index: 9999; animation: toastFade 0.3s ease;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.2); max-width: 85%; text-align: center;
+    }
+    @keyframes toastFade { from { opacity: 0; transform: translateX(-50%) translateY(-10px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
+    .toast-error { background: #ef4444; }
+    .toast-success { background: #10b981; }
+    
+    .modal-overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 9998; }
+    .modal-content { background: white; border-radius: 20px; padding: 28px; max-width: 400px; width: 90%; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
+    .dark-mode .modal-content { background: #1e293b; color: white; }
+    
+    video, canvas { border-radius: 14px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+
+    .table-container {
+        width: 100%;
+        overflow-x: auto;
+        overflow-y: auto;
+        max-height: 70vh;
+        border-radius: 12px;
+        border: 1px solid #e2e8f0;
+        background: white;
+    }
+    .dark-mode .table-container {
+        border-color: #334155;
+        background: #1e293b;
+    }
+    .table-container::-webkit-scrollbar {
+        height: 10px;
+        width: 10px;
+    }
+    .table-container::-webkit-scrollbar-thumb {
+        background: #94a3b8;
+        border-radius: 10px;
+    }
+    .table-container::-webkit-scrollbar-track {
+        background: #e2e8f0;
+    }
+    table {
+        min-width: 1800px;
+        border-collapse: collapse;
+        font-size: 13px;
+        white-space: nowrap;
+    }
+
+    thead th {
+        position: sticky;
+        top: 0;
+        z-index: 20;
+    }
+   
+    th { background: #1e3a5f; color: white; padding: 12px 10px; text-align: left; font-weight: 600; }
+    td { padding: 10px 8px; border-bottom: 1px solid #edf2f7; }
+
+    tbody tr {
+        transition: all .2s ease;
+    }
+    tbody tr:hover {
+        background: rgba(37,99,235,.05);
+    }
+    .dark-mode tbody tr:hover {
+        background: rgba(59,130,246,.08);
+    }
+   
+    .tab-btn { padding: 8px 16px; border-radius: 10px; cursor: pointer; font-weight: 600; font-size: 13px; transition: all 0.2s; border: none; background: #e2e8f0; color: #4a5568; }
+    .tab-btn.active { background: #1e3a5f; color: white; box-shadow: 0 4px 12px rgba(30,58,95,0.15); }
+
+  #print-root{display:none}
+  @media print{
+    body>*:not(#print-root){display:none!important}
+    #print-root{display:block!important}
+    html,body{background:#fff!important;height:auto!important;overflow:visible!important}
+    body::before{display:none!important}
+  }
+  </style>
+  <style>body { box-sizing: border-box; }</style></head>
+ <body class="h-full text-slate-800 overflow-auto">
+  <div class="fixed top-4 right-4 z-[9999] no-print"><button onclick="toggleTheme()" id="theme-toggle-btn" class="btn-3d btn-3d-primary !p-2 !rounded-full shadow-lg" title="Ubah Mode Layar"> <i data-lucide="moon" class="w-5 h-5"></i> </button>
+  </div>
+  <div id="toast-container"></div>
+  <div id="modal" class="modal-overlay" style="display:none">
+   <div class="modal-content fade-in">
+    <h3 id="modal-title" class="font-bold text-base text-blue-950 dark:text-white mb-2"></h3>
+    <p id="modal-message" class="text-xs text-gray-600 dark:text-gray-300 mb-4 whitespace-pre-line"></p><button onclick="closeModal()" class="btn-3d btn-3d-primary w-full justify-center">Tutup</button>
+   </div>
+  </div>
+  <div id="confirm-modal" class="modal-overlay" style="display:none">
+   <div class="modal-content fade-in">
+    <h3 id="confirm-title" class="font-bold text-base text-blue-950 dark:text-white mb-2"></h3>
+    <p id="confirm-message" class="text-xs text-gray-600 dark:text-gray-300 mb-4"></p>
+    <div class="flex gap-2 justify-center"><button onclick="confirmAction(true)" class="btn-3d btn-3d-success">Ya, Lanjutkan</button> <button onclick="confirmAction(false)" class="btn-3d btn-3d-danger">Batal</button>
+    </div>
+   </div>
+  </div>
+  <div id="page-login" class="h-full flex flex-col items-center justify-center p-4">
+   <div class="card text-center max-w-sm w-full fade-in">
+    <div class="mx-auto mb-4"><img src="LOGO NGLIPAR.png" alt="LOGO" class="w-24 h-24 object-contain mx-auto drop-shadow-md" onerror="this.style.background='#e5e7eb'; this.alt='Logo unavailable';">
+    </div>
+    <h1 id="login-title" class="text-xl font-bold text-blue-900 dark:text-blue-400 mb-1">Presensi Praktik Kerja Industri</h1>
+    <p id="login-school" class="text-xs font-semibold text-gray-500 dark:text-gray-400 mb-6 tracking-wide">SMK NEGERI 1 NGLIPAR</p>
+    <div class="mb-4"><input id="login-code" type="text" maxlength="6" placeholder="INPUT KODE" class="input-field text-center text-xl font-bold tracking-widest uppercase text-blue-900">
+    </div>
+    <div class="mt-4 pt-4 border-t border-gray-200 dark:border-slate-700"><button onclick="showAdminLogin()" class="text-xs text-blue-600 dark:text-blue-400 hover:underline cursor-pointer font-medium">Versi Beta-X9. Hubungi Admin untuk mendapatkan Kode</button>
+    </div>
+   </div>
+   <p id="footer-text" class="text-gray-400 text-xs mt-6">©Moidea-Lybra 2026</p>
+  </div>
+  <div id="page-dashboard" class="h-full hidden p-4 max-w-4xl mx-auto w-full fade-in">
+   <div class="flex items-center justify-between mb-4 no-print">
+    <div>
+     <h2 class="text-lg font-bold text-blue-900 dark:text-white">SMK NEGERI 1 NGLIPAR</h2>
+     <p id="user-info" class="text-xs font-medium text-gray-500 dark:text-slate-400"></p>
+    </div>
+   </div>
+   <div class="card mb-4 text-center sm:text-left">
+    <div class="flex flex-col sm:flex-row items-center justify-between gap-2">
+     <div>
+      <div id="clock" class="text-4xl font-extrabold text-blue-900 dark:text-blue-400 tracking-tight">
+       00:00:00
+      </div>
+      <div id="date-display" class="text-xs font-medium text-gray-500 dark:text-slate-400 mt-1"></div>
+     </div>
+     <div id="days-remaining" class="text-xs font-bold text-blue-700 bg-blue-50 dark:bg-blue-950/50 dark:text-blue-300 px-4 py-2 rounded-full border border-blue-100 dark:border-blue-900"></div>
+    </div>
+   </div>
+   <div class="flex flex-wrap items-center gap-2 mb-4 no-print"><div id="s-tabs" class="flex flex-wrap gap-2 flex-1"></div><button onclick="handleLogout()" class="btn-3d btn-3d-danger text-xs"><i data-lucide="log-out" class="w-4 h-4"></i> Keluar</button></div>
+   <div class="card mb-4 no-print tabpane" data-g="s" data-p="presensi">
+    <h3 class="font-bold text-blue-950 dark:text-white text-sm mb-4 flex items-center gap-2"><i data-lucide="clipboard-check" class="w-5 h-5 text-blue-600"></i> Form Presensi PKL</h3>
+    <div class="mb-5 text-center"><label class="block text-xs font-bold text-gray-600 dark:text-slate-300 mb-2 text-left">Foto Selfie Verifikasi</label>
+     <div class="relative bg-slate-100 dark:bg-slate-800 rounded-xl overflow-hidden inline-block p-1">
+      <video id="camera-feed" autoplay playsinline class="w-full max-w-xs mx-auto block" style="display:none"></video>
+      <canvas id="camera-canvas" class="w-full max-w-xs mx-auto block" style="display:none"></canvas><img id="captured-photo" class="w-full max-w-xs mx-auto rounded-xl" style="display:none" onerror="this.style.background='#e5e7eb';">
+     </div>
+     <div class="flex gap-2 mt-3 justify-center"><button onclick="startCamera()" class="btn-3d btn-3d-primary"><i data-lucide="camera" class="w-4 h-4"></i> Buka Kamera</button> <button onclick="capturePhoto()" id="btn-capture" class="btn-3d btn-3d-success" style="display:none"><i data-lucide="check-circle" class="w-4 h-4"></i> Ambil Foto</button>
+     </div>
+    </div>
+    <div class="mb-5 text-center border-t border-b border-gray-100 dark:border-slate-700 py-4"><label class="block text-xs font-bold text-gray-600 dark:text-slate-300 mb-2">Lokasi GPS</label>
+     <div id="gps-status" class="text-xs text-gray-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-800/50 p-3 rounded-xl max-w-xs mx-auto">
+      Belum mendapatkan lokasi
+     </div><button onclick="getLocation()" class="btn-3d btn-3d-primary mt-3"> <i data-lucide="map-pin" class="w-4 h-4"></i> Ambil Lokasi</button>
+    </div>
+    <div class="flex flex-wrap gap-2 mb-2 justify-center"><button onclick="absenMasuk()" id="btn-masuk" class="btn-3d btn-3d-success"> <i data-lucide="log-in" class="w-4 h-4"></i> Absen Masuk </button> <button onclick="absenPulang()" id="btn-pulang" class="btn-3d btn-3d-primary" style="display:none"> <i data-lucide="log-out" class="w-4 h-4"></i> Absen Pulang </button>
+    </div>
+    <div id="kegiatan-section" style="display:none" class="mb-4 mt-4 fade-in"><label class="block text-xs font-bold text-gray-600 dark:text-slate-300 mb-2">Kegiatan Hari Ini</label> <textarea id="kegiatan-input" rows="3" class="input-field" placeholder="Tuliskan jurnal kegiatan yang Anda lakukan hari ini..."></textarea> <button onclick="submitKegiatan()" class="btn-3d btn-3d-success mt-2">Simpan Kegiatan</button>
+    </div>
+    <div class="flex flex-wrap gap-2 mb-2 justify-center"><button onclick="showIzinForm()" id="btn-izin" class="btn-3d btn-3d-warning"> <i data-lucide="file-text" class="w-4 h-4"></i> Izin tidak PKL </button>
+    </div>
+    <div id="izin-section" style="display:none" class="mb-4 mt-4 fade-in"><label class="block text-xs font-bold text-gray-600 dark:text-slate-300 mb-2">Keterangan Izin</label> <textarea id="izin-input" rows="3" class="input-field" placeholder="Tuliskan alasan lengkap tidak masuk PKL..."></textarea> <button onclick="submitIzin()" class="btn-3d btn-3d-warning mt-2">Kirim Surat Izin</button>
+    </div>
+   </div>
+   <div class="card mb-4 tabpane" data-g="s" data-p="riwayat" style="display:none">
+    <div class="flex flex-wrap items-center justify-between gap-2 mb-3"><h3 class="font-bold text-blue-950 dark:text-white text-sm flex items-center gap-2"><i data-lucide="history" class="w-5 h-5 text-blue-600"></i> Riwayat Presensi</h3><button onclick="printHistory()" class="btn-3d btn-3d-primary text-xs"><i data-lucide="printer" class="w-4 h-4"></i> Cetak Laporan Jurnal</button></div>
+    <div id="stu-stats" class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-3"></div>
+    <div class="table-container" style="max-height:60vh"><table id="history-table" style="min-width:760px"><thead><tr><th>Tanggal</th><th>Masuk</th><th>Pulang</th><th>Status</th><th>Kegiatan</th><th>Jarak</th></tr></thead><tbody id="history-body"></tbody></table></div>
+   </div>
+   <div class="tabpane no-print" data-g="s" data-p="laporan" id="s-lap" style="display:none"></div>
+   <div class="tabpane no-print" data-g="s" data-p="pesan" id="s-pesan" style="display:none"></div>
+  </div>
+  <div id="page-admin" class="h-full hidden p-4 max-w-5xl mx-auto w-full fade-in">
+   <div class="flex items-center justify-between mb-4 no-print">
+    <h2 class="text-lg font-bold text-blue-900 dark:text-white">Admin Panel</h2>
+   </div>
+   <div class="flex gap-2 mb-4 flex-wrap no-print"><button onclick="switchAdminTab('add')" class="tab-btn active" id="tab-add">Tambah Peserta</button> <button onclick="switchAdminTab('guru')" class="tab-btn" id="tab-guru">Guru Pembimbing</button> <button onclick="switchAdminTab('report')" class="tab-btn" id="tab-report">Laporan Peserta</button>
+   </div>
+   <div id="admin-add" class="card mb-4 no-print">
+    <h3 class="font-bold text-sm text-gray-800 dark:text-slate-200 mb-4">Tambah Peserta PKL Baru</h3>
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+     <div><label class="block text-xs font-semibold text-gray-600 dark:text-slate-300 mb-1">Nama Lengkap</label> <input id="admin-nama" class="input-field" placeholder="Nama Lengkap Siswa">
+     </div>
+     <div><label class="block text-xs font-semibold text-gray-600 dark:text-slate-300 mb-1">Kelas &amp; Jurusan</label> <select id="admin-kelas" class="input-field"> <option value="">Pilih Kelas</option> <option value="XI TKR 1|Teknik Kendaraan Ringan">XI TKR 1 (Teknik Kendaraan Ringan)</option> <option value="XI TKR 2|Teknik Kendaraan Ringan">XI TKR 2 (Teknik Kendaraan Ringan)</option> <option value="XII TKR 1|Teknik Kendaraan Ringan">XII TKR 1 (Teknik Kendaraan Ringan)</option> <option value="XII TKR 2|Teknik Kendaraan Ringan">XII TKR 2 (Teknik Kendaraan Ringan)</option> <option value="XI TKJ 1|Teknik Komputer &amp; Jaringan">XI TKJ 1 (Teknik Komputer &amp; Jaringan)</option> <option value="XI TKJ 2|Teknik Komputer &amp; Jaringan">XI TKJ 2 (Teknik Komputer &amp; Jaringan)</option> <option value="XII TKJ 1|Teknik Komputer &amp; Jaringan">XII TKJ 1 (Teknik Komputer &amp; Jaringan)</option> <option value="XII TKJ 2|Teknik Komputer &amp; Jaringan">XII TKJ 2 (Teknik Komputer &amp; Jaringan)</option> <option value="XI TP 1|Teknik Pemesinan">XI TP 1 (Teknik Pemesinan)</option> <option value="XI TP 2|Teknik Pemesinan">XI TP 2 (Teknik Pemesinan)</option> <option value="XII TP 1|Teknik Pemesinan">XII TP 1 (Teknik Pemesinan)</option> <option value="XII TP 2|Teknik Pemesinan">XII TP 2 (Teknik Pemesinan)</option> <option value="XI AKL 1|Akuntansi &amp; Keuangan Lembaga">XI AKL 1 (Akuntansi &amp; Keuangan Lembaga)</option> <option value="XI AKL 2|Akuntansi &amp; Keuangan Lembaga">XI AKL 2 (Akuntansi &amp; Keuangan Lembaga)</option> <option value="XII AKL 1|Akuntansi &amp; Keuangan Lembaga">XII AKL 1 (Akuntansi &amp; Keuangan Lembaga)</option> <option value="XII AKL 2|Akuntansi &amp; Keuangan Lembaga">XII AKL 2 (Akuntansi &amp; Keuangan Lembaga)</option> </select>
+     </div>
+     <div><label class="block text-xs font-semibold text-gray-600 dark:text-slate-300 mb-1">Nomor Handphone</label> <input id="admin-hp" class="input-field" placeholder="08xxxxxxxxxx">
+     </div>
+     <div><label class="block text-xs font-semibold text-gray-600 dark:text-slate-300 mb-1">Nama Perusahaan (DUDI)</label>
+      <div class="flex gap-2"><input id="admin-perusahaan" class="input-field" placeholder="Nama perusahaan"> <button onclick="searchCompanyLocation()" type="button" class="btn-3d btn-3d-primary text-xs">Cari</button>
+      </div>
+     </div>
+     <div><label class="block text-xs font-semibold text-gray-600 dark:text-slate-300 mb-1">Koordinat GPS Perusahaan</label> <input id="admin-koordinat" class="input-field mb-2" placeholder="Lat, Lng (contoh: -7.927,110.615)">
+      <div id="company-map" class="border border-slate-200 dark:border-slate-700 shadow-inner" style="height:200px; border-radius:12px; overflow:hidden;"></div>
+     </div>
+     <div><label class="block text-xs font-semibold text-gray-600 dark:text-slate-300 mb-1">Nomor BPJS</label> <input id="admin-bpjs" class="input-field" placeholder="Nomor BPJS Kesehatan">
+     </div>
+     <div><label class="block text-xs font-semibold text-gray-600 dark:text-slate-300 mb-1">Tanggal Mulai PKL</label> <input id="admin-mulai" type="date" class="input-field">
+     </div>
+     <div><label class="block text-xs font-semibold text-gray-600 dark:text-slate-300 mb-1">Tanggal Selesai PKL</label> <input id="admin-selesai" type="date" class="input-field">
+     </div>
+    <div><label class="block text-xs font-semibold text-gray-600 dark:text-slate-300 mb-1">Guru Pembimbing</label> <select id="admin-pembimbing" class="input-field"></select></div>
+    </div><button onclick="addPeserta()" class="btn-3d btn-3d-primary mt-5"> <i data-lucide="user-plus" class="w-4 h-4"></i> Tambah Peserta &amp; Buat Kode </button>
+    <button onclick="handleLogout()" class="btn-3d btn-3d-danger text-xs no-print"> <i data-lucide="log-out" class="w-4 h-4"></i> Keluar </button>
+    <div id="generated-code-section" style="display:none" class="mt-4 p-4 bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-900 rounded-xl">
+     <p class="text-xs text-green-800 dark:text-green-400 font-bold mb-2">Kode Login Berhasil Dibuat:</p>
+     <div class="flex items-center gap-2"><span id="generated-code" class="text-2xl font-mono font-extrabold tracking-widest text-green-900 dark:text-green-300 mr-2"></span> <button onclick="copyCode()" class="btn-3d btn-3d-success text-xs">Copy</button> <button onclick="shareWhatsApp()" class="btn-3d btn-3d-success text-xs">WhatsApp</button>
+     </div>
+    </div>
+   </div>
+   <div id="admin-guru" class="card mb-4 no-print" style="display:none">
+    <h3 class="font-bold text-sm mb-4">Tambah Guru Pembimbing</h3>
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4"><input id="guru-nama" class="input-field" placeholder="Nama guru pembimbing"><input id="guru-hp" class="input-field" placeholder="No. HP / WhatsApp (08xxxxxxxxxx)"></div>
+    <button onclick="addGuru()" class="btn-3d btn-3d-primary mt-4">Tambah Guru &amp; Buat Kode</button>
+    <div id="guru-code-out" class="mt-3 text-sm text-green-700"></div>
+    <div class="table-container mt-4"><table style="min-width:600px"><thead><tr><th>Nama</th><th>HP</th><th>Kode</th><th>Siswa</th><th>Aksi</th></tr></thead><tbody id="guru-body"></tbody></table></div>
+    <p class="text-xs text-gray-500 mt-3">Tentukan pembimbing tiap siswa pada form peserta atau pada tab Laporan Peserta.</p>
+   </div>
+   <div id="admin-report" class="card mb-4" style="display:none">
+    <div class="card mb-4 no-print">
+     <h3 class="font-bold text-sm mb-4">Pengaturan Tanda Tangan Laporan</h3>
+     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div><label class="block text-xs font-semibold mb-1">Nama Kepala Sekolah</label> <input id="kepsek-nama" class="input-field" placeholder="Nama Kepala Sekolah">
+      </div>
+      <div><label class="block text-xs font-semibold mb-1">NIP Kepala Sekolah</label> <input id="kepsek-nip" class="input-field" placeholder="NIP Kepala Sekolah">
+      </div>
+      <div><label class="block text-xs font-semibold mb-1">Nama Admin PKL</label> <input id="admin-ttd-nama" class="input-field" placeholder="Nama Admin">
+      </div>
+      <div><label class="block text-xs font-semibold mb-1">NIP Admin</label> <input id="admin-ttd-nip" class="input-field" placeholder="NIP Admin">
+      </div>
+     </div>
+    </div>
+    <div class="flex flex-wrap justify-between items-center gap-2 mb-3 no-print"><button onclick="printAdminReport()" class="btn-3d btn-3d-primary"> <i data-lucide="printer"></i> Cetak Laporan </button>
+    </div>
+    <div id="admin-print-header" style="display:none">
+     <table style="width:100%;border:none;margin-bottom:10px">
+      <tbody>
+       <tr>
+        <td style="width:90px;text-align:center;border:none"><img src="LOGO NGLIPAR.png" style="width:70px" onerror="this.style.background='#e5e7eb';"></td>
+        <td style="text-align:center;border:none">
+         <div style="font-size:14px;font-weight:bold">
+          PEMERINTAH DAERAH DAERAH ISTIMEWA YOGYAKARTA
+         </div>
+         <div style="font-size:16px;font-weight:bold">
+          SMK NEGERI 1 NGLIPAR
+         </div>
+         <div style="font-size:12px">
+          Gunungkidul, Daerah Istimewa Yogyakarta
+         </div>
+         <div style="font-size:18px;font-weight:bold;margin-top:8px">
+          LAPORAN REKAP PRESENSI PKL
+         </div></td>
+       </tr>
+      </tbody>
+     </table>
+     <hr style="border:2px solid black">
+    </div>
+    <div class="table-container">
+     <table id="admin-table" class="min-w-[1900px]">
+      <thead>
+       <tr>
+        <th style="min-width:50px">No</th>
+        <th style="min-width:180px">Nama</th>
+        <th style="min-width:120px">Kelas</th>
+        <th style="min-width:130px">No HP</th>
+        <th style="min-width:220px">Perusahaan</th>
+        <th style="min-width:180px">Koordinat Perusahaan</th>
+        <th style="min-width:180px">Koordinat Presensi</th>
+        <th style="min-width:120px">Jarak</th>
+        <th style="min-width:100px">Kode</th>
+        <th style="min-width:120px">Mulai</th>
+        <th style="min-width:120px">Selesai</th>
+        <th style="min-width:160px">Pembimbing</th>
+        <th style="min-width:140px">Kehadiran &amp; Keaktifan</th>
+        <th style="min-width:120px" class="no-print">Aksi</th>
+       </tr>
+      </thead>
+      <tbody id="admin-table-body"></tbody>
+     </table>
+    </div>
+    <div class="flex flex-wrap justify-between items-center gap-2 mb-3 no-print mt-3"><button onclick="printAdminReport()" class="btn-3d btn-3d-primary"> <i data-lucide="printer"></i> Cetak Laporan </button> <button onclick="askResetAllData()" class="btn-3d btn-3d-danger"> <i data-lucide="trash-2"></i> Hapus Semua Data </button>
+       <button onclick="handleLogout()" class="btn-3d btn-3d-danger text-xs no-print"> <i data-lucide="log-out" class="w-4 h-4"></i> Keluar </button>
+    </div>
+   </div>
+   <div id="print-area-admin" style="display:none;">
+    <div id="print-table-container"></div>
+    <div id="admin-print-footer"></div>
+   </div>
+   <div id="admin-print-footer" style="display:none">
+    <div style="margin-top:60px;display:flex;justify-content:space-between">
+     <div style="text-align:center;width:40%">
+      <p>Admin PKL</p><br><br><br>
+      <p id="print-admin-name"></p>
+      <p id="print-admin-nip"></p>
+     </div>
+     <div style="text-align:center;width:40%">
+      <p>Kepala Sekolah</p><br><br><br>
+      <p id="print-kepsek-name"></p>
+      <p id="print-kepsek-nip"></p>
+     </div>
+    </div>
+   </div>
+  </div>
+  <div id="page-guru" class="h-full hidden p-4 max-w-5xl mx-auto w-full fade-in">
+   <div class="flex items-center justify-between mb-3 no-print">
+    <div><h2 class="text-lg font-bold text-blue-900 dark:text-white">Panel Guru Pembimbing</h2><p id="g-info" class="text-xs text-gray-500 dark:text-slate-400"></p></div>
+    <div class="flex gap-2"><button onclick="gRefresh()" class="btn-3d btn-3d-primary text-xs">Muat Ulang</button><button onclick="handleLogout()" class="btn-3d btn-3d-danger text-xs">Keluar</button></div>
+   </div>
+   <div class="card mb-3 no-print"><label class="block text-xs font-bold mb-1">Siswa Bimbingan</label><select id="g-sis" class="input-field" onchange="renderGuruTab()"></select></div>
+   <div id="g-tabs" class="flex flex-wrap gap-2 mb-3 no-print"></div>
+   <div class="tabpane no-print" data-g="g" data-p="ringkasan">
+    <div class="card mb-3"><div class="flex flex-wrap items-center gap-3 mb-3"><label class="text-xs font-bold">Tanggal</label><input type="date" id="g-date" class="input-field" style="width:auto" onchange="renderRingkasan()"></div><div id="g-cards" class="grid grid-cols-2 sm:grid-cols-4 gap-3"></div></div>
+    <div class="grid md:grid-cols-2 gap-3 mb-3"><div class="card"><h3 class="font-bold text-sm mb-2">✅ Siswa Hadir</h3><div id="g-hadir"></div></div><div class="card"><h3 class="font-bold text-sm mb-2">❌ Siswa Tidak Hadir</h3><div id="g-absen"></div></div></div>
+    <div class="card mb-3"><h3 class="font-bold text-sm mb-2">Grafik Keaktifan Siswa</h3><div id="ch-bar-wrap" style="position:relative;height:300px"><canvas id="ch-bar"></canvas></div></div>
+    <div class="card mb-3"><h3 class="font-bold text-sm mb-1">Grafik Radar Keaktifan</h3><p class="text-xs text-gray-500 mb-2">Pilih siswa di atas untuk dibandingkan dengan rata-rata kelompok.</p><div style="position:relative;height:360px"><canvas id="ch-radar"></canvas></div></div>
+   </div>
+   <div class="tabpane no-print" data-g="g" data-p="riwayat" id="g-riw" style="display:none"></div>
+   <div class="tabpane no-print" data-g="g" data-p="nilai" id="g-nilai" style="display:none"></div>
+   <div class="tabpane no-print" data-g="g" data-p="monitoring" id="g-mon" style="display:none"></div>
+   <div class="tabpane no-print" data-g="g" data-p="pesan" id="g-pesan" style="display:none"></div>
+   <div class="tabpane no-print" data-g="g" data-p="cetak" style="display:none"><div class="card"><h3 class="font-bold text-sm mb-3">Cetak Laporan Guru Pembimbing</h3>
+    <div class="grid sm:grid-cols-2 gap-3"><input id="g-nip" class="input-field" placeholder="NIP Guru"><input id="g-ks" class="input-field" placeholder="Nama Kepala Sekolah"><input id="g-ksn" class="input-field" placeholder="NIP Kepala Sekolah"></div>
+    <button onclick="printGuru()" class="btn-3d btn-3d-primary mt-4"><i data-lucide="printer" class="w-4 h-4"></i> Cetak Laporan Guru (dengan grafik)</button></div></div>
+  </div>
+  <div id="koreksi-modal" class="modal-overlay" style="display:none"><div class="modal-content fade-in" style="text-align:left;max-width:420px">
+   <h3 class="font-bold mb-1">Koreksi Presensi</h3><p id="k-info" class="text-xs mb-3 text-gray-500"></p>
+   <div class="grid grid-cols-2 gap-2"><div class="col-span-2"><label class="text-xs font-semibold">Tanggal</label><input type="date" id="k-tgl" class="input-field"></div>
+    <div class="col-span-2"><label class="text-xs font-semibold">Status</label><select id="k-status" class="input-field"><option>Hadir</option><option>Izin</option><option>Sakit</option><option>Alpa</option></select></div>
+    <div><label class="text-xs font-semibold">Jam Masuk</label><input type="time" id="k-masuk" class="input-field"></div><div><label class="text-xs font-semibold">Jam Pulang</label><input type="time" id="k-pulang" class="input-field"></div>
+    <div class="col-span-2"><label class="text-xs font-semibold">Alasan koreksi (wajib)</label><textarea id="k-note" rows="2" class="input-field"></textarea></div></div>
+   <div class="flex gap-2 mt-4"><button onclick="saveKoreksi()" class="btn-3d btn-3d-success">Simpan</button><button onclick="$('koreksi-modal').style.display='none'" class="btn-3d btn-3d-danger">Batal</button></div></div></div>
+  <div id="print-root" class="pr"></div>
+  <p class="text-center text-gray-400 text-xs mt-8 mb-6 no-print">©Moidea-Lybra 2026</p>
+  <script>
+// ===================== STATE MANAGEMENT =====================
+let currentUser = null;
+let isAdmin = false;
+let lastGeneratedPhone = '';
+let cameraStream = null;
+let capturedPhotoData = null;
+let currentGPS = null;
+let attendanceState = 'idle'; 
+let companyMap;
+let companyMarker;
+let pendingConfirmCallback = null;
+
+// ===================== THEME TOGGLE FUNCTION =====================
+function toggleTheme() {
+    const body = document.body;
+    const themeBtn = document.getElementById('theme-toggle-btn');
+    body.classList.toggle('dark-mode');
+    
+    if(body.classList.contains('dark-mode')) {
+        themeBtn.innerHTML = '<i data-lucide="sun" class="w-5 h-5"></i>';
+        localStorage.setItem('pkl_theme', 'dark');
+    } else {
+        themeBtn.innerHTML = '<i data-lucide="moon" class="w-5 h-5"></i>';
+        localStorage.setItem('pkl_theme', 'light');
+    }
+    lucide.createIcons();
+}
+
+if(localStorage.getItem('pkl_theme') === 'dark') {
+    document.body.classList.add('dark-mode');
+    document.getElementById('theme-toggle-btn').innerHTML = '<i data-lucide="sun" class="w-5 h-5"></i>';
+}
+
+// ===================== MODAL FUNCTIONS (NO alert/confirm) =====================
+function showModal(title, message) {
+    document.getElementById('modal-title').textContent = title;
+    document.getElementById('modal-message').textContent = message;
+    document.getElementById('modal').style.display = 'flex';
+}
+
+function closeModal() {
+    document.getElementById('modal').style.display = 'none';
+}
+
+function showConfirm(title, message, callback) {
+    document.getElementById('confirm-title').textContent = title;
+    document.getElementById('confirm-message').textContent = message;
+    pendingConfirmCallback = callback;
+    document.getElementById('confirm-modal').style.display = 'flex';
+}
+
+function confirmAction(result) {
+    document.getElementById('confirm-modal').style.display = 'none';
+    if (pendingConfirmCallback) {
+        pendingConfirmCallback(result);
+        pendingConfirmCallback = null;
+    }
+}
+
+// ===================== MAPS INITIALIZATION =====================
+function initCompanyMap() {
+    companyMap = L.map('company-map').setView([-7.927,110.615], 13);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap'
+    }).addTo(companyMap);
+}
+
+async function searchCompanyLocation() {
+    const company = document.getElementById('admin-perusahaan').value.trim();
+    if (!company) {
+        showToast('Masukkan nama perusahaan', 'error');
+        return;
+    }
+    try {
+        showToast('Mencari lokasi...');
+        const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(company)}`);
+        const data = await response.json();
+        if (!data.length) {
+            showToast('Lokasi tidak ditemukan', 'error');
+            return;
+        }
+        const result = data[0];
+        const lat = parseFloat(result.lat);
+        const lon = parseFloat(result.lon);
+        document.getElementById('admin-koordinat').value = `${lat}, ${lon}`;
+        companyMap.setView([lat, lon], 17);
+        if (companyMarker) {
+            companyMap.removeLayer(companyMarker);
+        }
+        companyMarker = L.marker([lat, lon]).addTo(companyMap).bindPopup(company).openPopup();
+        showToast('Lokasi perusahaan ditemukan');
+    } catch(err) {
+        console.error(err);
+        showToast('Gagal mencari lokasi', 'error');
+    }
+}
+
+// ===================== UTILITIES =====================
+function showToast(message, type = 'success') {
+    const container = document.getElementById('toast-container');
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${type}`;
+    toast.textContent = message;
+    container.appendChild(toast);
+    setTimeout(() => toast.remove(), 3500);
+}
+
+function generateCode() {
+    const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    const nums = '0123456789';
+    let code = '';
+    for (let i = 0; i < 3; i++) code += letters[Math.floor(Math.random() * 26)];
+    for (let i = 0; i < 3; i++) code += nums[Math.floor(Math.random() * 10)];
+    return code;
+}
+
+
+
+
+
+
+const ADMIN_CODE = 'AAA000';
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyVdrqDBJOuo1ddyWPO0PEmr_6s4haq7qsgKBl_9ixdMSFrYjb2cfd_9wI1Pvc4gB-mSQ/exec';
+
+const defaultConfig = {
+    app_title: 'Presensi Praktik Kerja Industri',
+    school_name: 'SMK NEGERI 1 NGLIPAR',
+    footer_text: '©Moidea-Lybra 2026',
+    background_color: '#f0f4f8',
+    surface_color: '#ffffff',
+    text_color: '#1e293b',
+    primary_color: '#1e3a5f',
+    accent_color: '#10b981'
+};
+
+function applyConfig(config) {
+    const t = (k) => config[k] || defaultConfig[k];
+    document.getElementById('login-title').textContent = t('app_title');
+    document.getElementById('login-school').textContent = t('school_name');
+    document.getElementById('footer-text').textContent = t('footer_text');
+}
+
+
+
+
+
+
+
+// ===================== CLOCK WIDGET =====================
+function updateClock() {
+    const now = new Date();
+    const days = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
+    const months = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+    
+    document.getElementById('clock').textContent = now.toLocaleTimeString('id-ID');
+    document.getElementById('date-display').textContent = `${days[now.getDay()]}, ${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()}`;
+    
+    if (currentUser) {
+        const endDate = new Date(currentUser.selesai);
+        const diff = Math.ceil((endDate - now) / (1000*60*60*24));
+        document.getElementById('days-remaining').textContent = diff > 0 ? `Sisa ${diff} hari PKL` : 'PKL telah selesai';
+    }
+}
+
+// ===================== SECURITY & AUTH LOGIN =====================
+
+
+function showAdminLogin() {
+    document.getElementById('login-code').value = '';
+    document.getElementById('login-code').placeholder = 'ADMIN';
+    document.getElementById('login-code').focus();
+}
+
+
+
+
+
+// ===================== HARDWARE CONTROLS (CAMERA & GPS) =====================
+async function startCamera() {
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user', width: 240, height: 240 } });
+        cameraStream = stream;
+        const video = document.getElementById('camera-feed');
+        video.srcObject = stream;
+        video.style.display = 'block';
+        document.getElementById('btn-capture').style.display = 'inline-flex';
+        document.getElementById('captured-photo').style.display = 'none';
+    } catch (e) {
+        showToast('Tidak bisa mengakses kamera', 'error');
+    }
+}
+
+function capturePhoto() {
+    const video = document.getElementById('camera-feed');
+    const canvas = document.getElementById('camera-canvas');
+    canvas.width = 240;
+    canvas.height = 240;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(video, 0, 0, 240, 240);
+    capturedPhotoData = canvas.toDataURL('image/jpeg', 0.6);
+    
+    const img = document.getElementById('captured-photo');
+    img.src = capturedPhotoData;
+    img.style.display = 'block';
+    video.style.display = 'none';
+    document.getElementById('btn-capture').style.display = 'none';
+    stopCamera();
+    showToast('Foto berhasil diambil');
+}
+
+function stopCamera() {
+    if (cameraStream) {
+        cameraStream.getTracks().forEach(t => t.stop());
+        cameraStream = null;
+    }
+}
+// ==================== GPS ====================
+function getLocation() {
+    if (!navigator.geolocation) {
+        showToast('GPS tidak didukung', 'error');
+        return;
+    }
+    document.getElementById('gps-status').textContent = 'Mengambil lokasi...';
+    navigator.geolocation.getCurrentPosition(
+        (pos) => {
+            currentGPS = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+            document.getElementById('gps-status').innerHTML = `<span class="text-green-600 font-bold">✓ ${currentGPS.lat.toFixed(6)}, ${currentGPS.lng.toFixed(6)}</span>`;
+            showToast('Lokasi berhasil');
+        },
+        () => {
+            document.getElementById('gps-status').textContent = 'Gagal mendapat lokasi';
+            showToast('Gagal ambil lokasi', 'error');
+        },
+        { enableHighAccuracy: true }
+    );
+}
+
+function checkDistance(lat1, lon1, lat2, lon2) {
+    const R = 6371000;
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLon = (lon2 - lon1) * Math.PI / 180;
+    const a = Math.sin(dLat/2)*Math.sin(dLat/2) + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)*Math.sin(dLon/2);
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+}
+
+function calculateDistanceText(companyGPS, studentGPS) {
+    if (!companyGPS || !studentGPS || companyGPS === '-' || studentGPS === '-') return '-';
+    try {
+        const company = companyGPS.split(',');
+        const student = studentGPS.split(',');
+        const distance = checkDistance(parseFloat(company[0]), parseFloat(company[1]), parseFloat(student[0]), parseFloat(student[1]));
+        return distance < 1000 ? `${Math.round(distance)} meter` : `${(distance / 1000).toFixed(2)} km`;
+    } catch(err) {
+        return '-';
+    }
+}
+
+// ===================== BUSINESS LOGIC ATTENDANCE =====================
+
+
+function validatePresensi() {
+    if (!capturedPhotoData) {
+        showModal('Foto Diperlukan', 'Silakan ambil foto selfie terlebih dahulu untuk verifikasi kehadiran.');
+        return false;
+    }
+    if (!currentGPS) {
+        showModal('Lokasi Diperlukan', 'Silakan aktifkan GPS dan ambil lokasi Anda terlebih dahulu.');
+        return false;
+    }
+    if (currentUser.koordinat) {
+        const [compLat, compLng] = currentUser.koordinat.split(',').map(Number);
+        if (compLat && compLng) {
+            const dist = checkDistance(currentGPS.lat, currentGPS.lng, compLat, compLng);
+            if (dist > 100) {
+                showModal('Lokasi Tidak Sesuai', `Anda berada ${Math.round(dist)} meter dari area kantor. Jarak maksimal yang diperbolehkan adalah 100 meter.`);
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+
+
+
+
+
+
+function showIzinForm() {
+    document.getElementById('izin-section').style.display = 'block';
+}
+
+
+
+// ===================== TABEL DATA & CETAK PRINT =====================
+
+
+
+
+
+
+// ===================== PANEL KONTROL ADMIN =====================
+
+
+
+
+function askDeletePeserta(code) {
+    showConfirm('Hapus Peserta', 'Yakin menghapus peserta beserta seluruh riwayatnya?', (confirmed) => {
+        if (confirmed) {
+            deletePeserta(code);
+        }
+    });
+}
+
+
+
+function askResetPeserta(code) {
+    showConfirm('Reset Peserta', 'Apakah Anda yakin ingin menghapus seluruh riwayat presensi siswa ini?', (confirmed) => {
+        if (confirmed) {
+            resetPeserta(code);
+        }
+    });
+}
+
+
+
+function askResetAllData() {
+    showConfirm('Hapus Semua Data', 'Yakin menghapus seluruh peserta dan seluruh riwayat presensi?', (confirmed) => {
+        if (confirmed) {
+            resetAllData();
+        }
+    });
+}
+
+
+
+function copyCode() {
+    const code = document.getElementById('generated-code').textContent;
+    navigator.clipboard.writeText(code).then(() => showToast('Kode berhasil dicopy!'));
+}
+
+function shareWhatsApp() {
+    const code = document.getElementById('generated-code').textContent;
+    let nomor = document.getElementById('generated-code').dataset.hp;
+    
+    if (!nomor) {
+        showToast('Nomor HP peserta tidak tersedia', 'error');
+        return;
+    }
+
+    nomor = nomor.replace(/\D/g,'');
+    if (nomor.startsWith('0')) {
+        nomor = '62' + nomor.substring(1);
+    }
+
+    const pesan = encodeURIComponent(`Selamat, Anda sudah bisa melaksanakan Praktik Kerja Lapangan.\n\nBerikut kode login Presensi PKL Anda:\n\n*${code}*\n\nSilakan login pada aplikasi Presensi PKL menggunakan kode tersebut.\n\nSMKN 1 Nglipar`);
+    window.open(`https://wa.me/${nomor}?text=${pesan}`, '_blank');
+}
+
+
+
+
+
+// ===================== EVENT LISTENERS & INITIALIZATION =====================
+   
+setInterval(updateClock, 1000);
+updateClock();
+lucide.createIcons();
+applyConfig(defaultConfig);
+initCompanyMap();
+
+const loginInput = document.getElementById('login-code');
+loginInput.addEventListener('input', () => {
+    loginInput.value = loginInput.value.toUpperCase();
+    if (loginInput.value.length === 6) {
+        handleLogin().catch(err => {
+            console.error(err);
+            showToast('Gagal menghubungi server', 'error');
+        });
+    }
+});
+  </script><script>
+// ===================== V2: DATA, GURU, LAPORAN, CHAT, CETAK =====================
+const $=id=>document.getElementById(id);
+const z2=n=>String(n).padStart(2,'0');
+const iso=d=>`${d.getFullYear()}-${z2(d.getMonth()+1)}-${z2(d.getDate())}`;
+const TODAY=()=>iso(new Date());
+const hms=d=>`${z2(d.getHours())}:${z2(d.getMinutes())}:${z2(d.getSeconds())}`;
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const J=s=>{try{return JSON.parse(s)||{}}catch(e){return {}}};
+const BLN=['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+const tglIndo=d=>`${d.getDate()} ${BLN[d.getMonth()]} ${d.getFullYear()}`;
+const fdate=s=>{const a=String(s||'').split('-');return a.length===3?`${a[2]}/${a[1]}/${a[0]}`:(s||'-')};
+const nd=s=>{const m=/^(\d{1,2})[\/.](\d{1,2})[\/.](\d{4})$/.exec(s||'');return m?`${m[3]}-${z2(m[2])}-${z2(m[1])}`:s};
+const parseJarak=s=>{if(!s||s==='-')return null;const n=parseFloat(String(s).replace(',','.'));return isNaN(n)?null:(/km/i.test(s)?n*1000:n)};
+const rowTs=r=>new Date((r.tanggal||'1970-01-01')+'T'+(r.waktu||'00:00:00')).getTime()||0;
+const wa=(hp,t)=>{let n=String(hp||'').replace(/\D/g,'');if(n.startsWith('0'))n='62'+n.slice(1);return n?`https://wa.me/${n}?text=${encodeURIComponent(t)}`:''};
+const pct=(a,b)=>b?Math.min(100,Math.round(a/b*100)):0;
+const predikat=v=>v>=90?'A (Sangat Baik)':v>=80?'B (Baik)':v>=70?'C (Cukup)':v>0?'D (Kurang)':'-';
+
+let DB={rows:[]},guru=null,pollT=null,curTab={},charts={},prevUnread=0,lapTimer=null,koreksiDate='';
+
+// ---------- spreadsheet ----------
+async function sendToSpreadsheet(d){
+  try{await fetch(APPS_SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(d)})}
+  catch(e){console.error(e);showToast('Gagal menyimpan ke spreadsheet','error')}
+}
+async function refreshData(){
+  try{
+    const r=await fetch(APPS_SCRIPT_URL+'?action=getAll&t='+Date.now());const d=await r.json();
+    if(!Array.isArray(d))return false;
+    d.forEach(x=>{x.tanggal=nd(x.tanggal);x.mulai=nd(x.mulai);x.selesai=nd(x.selesai);x.waktu=String(x.waktu||'').replace(/\./g,':')});
+    DB.rows=d;return true;
+  }catch(e){console.error(e);return false}
+}
+const pesertaAll=()=>DB.rows.filter(r=>r.status==='PESERTA');
+const guruAll=()=>DB.rows.filter(r=>r.status==='GURU');
+const siswaOf=g=>pesertaAll().filter(p=>p.pembimbing===g.code);
+const rowsOf=(c,s)=>DB.rows.filter(r=>r.code===c&&(!s||r.status===s));
+const latest=(c,s)=>{const a=rowsOf(c,s);return a[a.length-1]};
+const guruOf=p=>guruAll().find(g=>g.code===p.pembimbing);
+function post(rows,action){rows=[].concat(rows);rows.forEach(r=>DB.rows.push(Object.assign({},r)));return sendToSpreadsheet({action:action||'append',rows})}
+function upsert(r){DB.rows=DB.rows.filter(x=>!(x.status===r.status&&x.code===r.code));DB.rows.push(Object.assign({},r));return sendToSpreadsheet({action:'upsert',rows:[r]})}
+function mk(p,x){const n=new Date();return Object.assign({tanggal:iso(n),waktu:hms(n),nama:p.nama,kelas:p.kelas,hp:p.hp,perusahaan:p.perusahaan,koordinatPerusahaan:p.koordinatPerusahaan||p.koordinat||'',koordinatPresensi:'',jarak:'',status:'',kegiatan:'',mulai:p.mulai,selesai:p.selesai,code:p.code,pembimbing:p.pembimbing||'',laporan:''},x)}
+function uniqueCode(){let c;do{c=generateCode()}while(DB.rows.some(r=>r.code===c)||c===ADMIN_CODE);return c}
+
+// ---------- perhitungan presensi ----------
+function days(code){
+  const m={},g=d=>m[d]||(m[d]={date:d,status:'',masuk:'',pulang:'',kegiatan:'',gps:'',jarak:null,koreksi:''});
+  const R=rowsOf(code).filter(r=>r.tanggal).sort((a,b)=>rowTs(a)-rowTs(b));
+  const keg=r=>r.kegiatan&&r.kegiatan!=='-'?r.kegiatan:'';
+  R.forEach(r=>{const d=g(r.tanggal);
+    if(r.status==='Masuk'){d.masuk=r.waktu;d.gps=r.koordinatPresensi;d.jarak=parseJarak(r.jarak);d.status='Hadir'}
+    else if(r.status==='Pulang'){d.pulang=r.waktu;if(!d.gps)d.gps=r.koordinatPresensi}
+    else if(r.status==='Kegiatan'){d.kegiatan=keg(r)}
+    else if(r.status==='Izin'){d.kegiatan=keg(r);d.status=d.status||'Izin'}});
+  R.filter(r=>r.status==='KOREKSI').sort((a,b)=>(J(a.laporan).ts||0)-(J(b.laporan).ts||0)).forEach(r=>{
+    const j=J(r.laporan),d=g(r.tanggal);d.status=j.status||d.status;if(j.masuk)d.masuk=j.masuk;if(j.pulang)d.pulang=j.pulang;d.koreksi=r.kegiatan||'Dikoreksi guru'});
+  return Object.values(m).filter(d=>d.status);
+}
+function fullDays(p){
+  const m={};days(p.code).forEach(d=>m[d.date]=d);
+  const t=TODAY(),end=p.selesai&&p.selesai<t?p.selesai:t;
+  if(p.mulai)for(let d=new Date(p.mulai+'T00:00');iso(d)<=end;d.setDate(d.getDate()+1)){
+    const k=iso(d),w=d.getDay();
+    if(!m[k]&&w>0&&w<6&&k<t)m[k]={date:k,status:'Alpa',masuk:'',pulang:'',kegiatan:'',gps:'',jarak:null,koreksi:'',auto:1};
+  }
+  return Object.values(m).sort((a,b)=>a.date<b.date?-1:1);
+}
+function dayStatus(p,D){
+  if((p.mulai&&D<p.mulai)||(p.selesai&&D>p.selesai))return null;
+  const d=fullDays(p).find(x=>x.date===D);if(d)return d;
+  const w=new Date(D+'T00:00').getDay();if(w===0||w===6)return null;
+  return{date:D,status:D<TODAY()?'Alpa':'Belum Absen',masuk:'',pulang:'',jarak:null};
+}
+const MET=['Kehadiran','Jurnal','Presensi Pulang','Lokasi Valid','Laporan'];
+function stats(p){
+  const fd=fullDays(p),H=fd.filter(d=>d.status==='Hadir'),I=fd.filter(d=>d.status==='Izin'||d.status==='Sakit'),A=fd.filter(d=>d.status==='Alpa');
+  const jk=H.filter(d=>d.jarak!=null);
+  const m={Kehadiran:pct(H.length,fd.length),Jurnal:pct(H.filter(d=>d.kegiatan).length,H.length),'Presensi Pulang':pct(H.filter(d=>d.pulang).length,H.length),
+    'Lokasi Valid':jk.length?pct(jk.filter(d=>d.jarak<=100).length,jk.length):(H.length?100:0),Laporan:lapProgress(p.code)};
+  const skor=Math.round(m.Kehadiran*.4+m.Jurnal*.25+m['Presensi Pulang']*.15+m['Lokasi Valid']*.1+m.Laporan*.1);
+  return{fd,hadir:H.length,izin:I.length,alpa:A.length,el:fd.length,m,vals:MET.map(k=>m[k]),skor};
+}
+function nilaiOf(c){const r=latest(c,'NILAI');return r?Object.assign({catatan:r.kegiatan},J(r.laporan)):{a:{},avg:0,catatan:''}}
+
+// ---------- grafik (Chart.js) ----------
+const COL={H:'#10b981',I:'#f59e0b',A:'#ef4444',B:'#2563eb'};
+const valLabels={id:'vl',afterDatasetsDraw(c){const x=c.ctx,pr=c.canvas.dataset.print;x.save();x.font='bold 11px sans-serif';x.fillStyle=(!pr&&document.body.classList.contains('dark-mode'))?'#e2e8f0':'#111';
+  c.data.datasets.forEach((ds,i)=>{if(ds.noLabel)return;c.getDatasetMeta(i).data.forEach((el,j)=>{const v=ds.data[j];if(v==null||v===0||!(c.config.type==='bar'||c.config.type==='radar'))return;const t=v+(ds.suffix||'');
+    if(c.config.type==='radar'){x.textAlign='center';x.fillText(t,el.x,el.y-6)}
+    else if(c.options.indexAxis==='y'){x.textAlign='left';x.fillText(t,el.x+4,el.y+4)}
+    else{x.textAlign='center';x.fillText(t,el.x,el.y-4)}})});x.restore()}};
+const whiteBg={id:'wb',afterDraw(c){const x=c.ctx;x.save();x.globalCompositeOperation='destination-over';x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height);x.restore()}};
+function mkChart(id,cfg){if(charts[id])charts[id].destroy();Chart.defaults.color=document.body.classList.contains('dark-mode')?'#cbd5e1':'#334155';
+  cfg.plugins=[valLabels];cfg.options=Object.assign({responsive:true,maintainAspectRatio:false},cfg.options);charts[id]=new Chart($(id),cfg)}
+function chartImg(cfg,w=700,h=340){const cv=document.createElement('canvas');cv.width=w;cv.height=h;cv.dataset.print=1;
+  cfg.options=Object.assign({responsive:false,animation:false,devicePixelRatio:3,color:'#111'},cfg.options);cfg.plugins=[valLabels,whiteBg];
+  const c=new Chart(cv,cfg),u=cv.toDataURL('image/png');c.destroy();return u}
+function radarCfg(vals,name,avg){
+  const ds=[{label:name,data:vals,borderColor:COL.B,backgroundColor:'rgba(37,99,235,.25)',pointBackgroundColor:COL.B,borderWidth:2,suffix:'%'}];
+  if(avg)ds.push({label:'Rata-rata kelompok',data:avg,borderColor:'#f97316',backgroundColor:'rgba(249,115,22,.1)',borderDash:[5,4],borderWidth:2,noLabel:1});
+  return{type:'radar',data:{labels:MET,datasets:ds},options:{scales:{r:{min:0,max:100,ticks:{stepSize:20,backdropColor:'transparent'}}},plugins:{legend:{position:'bottom'}}}}}
+function weekly(p,fd){
+  const w={},s0=new Date(p.mulai+'T00:00').getTime();
+  fd.forEach(d=>{const i=Math.floor((new Date(d.date+'T00:00').getTime()-s0)/6048e5);if(i<0)return;const k=w[i]||(w[i]={H:0,I:0,A:0});
+    if(d.status==='Hadir')k.H++;else if(d.status==='Alpa')k.A++;else k.I++});
+  const ks=Object.keys(w).map(Number).sort((a,b)=>a-b);
+  return{labels:ks.map(i=>'Mgg '+(i+1)),H:ks.map(i=>w[i].H),I:ks.map(i=>w[i].I),A:ks.map(i=>w[i].A)}}
+const weeklyCfg=wk=>({type:'bar',data:{labels:wk.labels,datasets:[{label:'Hadir',data:wk.H,backgroundColor:COL.H},{label:'Izin/Sakit',data:wk.I,backgroundColor:COL.I},{label:'Alpa',data:wk.A,backgroundColor:COL.A}]},
+  options:{scales:{x:{stacked:true},y:{stacked:true,beginAtZero:true,ticks:{stepSize:1},title:{display:true,text:'Jumlah hari'}}},plugins:{legend:{position:'bottom'}}}});
+const barSkor=S=>({type:'bar',data:{labels:S.map(x=>x.p.nama),datasets:[{label:'Keaktifan (%)',data:S.map(x=>x.st.skor),backgroundColor:S.map(x=>x.st.skor>=75?COL.H:x.st.skor>=50?COL.I:COL.A),suffix:'%'}]},options:{indexAxis:'y',scales:{x:{min:0,max:100}},plugins:{legend:{display:false}}}});
+
+// ---------- tab ----------
+function buildTabs(g,list,el){
+  $(el).innerHTML=list.map(t=>`<button class="tab-btn" data-g="${g}" data-t="${t[0]}" onclick="setTab('${g}','${t[0]}')">${t[1]}<span id="tb-${g}-${t[0]}" class="ml-1 px-1.5 rounded-full bg-red-500 text-white text-[10px]" style="display:none"></span></button>`).join('')}
+function setTab(g,t){
+  curTab[g]=t;
+  document.querySelectorAll(`.tabpane[data-g="${g}"]`).forEach(e=>e.style.display=e.dataset.p===t?'block':'none');
+  document.querySelectorAll(`.tab-btn[data-g="${g}"]`).forEach(b=>b.classList.toggle('active',b.dataset.t===t));
+  if(g==='s'){if(t==='riwayat')renderHistory();if(t==='laporan')renderLaporan();if(t==='pesan')renderChat('s')}
+  else renderGuruTab();
+  lucide.createIcons();
+}
+const fld=(pre,f,v)=>{v=v||'';const id=`${pre}-${f[0]}`,c='input-field';
+  const inp=f[2]==='sel'?`<select id="${id}" class="${c}">${f[3].map(o=>`<option ${o===v?'selected':''}>${o}</option>`).join('')}</select>`
+   :f[2]==='ta'?`<textarea id="${id}" rows="3" class="${c}">${esc(v)}</textarea>`:`<input id="${id}" type="${f[2]}" class="${c}" value="${esc(v)}" ${f[2]==='number'?'min="0" max="100"':''}>`;
+  return `<div class="${f[2]==='ta'?'sm:col-span-2':''}"><label class="block text-xs font-semibold mb-1">${f[1]}</label>${inp}</div>`};
+
+// ---------- login / logout ----------
+async function handleLogin(){
+  const code=$('login-code').value.trim().toUpperCase();
+  if(!code){showModal('Kode Kosong','Silakan masukkan kode login terlebih dahulu.');return}
+  if(code.length!==6){showModal('Kode Tidak Valid','Format kode harus sesuai seperti yang diberikan oleh Admin/Petugas');return}
+  showToast('Memeriksa kode...');
+  const ok=await refreshData();
+  if(!ok&&code!==ADMIN_CODE){showModal('Gagal Terhubung','Tidak dapat mengambil data dari server. Periksa koneksi internet / URL Apps Script.');return}
+  if(code===ADMIN_CODE){isAdmin=true;showToast('Login Admin Berhasil');showPage('admin');fillPembimbing();renderAdminTable();renderGuruTable();return}
+  const g=guruAll().find(x=>x.code===code);
+  if(g){guru=g;showToast(`Selamat datang ${g.nama}`);showPage('guru');initGuru();startPoll();return}
+  const p=pesertaAll().find(x=>x.code===code);
+  if(!p){showModal('Kode Tidak Ditemukan','Kode login tidak terdaftar.\n\nSilakan hubungi Admin PKL.');$('login-code').value='';return}
+  currentUser=Object.assign({},p,{koordinat:p.koordinatPerusahaan});
+  isAdmin=false;
+  const gp=guruOf(p);
+  $('user-info').textContent=`${p.nama} | ${p.kelas} | ${p.perusahaan}${gp?' | Pembimbing: '+gp.nama:''}`;
+  showToast(`Selamat datang ${p.nama}`);
+  showPage('dashboard');
+  buildTabs('s',[['presensi','Presensi'],['riwayat','Riwayat'],['laporan','Laporan PKL'],['pesan','Pesan']],'s-tabs');
+  $('s-pesan').innerHTML=chatPane('s');
+  checkAttendanceState();setTab('s','presensi');updateBadges();startPoll();
+}
+function handleLogout(){
+  currentUser=null;isAdmin=false;guru=null;stopCamera();capturedPhotoData=null;currentGPS=null;clearInterval(pollT);
+  $('login-code').value='';$('login-code').placeholder='INPUT KODE';showPage('login');
+}
+function showPage(p){['login','dashboard','admin','guru'].forEach(x=>$('page-'+x).classList.toggle('hidden',x!==p));lucide.createIcons();window.scrollTo(0,0)}
+function startPoll(){clearInterval(pollT);pollT=setInterval(pollTick,20000)}
+async function pollTick(){
+  if(document.hidden||!(await refreshData()))return;
+  if(currentUser){renderHistory();updateBadges();if(curTab.s==='pesan')renderChat('s')}
+  else if(guru){updateBadges();if(curTab.g==='pesan')renderChat('g');if(curTab.g==='ringkasan')renderRingkasan()}
+}
+async function gRefresh(){await refreshData();renderGuruTab();updateBadges();showToast('Data diperbarui')}
+
+// ---------- presensi siswa ----------
+function checkAttendanceState(){
+  const d=days(currentUser.code).find(x=>x.date===TODAY())||{},sh=(id,v,t)=>$(id).style.display=v?(t||'inline-flex'):'none';
+  const done=d.status&&d.status!=='Hadir',hasIn=d.status==='Hadir'&&d.masuk;
+  sh('btn-masuk',!d.status);sh('btn-izin',!d.status);
+  sh('kegiatan-section',hasIn&&!d.kegiatan,'block');sh('btn-pulang',hasIn&&d.kegiatan&&!d.pulang);
+  $('izin-section').style.display='none';
+}
+function koord(){return `${currentGPS.lat.toFixed(6)},${currentGPS.lng.toFixed(6)}`}
+function jarakNow(){if(!currentUser.koordinat)return '-';const[a,b]=currentUser.koordinat.split(',').map(Number);return a&&b?Math.round(checkDistance(currentGPS.lat,currentGPS.lng,a,b))+' meter':'-'}
+function absenMasuk(){
+  if(!validatePresensi())return;
+  post(mk(currentUser,{status:'Masuk',koordinatPresensi:koord(),jarak:jarakNow()}));
+  $('btn-masuk').style.display='none';$('btn-izin').style.display='none';$('kegiatan-section').style.display='block';
+  renderHistory();showToast('Absen Masuk berhasil!');
+}
+function submitKegiatan(){
+  const k=$('kegiatan-input').value.trim();if(!k){showToast('Tuliskan kegiatan hari ini','error');return}
+  post(mk(currentUser,{status:'Kegiatan',kegiatan:k}));
+  $('kegiatan-section').style.display='none';$('btn-pulang').style.display='inline-flex';$('kegiatan-input').value='';
+  renderHistory();showToast('Jurnal kegiatan disimpan!');
+}
+function absenPulang(){
+  if(!validatePresensi())return;
+  post(mk(currentUser,{status:'Pulang',koordinatPresensi:koord(),jarak:jarakNow()}));
+  $('btn-pulang').style.display='none';$('btn-izin').style.display='none';renderHistory();showToast('Absen Pulang berhasil!');
+}
+function submitIzin(){
+  const k=$('izin-input').value.trim();
+  if(!currentGPS){showModal('Lokasi Diperlukan','Silakan ambil lokasi GPS sebelum mengirim form izin.');return}
+  if(!k){showToast('Tuliskan keterangan izin','error');return}
+  post(mk(currentUser,{status:'Izin',kegiatan:k,koordinatPresensi:koord(),jarak:jarakNow()}));
+  $('izin-section').style.display='none';$('btn-masuk').style.display='none';$('btn-izin').style.display='none';$('izin-input').value='';
+  renderHistory();showToast('Surat izin berhasil dikirim!');
+}
+const stCol=s=>s==='Hadir'?'#10b981':s==='Alpa'?'#ef4444':s==='Belum Absen'?'#64748b':'#f59e0b';
+const chip=(l,v,c)=>`<div class="rounded-xl p-3 text-center" style="background:${c}22;color:${c}"><div class="text-2xl font-extrabold">${v}</div><div class="text-[11px] font-semibold">${l}</div></div>`;
+function renderHistory(){
+  if(!currentUser||!$('history-body'))return;
+  const st=stats(currentUser);
+  $('stu-stats').innerHTML=chip('Hadir',st.hadir,'#10b981')+chip('Izin/Sakit',st.izin,'#f59e0b')+chip('Alpa',st.alpa,'#ef4444')+chip('Keaktifan',st.skor+'%','#2563eb');
+  $('history-body').innerHTML=st.fd.slice().reverse().map(d=>`<tr><td>${fdate(d.date)}</td><td>${d.masuk||'-'}</td><td>${d.pulang||'-'}</td><td><b style="color:${stCol(d.status)}">${d.status}</b>${d.koreksi?' <span class="text-[10px] text-blue-500">(dikoreksi guru)</span>':''}</td><td style="white-space:normal;min-width:220px">${esc(d.kegiatan)||'-'}</td><td>${d.jarak!=null?Math.round(d.jarak)+' m':'-'}</td></tr>`).join('')||'<tr><td colspan="6" class="text-center text-gray-400">Belum ada riwayat</td></tr>';
+}
+
+// ---------- laporan siswa (template + cicil) ----------
+const SEC=[['pendahuluan','BAB I – Pendahuluan','Latar belakang memilih DUDI, tujuan PKL, manfaat bagi siswa, sekolah, dan perusahaan.'],
+ ['profil','BAB II – Profil Perusahaan / DUDI','Nama & alamat, sejarah singkat, bidang usaha, struktur organisasi, jam kerja.'],
+ ['kegiatan','BAB III – Pelaksanaan Kegiatan PKL','Uraian kegiatan per minggu: pekerjaan, alat/bahan, prosedur, hasil. Gunakan tombol “Sisipkan Rekap Jurnal”.'],
+ ['pembahasan','BAB IV – Pembahasan, Kendala & Solusi','Kompetensi yang diperoleh, hubungan dengan materi sekolah, kendala dan cara mengatasinya.'],
+ ['penutup','BAB V – Kesimpulan & Saran','Kesimpulan pengalaman PKL; saran untuk sekolah dan DUDI.']];
+const words=t=>(t||'').trim().split(/\s+/).filter(Boolean).length;
+function getLap(c){const r=latest(c,'LAPORAN'),v=J(r&&r.laporan);let l={};try{l=JSON.parse(localStorage.getItem('lap_'+c)||'{}')}catch(e){}const b=(l.ts||0)>(v.ts||0)?l:v;return{ts:b.ts||0,sec:b.sec||{}}}
+const lapProgress=c=>{const l=getLap(c).sec;return Math.round(SEC.reduce((a,s)=>a+Math.min(1,words(l[s[0]])/150),0)/SEC.length*100)};
+function renderLaporan(){
+  const l=getLap(currentUser.code).sec;
+  $('s-lap').innerHTML=`<div class="card mb-4"><h3 class="font-bold text-sm mb-1">Template Laporan Akhir PKL</h3>
+  <p class="text-xs text-gray-500 mb-3">Cicil sedikit demi sedikit — tulisan tersimpan otomatis di perangkat dan di server. Target ±150 kata per bab.</p>
+  <div class="w-full bg-slate-200 rounded-full h-3 mb-1"><div id="lap-bar" class="h-3 rounded-full bg-emerald-500" style="width:0%"></div></div><p id="lap-pct" class="text-xs font-bold mb-4"></p>
+  ${SEC.map(s=>`<div class="mb-4"><label class="block text-xs font-bold mb-1">${s[1]} <span id="wc-${s[0]}" class="font-normal text-gray-500"></span></label><p class="text-[11px] text-gray-500 mb-1">${s[2]}</p><textarea id="lap-${s[0]}" rows="6" class="input-field" oninput="lapInput()" placeholder="Tulis di sini...">${esc(l[s[0]]||'')}</textarea></div>`).join('')}
+  <div class="flex flex-wrap gap-2"><button onclick="saveLaporan()" class="btn-3d btn-3d-success">Simpan</button><button onclick="fillBab3()" class="btn-3d btn-3d-warning">Sisipkan Rekap Jurnal ke Bab III</button><button onclick="downloadLaporan()" class="btn-3d btn-3d-primary">Unduh Word (.doc)</button><button onclick="printDoc(laporanHTML(currentUser))" class="btn-3d btn-3d-primary">Cetak / PDF</button></div></div>`;
+  lapCount();
+}
+function lapVals(){const o={};SEC.forEach(s=>o[s[0]]=$('lap-'+s[0]).value);return o}
+function lapCount(){const v=lapVals();SEC.forEach(s=>$('wc-'+s[0]).textContent=`(${words(v[s[0]])} kata)`);
+  const p=Math.round(SEC.reduce((a,s)=>a+Math.min(1,words(v[s[0]])/150),0)/SEC.length*100);$('lap-bar').style.width=p+'%';$('lap-pct').textContent=`Progres laporan: ${p}%`}
+function lapInput(){lapCount();localStorage.setItem('lap_'+currentUser.code,JSON.stringify({ts:Date.now(),sec:lapVals()}));clearTimeout(lapTimer);lapTimer=setTimeout(()=>saveLaporan(true),3000)}
+function saveLaporan(silent){
+  const o={ts:Date.now(),sec:lapVals()};localStorage.setItem('lap_'+currentUser.code,JSON.stringify(o));
+  const js=JSON.stringify(o);if(js.length>45000){showToast('Laporan terlalu panjang untuk disimpan di server','error');return}
+  upsert(mk(currentUser,{status:'LAPORAN',kegiatan:lapProgress(currentUser.code)+'%',laporan:js}));
+  if(!silent)showToast('Laporan tersimpan');
+}
+function fillBab3(){
+  const t=days(currentUser.code).filter(d=>d.status==='Hadir'&&d.kegiatan).map(d=>`${fdate(d.date)}: ${d.kegiatan}`).join('\n');
+  if(!t){showToast('Belum ada jurnal harian','error');return}
+  const e=$('lap-kegiatan');e.value=(e.value?e.value+'\n\n':'')+'Rekap kegiatan harian:\n'+t;lapInput();showToast('Rekap jurnal disisipkan')}
+function laporanHTML(p,doc){
+  const l=getLap(p.code).sec,fd=fullDays(p).filter(d=>d.status==='Hadir'&&d.kegiatan);
+  return `<div class="pr"><div class="c pb" style="padding-top:60px">${doc?'':`<img src="LOGO NGLIPAR.png" style="width:110px" onerror="this.style.display='none'">`}
+  <h1 style="font-size:20pt;margin-top:30px">LAPORAN PRAKTIK KERJA INDUSTRI</h1><p style="font-size:13pt">${esc(p.perusahaan)}</p><br><br><br>
+  <table class="nb" style="width:70%;margin:0 auto;font-size:12pt"><tr><td>Nama</td><td>: ${esc(p.nama)}</td></tr><tr><td>Kelas</td><td>: ${esc(p.kelas)}</td></tr><tr><td>Periode</td><td>: ${fdate(p.mulai)} s.d. ${fdate(p.selesai)}</td></tr></table>
+  <br><br><br><br><p style="font-size:13pt;font-weight:bold">SMK NEGERI 1 NGLIPAR<br>GUNUNGKIDUL, DI YOGYAKARTA<br>${new Date().getFullYear()}</p></div>
+  ${SEC.map(s=>`<h2>${s[1]}</h2><p class="ps">${esc(l[s[0]])||'<i>(belum diisi)</i>'}</p>`).join('')}
+  <h2>Lampiran – Jurnal Kegiatan Harian</h2><table><thead><tr><th>No</th><th>Tanggal</th><th>Kegiatan</th></tr></thead><tbody>${fd.map((d,i)=>`<tr><td class="c">${i+1}</td><td>${fdate(d.date)}</td><td>${esc(d.kegiatan)}</td></tr>`).join('')||'<tr><td colspan="3">-</td></tr>'}</tbody></table>
+  ${ttd([['Pembimbing Industri',''],['Guru Pembimbing',(guruOf(p)||{}).nama],['Peserta PKL',p.nama]])}</div>`;
+}
+function downloadLaporan(){
+  saveLaporan(true);
+  const h=`<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word"><head><meta charset="utf-8"><style>${PRCSS}</style></head><body>${laporanHTML(currentUser,true)}</body></html>`;
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\ufeff',h],{type:'application/msword'}));a.download=`Laporan_PKL_${currentUser.nama.replace(/\s+/g,'_')}.doc`;a.click();showToast('Laporan diunduh');
+}
+
+// ---------- chat ----------
+function chatPane(r){return `<div class="card mb-4"><div class="flex flex-wrap items-center justify-between gap-2 mb-3"><h3 class="font-bold text-sm" id="${r}-chat-title">Pesan</h3><button onclick="openWA('${r}')" class="btn-3d btn-3d-success text-xs">WhatsApp</button></div>
+ <div id="${r}-chat-box" style="height:320px;overflow-y:auto;padding:8px;border-radius:12px;background:rgba(100,116,139,.1)"></div>
+ <div class="flex gap-2 mt-3"><textarea id="${r}-chat-in" rows="2" class="input-field" placeholder="Tulis pesan..."></textarea><button onclick="sendChat('${r}')" class="btn-3d btn-3d-primary">Kirim</button></div></div>`
+ +(r==='g'?`<div class="card mb-4"><h3 class="font-bold text-sm mb-2">📢 Broadcast ke Semua Siswa Bimbingan</h3><textarea id="g-bc" rows="3" class="input-field" placeholder="Pesan pengumuman..."></textarea>
+ <div class="flex flex-wrap gap-2 mt-2"><button onclick="sendBroadcast()" class="btn-3d btn-3d-primary">Kirim Notifikasi</button><button onclick="bcWA()" class="btn-3d btn-3d-success">Daftar Link WhatsApp</button></div><div id="g-bc-wa" class="mt-3 text-xs"></div></div>`:'')}
+const chatCode=r=>r==='s'?currentUser.code:$('g-sis').value;
+const chatPerson=r=>r==='s'?currentUser:gSel();
+function renderChat(r){
+  const c=chatCode(r),box=$(r+'-chat-box');if(!c||!box){if(box)box.innerHTML='<p class="text-xs text-gray-500 p-2">Pilih siswa terlebih dahulu.</p>';return}
+  const p=chatPerson(r),gp=r==='s'?guruOf(p):null;
+  $(r+'-chat-title').textContent=r==='s'?(gp?`Chat dengan Pembimbing: ${gp.nama}`:'Belum ada guru pembimbing'):`Chat dengan ${p.nama}`;
+  const M=rowsOf(c,'PESAN').sort((a,b)=>rowTs(a)-rowTs(b)),me=r==='s'?'siswa':'guru';
+  box.innerHTML=M.map(m=>{const j=J(m.laporan),mine=j.from===me;return `<div style="display:flex;justify-content:${mine?'flex-end':'flex-start'};margin:4px 0"><div style="max-width:80%;padding:8px 12px;border-radius:14px;font-size:13px;background:${mine?'#2563eb':'#e2e8f0'};color:${mine?'#fff':'#1e293b'}">${j.bc?'<div style="font-size:10px;font-weight:700;opacity:.8">📢 BROADCAST</div>':''}${esc(m.kegiatan).replace(/\n/g,'<br>')}<div style="font-size:10px;opacity:.7;text-align:right">${fdate(m.tanggal)} ${String(m.waktu).slice(0,5)}</div></div></div>`}).join('')||'<p class="text-xs text-gray-500 p-2">Belum ada pesan.</p>';
+  box.scrollTop=box.scrollHeight;
+  localStorage.setItem(`seen_${r}_${c}`,Math.max(Date.now(),...M.map(rowTs)));updateBadges(true);
+}
+function sendChat(r){
+  const t=$(r+'-chat-in').value.trim(),p=chatPerson(r);if(!t||!p)return;
+  post(mk(p,{status:'PESAN',kegiatan:t,laporan:JSON.stringify({from:r==='s'?'siswa':'guru'})}));
+  $(r+'-chat-in').value='';renderChat(r);
+}
+function openWA(r){
+  const p=chatPerson(r);if(!p)return showToast('Pilih siswa dahulu','error');
+  const hp=r==='s'?(guruOf(p)||{}).hp:p.hp,u=wa(hp,r==='s'?`Assalamualaikum Bapak/Ibu, saya ${p.nama} (${p.kelas}) peserta PKL di ${p.perusahaan}.`:`Halo ${p.nama}, ini guru pembimbing PKL SMKN 1 Nglipar.`);
+  u?window.open(u,'_blank'):showToast('Nomor HP tidak tersedia','error');
+}
+function unread(r,c){const seen=+localStorage.getItem(`seen_${r}_${c}`)||0,o=r==='s'?'guru':'siswa';return rowsOf(c,'PESAN').filter(m=>J(m.laporan).from===o&&rowTs(m)>seen).length}
+function updateBadges(quiet){
+  const n=currentUser?unread('s',currentUser.code):guru?siswaOf(guru).reduce((a,p)=>a+unread('g',p.code),0):0,b=$(currentUser?'tb-s-pesan':'tb-g-pesan');
+  if(b){b.textContent=n;b.style.display=n?'inline':'none'}
+  if(!quiet&&n>prevUnread)showToast('📩 Ada pesan baru');prevUnread=n;
+}
+function sendBroadcast(){
+  const t=$('g-bc').value.trim(),S=siswaOf(guru);if(!t||!S.length)return showToast('Isi pesan / belum ada siswa','error');
+  post(S.map(p=>mk(p,{status:'PESAN',kegiatan:t,laporan:JSON.stringify({from:'guru',bc:1})})));
+  $('g-bc').value='';showToast(`Broadcast terkirim ke ${S.length} siswa`);
+}
+function bcWA(){
+  const t=$('g-bc').value.trim()||'Pengumuman dari guru pembimbing PKL.';
+  $('g-bc-wa').innerHTML=siswaOf(guru).map(p=>`<a class="inline-block m-1 px-3 py-1 rounded-lg bg-emerald-500 text-white font-semibold" target="_blank" href="${wa(p.hp,t)}">${esc(p.nama)}</a>`).join('')||'Belum ada siswa.';
+}
+
+// ---------- halaman guru ----------
+const gSel=()=>pesertaAll().find(p=>p.code===$('g-sis').value);
+function initGuru(){
+  $('g-info').textContent=`${guru.nama} | Kode ${guru.code} | ${siswaOf(guru).length} siswa bimbingan`;
+  $('g-sis').innerHTML='<option value="">— Semua siswa / pilih siswa —</option>'+siswaOf(guru).map(p=>`<option value="${p.code}">${esc(p.nama)} (${esc(p.kelas)})</option>`).join('');
+  $('g-date').value=TODAY();
+  const t=J(localStorage.getItem('g_ttd'));$('g-nip').value=t.nip||'';$('g-ks').value=t.ks||'';$('g-ksn').value=t.ksn||'';
+  buildTabs('g',[['ringkasan','Ringkasan'],['riwayat','Riwayat & Koreksi'],['nilai','Penilaian'],['monitoring','Monitoring'],['pesan','Pesan'],['cetak','Cetak']],'g-tabs');
+  $('g-pesan').innerHTML=chatPane('g');setTab('g','ringkasan');updateBadges(true);
+}
+function renderGuruTab(){({ringkasan:renderRingkasan,riwayat:renderGRiwayat,nilai:renderNilai,monitoring:renderMon,pesan:()=>renderChat('g')}[curTab.g]||(()=>{}))()}
+const need=el=>{if(!$('g-sis').value){$(el).innerHTML='<div class="card text-sm text-gray-500">Pilih siswa pada kotak “Siswa Bimbingan” di atas.</div>';return false}return true};
+function renderRingkasan(){
+  const D=$('g-date').value||TODAY(),S=siswaOf(guru).map(p=>({p,d:dayStatus(p,D),st:stats(p)})).filter(x=>x.d);
+  const H=S.filter(x=>x.d.status==='Hadir'),I=S.filter(x=>x.d.status==='Izin'||x.d.status==='Sakit'),T=S.filter(x=>x.d.status!=='Hadir');
+  $('g-cards').innerHTML=chip('Siswa Aktif',S.length,'#2563eb')+chip('Hadir',H.length,'#10b981')+chip('Izin/Sakit',I.length,'#f59e0b')+chip('Tidak Hadir',T.length-I.length,'#ef4444');
+  $('g-hadir').innerHTML=H.map(x=>`<div class="text-xs py-1 border-b border-slate-200">✅ <b>${esc(x.p.nama)}</b> — masuk ${x.d.masuk||'-'}${x.d.pulang?', pulang '+x.d.pulang:''}${x.d.jarak!=null?` · ${Math.round(x.d.jarak)} m`:''}</div>`).join('')||'<p class="text-xs text-gray-500">Belum ada.</p>';
+  $('g-absen').innerHTML=T.map(x=>{const u=wa(x.p.hp,`Halo ${x.p.nama}, hari ini (${fdate(D)}) Anda belum presensi PKL. Mohon segera presensi / beri keterangan. Terima kasih.`);
+    return `<div class="text-xs py-1 border-b border-slate-200">❌ <b>${esc(x.p.nama)}</b> — <span style="color:${stCol(x.d.status)};font-weight:700">${x.d.status}</span>${x.d.kegiatan?': '+esc(x.d.kegiatan):''} ${u?`<a href="${u}" target="_blank" class="text-emerald-600 font-bold">[WA]</a>`:''}</div>`}).join('')||'<p class="text-xs text-gray-500">Semua hadir 🎉</p>';
+  const A=siswaOf(guru).map(p=>({p,st:stats(p)})).sort((a,b)=>b.st.skor-a.st.skor);
+  $('ch-bar-wrap').style.height=Math.max(240,A.length*30+60)+'px';
+  mkChart('ch-bar',barSkor(A));
+  const sel=gSel(),avg=A.length?MET.map((k,i)=>Math.round(A.reduce((a,x)=>a+x.st.vals[i],0)/A.length)):[0,0,0,0,0];
+  mkChart('ch-radar',sel?radarCfg(stats(sel).vals,sel.nama,avg):radarCfg(avg,'Rata-rata semua siswa'));
+}
+function renderGRiwayat(){
+  if(!need('g-riw'))return;const p=gSel(),st=stats(p);
+  $('g-riw').innerHTML=`<div class="card"><div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-3">${chip('Hadir',st.hadir,'#10b981')+chip('Izin/Sakit',st.izin,'#f59e0b')+chip('Alpa',st.alpa,'#ef4444')+chip('Keaktifan',st.skor+'%','#2563eb')}</div>
+  <div class="flex justify-between items-center mb-2"><p class="text-xs text-gray-500">Klik “Koreksi” untuk memperbaiki presensi yang salah (riwayat koreksi tetap tercatat).</p><button class="btn-3d btn-3d-warning text-xs" onclick="openKoreksi(TODAY())">+ Koreksi Tanggal</button></div>
+  <div class="table-container" style="max-height:60vh"><table style="min-width:820px"><thead><tr><th>Tanggal</th><th>Masuk</th><th>Pulang</th><th>Status</th><th>Jarak</th><th>Kegiatan / Keterangan</th><th>Aksi</th></tr></thead><tbody>${st.fd.slice().reverse().map(d=>`<tr><td>${fdate(d.date)}</td><td>${d.masuk||'-'}</td><td>${d.pulang||'-'}</td><td><b style="color:${stCol(d.status)}">${d.status}</b>${d.koreksi?'<div class="text-[10px] text-blue-500">dikoreksi</div>':''}</td><td>${d.jarak!=null?Math.round(d.jarak)+' m':'-'}</td><td style="white-space:normal;min-width:220px">${esc(d.kegiatan)||'-'}</td><td><button class="text-blue-600 text-xs font-bold" onclick="openKoreksi('${d.date}')">Koreksi</button></td></tr>`).join('')}</tbody></table></div></div>`;
+}
+function openKoreksi(date){
+  const p=gSel();if(!p)return showToast('Pilih siswa dahulu','error');
+  const d=fullDays(p).find(x=>x.date===date)||{};koreksiDate=date;
+  $('k-info').textContent=`${p.nama} — ${fdate(date)} (status saat ini: ${d.status||'belum ada'})`;
+  $('k-tgl').value=date;$('k-status').value=['Hadir','Izin','Sakit','Alpa'].includes(d.status)?d.status:'Hadir';
+  $('k-masuk').value=(d.masuk||'').slice(0,5);$('k-pulang').value=(d.pulang||'').slice(0,5);$('k-note').value='';$('koreksi-modal').style.display='flex';
+}
+function saveKoreksi(){
+  const p=gSel(),date=$('k-tgl').value,n=$('k-note').value.trim();if(!p||!date)return;
+  if(!n)return showToast('Isi alasan koreksi','error');
+  const t=v=>v?v+':00':'';
+  post(mk(p,{tanggal:date,status:'KOREKSI',kegiatan:n,laporan:JSON.stringify({status:$('k-status').value,masuk:t($('k-masuk').value),pulang:t($('k-pulang').value),ts:Date.now(),oleh:guru.nama})}));
+  $('koreksi-modal').style.display='none';renderGRiwayat();showToast('Presensi dikoreksi');
+}
+const ASP=[['disiplin','Disiplin & Kehadiran','number'],['kompetensi','Kompetensi Teknis','number'],['kerjasama','Kerja Sama','number'],['inisiatif','Inisiatif & Tanggung Jawab','number'],['komunikasi','Komunikasi','number'],['laporan','Laporan & Jurnal','number']];
+function renderNilai(){
+  if(!need('g-nilai'))return;const p=gSel(),n=nilaiOf(p.code);
+  $('g-nilai').innerHTML=`<div class="card"><h3 class="font-bold text-sm mb-3">Penilaian: ${esc(p.nama)} ${n.avg?`— Rata-rata <b>${n.avg}</b> · ${predikat(n.avg)}`:''}</h3>
+  <div class="grid sm:grid-cols-2 gap-3">${ASP.map(a=>fld('n',a,(n.a||{})[a[0]])).join('')}${fld('n',['cat','Catatan Guru','ta'],n.catatan)}</div>
+  <div class="flex flex-wrap gap-2 mt-4"><button onclick="saveNilai()" class="btn-3d btn-3d-success">Simpan Nilai</button><button onclick="printDoc(jurnalHTML(gSel()))" class="btn-3d btn-3d-primary">Cetak Jurnal Siswa</button><button onclick="printDoc(laporanHTML(gSel()))" class="btn-3d btn-3d-primary">Cetak Laporan Akhir Siswa</button></div></div>`;
+}
+function saveNilai(){
+  const p=gSel(),a={};let s=0;
+  for(const x of ASP){const v=parseFloat($('n-'+x[0]).value);if(isNaN(v)||v<0||v>100)return showToast(`Nilai ${x[1]} harus 0–100`,'error');a[x[0]]=v;s+=v}
+  const avg=Math.round(s/ASP.length*10)/10;
+  upsert(mk(p,{status:'NILAI',kegiatan:$('n-cat').value.trim(),laporan:JSON.stringify({a,avg,ts:Date.now(),oleh:guru.nama})}));
+  showToast('Nilai tersimpan');renderNilai();
+}
+const MON=[['tgl','Tanggal Kunjungan','date'],['pdudi','Pembimbing Industri (DUDI)','text'],['hadir','Siswa berada di lokasi','sel',['Ya','Tidak']],['kondisi','Kondisi tempat kerja & fasilitas','sel',['Baik','Cukup','Kurang']],
+ ['kesesuaian','Kesesuaian pekerjaan dengan kompetensi','sel',['Sesuai','Cukup Sesuai','Kurang Sesuai']],['sikap','Sikap & disiplin siswa (5 terbaik)','sel',['5','4','3','2','1']],
+ ['obs','Hasil pengamatan kegiatan siswa','ta'],['kendala','Kendala yang dihadapi','ta'],['tindak','Tindak lanjut / saran','ta']];
+const monRows=c=>rowsOf(c,'MONITORING').sort((a,b)=>rowTs(b)-rowTs(a));
+function renderMon(){
+  if(!need('g-mon'))return;const p=gSel();
+  $('g-mon').innerHTML=`<div class="card mb-3"><h3 class="font-bold text-sm mb-3">Laporan Monitoring Kunjungan: ${esc(p.nama)} — ${esc(p.perusahaan)}</h3><div class="grid sm:grid-cols-2 gap-3">${MON.map(f=>fld('m',f,f[0]==='tgl'?TODAY():'')).join('')}</div>
+  <button onclick="saveMon()" class="btn-3d btn-3d-success mt-4">Simpan Laporan Monitoring</button></div>
+  <div class="card"><h3 class="font-bold text-sm mb-2">Riwayat Kunjungan</h3>${monRows(p.code).map((r,i)=>{const j=J(r.laporan);return `<div class="flex justify-between items-center text-xs py-2 border-b border-slate-200"><span>${fdate(j.tgl||r.tanggal)} — ${esc(j.pdudi||'-')} · ${esc(j.kesesuaian||'')} · sikap ${esc(j.sikap||'-')}/5</span><button class="text-blue-600 font-bold" onclick="printMon(${i})">Cetak</button></div>`}).join('')||'<p class="text-xs text-gray-500">Belum ada kunjungan.</p>'}</div>`;
+}
+function saveMon(){
+  const p=gSel(),j={};MON.forEach(f=>j[f[0]]=$('m-'+f[0]).value.trim());
+  if(!j.tgl||!j.obs)return showToast('Isi tanggal dan hasil pengamatan','error');
+  j.oleh=guru.nama;post(mk(p,{tanggal:j.tgl,status:'MONITORING',kegiatan:j.obs.slice(0,150),laporan:JSON.stringify(j)}));showToast('Laporan monitoring tersimpan');renderMon();
+}
+function printMon(i){
+  const p=gSel(),j=J(monRows(p.code)[i].laporan);
+  printDoc(`<div class="pr">${kop('LAPORAN MONITORING KUNJUNGAN PKL')}<table class="nb"><tr><td width="30%">Nama Siswa</td><td>: ${esc(p.nama)} (${esc(p.kelas)})</td></tr><tr><td>Perusahaan / DUDI</td><td>: ${esc(p.perusahaan)}</td></tr><tr><td>Pembimbing Industri</td><td>: ${esc(j.pdudi)}</td></tr><tr><td>Guru Pembimbing</td><td>: ${esc(guru.nama)}</td></tr><tr><td>Tanggal Kunjungan</td><td>: ${fdate(j.tgl)}</td></tr></table>
+  <h2>Hasil Monitoring</h2><table><tr><th width="35%">Aspek</th><th>Hasil</th></tr>${MON.slice(2).map(f=>`<tr><td>${f[1]}</td><td style="white-space:pre-wrap">${esc(j[f[0]])||'-'}</td></tr>`).join('')}</table>${ttd([['Pembimbing Industri',j.pdudi],['Guru Pembimbing',guru.nama]])}</div>`);
+}
+
+// ---------- CETAK ----------
+const PRCSS=`.pr{font-family:'Times New Roman',serif;font-size:11pt;color:#000;line-height:1.45}.pr h1{font-size:14pt;text-align:center;margin:6px 0}.pr h2{font-size:12pt;margin:14px 0 6px;border-bottom:1px solid #000;padding-bottom:2px}
+.pr table{border-collapse:collapse;width:100%;min-width:0!important;white-space:normal!important;font-size:10pt;margin:6px 0}.pr th,.pr td{border:1px solid #000!important;padding:4px 6px;vertical-align:top;color:#000!important;background:#fff!important}
+.pr th{background:#e5e7eb!important;text-align:center;position:static}.pr table.nb th,.pr table.nb td{border:none!important;padding:1px 4px}.pr tr{page-break-inside:avoid}.pr thead{display:table-header-group}
+.pr img.ch{width:100%;display:block;margin:6px auto;page-break-inside:avoid}.pr .row{display:flex;gap:10px}.pr .row>div{flex:1}.pr .ttd{display:flex;justify-content:space-around;margin-top:26px;page-break-inside:avoid;text-align:center}
+.pr .pb{page-break-after:always}.pr .c{text-align:center}.pr p.ps{white-space:pre-wrap;text-align:justify;margin:4px 0}`;
+document.head.insertAdjacentHTML('beforeend',`<style>${PRCSS}</style><style id="page-style"></style>`);
+const kop=(t,logo=true)=>`<table class="nb" style="border-bottom:3px double #000;margin-bottom:8px"><tr><td style="width:80px;text-align:center">${logo?'<img src="LOGO NGLIPAR.png" style="width:64px" onerror="this.style.display=\'none\'">':''}</td><td style="text-align:center"><div style="font-size:11pt;font-weight:bold">PEMERINTAH DAERAH DAERAH ISTIMEWA YOGYAKARTA</div><div style="font-size:14pt;font-weight:bold">SMK NEGERI 1 NGLIPAR</div><div style="font-size:10pt">Gunungkidul, Daerah Istimewa Yogyakarta</div></td><td style="width:80px"></td></tr></table><h1>${t}</h1>`;
+const ttd=a=>`<p style="text-align:right;margin-top:18px">Nglipar, ${tglIndo(new Date())}</p><div class="ttd">${a.map(x=>`<div>${x[0]}<br><br><br><br><b><u>${esc(x[1]||'............................')}</u></b>${x[2]?'<br>'+esc(x[2]):''}</div>`).join('')}</div>`;
+let wasDark=false;
+function printDoc(html,land){
+  const r=$('print-root');r.innerHTML=html;$('page-style').textContent=`@page{size:A4 ${land?'landscape':'portrait'};margin:12mm}`;
+  wasDark=document.body.classList.contains('dark-mode');document.body.classList.remove('dark-mode');
+  Promise.all([...r.querySelectorAll('img')].map(i=>i.complete?1:new Promise(o=>{i.onload=i.onerror=o}))).then(()=>setTimeout(()=>window.print(),200));
+}
+window.addEventListener('afterprint',()=>{$('print-root').innerHTML='';if(wasDark)document.body.classList.add('dark-mode')});
+const idRow=(p,g)=>`<table class="nb"><tr><td width="22%">Nama</td><td>: ${esc(p.nama)}</td><td width="18%">Kelas</td><td>: ${esc(p.kelas)}</td></tr><tr><td>Perusahaan (DUDI)</td><td>: ${esc(p.perusahaan)}</td><td>Periode</td><td>: ${fdate(p.mulai)} s.d. ${fdate(p.selesai)}</td></tr><tr><td>Guru Pembimbing</td><td>: ${esc((g||{}).nama||'-')}</td><td>Dicetak</td><td>: ${tglIndo(new Date())}</td></tr></table>`;
+function jurnalHTML(p){
+  const st=stats(p),g=guruOf(p),wk=weekly(p,st.fd),n=nilaiOf(p.code);
+  const rad=chartImg(radarCfg(st.vals,p.nama),520,380),bar=wk.labels.length?chartImg(weeklyCfg(wk),520,380):'';
+  return `<div class="pr">${kop('LAPORAN JURNAL KEGIATAN PRAKTIK KERJA INDUSTRI')}${idRow(p,g)}
+  <h2>A. Ringkasan Kehadiran & Keaktifan</h2><table><tr><th>Hari Kerja</th><th>Hadir</th><th>Izin/Sakit</th><th>Alpa</th><th>% Kehadiran</th><th>Skor Keaktifan</th><th>Nilai Akhir</th></tr><tr class="c"><td>${st.el}</td><td>${st.hadir}</td><td>${st.izin}</td><td>${st.alpa}</td><td>${st.m.Kehadiran}%</td><td>${st.skor}%</td><td>${n.avg?n.avg+' ('+predikat(n.avg).charAt(0)+')':'-'}</td></tr></table>
+  <div class="row"><div><h3>Grafik Radar Keaktifan</h3><img class="ch" src="${rad}"></div><div><h3>Grafik Kehadiran per Minggu</h3>${bar?`<img class="ch" src="${bar}">`:'-'}</div></div>
+  <table><tr>${MET.map(k=>`<th>${k}</th>`).join('')}</tr><tr class="c">${st.vals.map(v=>`<td>${v}%</td>`).join('')}</tr></table>
+  <h2>B. Rincian Jurnal Harian</h2><table><thead><tr><th width="4%">No</th><th width="11%">Tanggal</th><th width="8%">Masuk</th><th width="8%">Pulang</th><th width="9%">Status</th><th>Kegiatan / Keterangan</th><th width="8%">Jarak</th></tr></thead><tbody>${st.fd.map((d,i)=>`<tr><td class="c">${i+1}</td><td>${fdate(d.date)}</td><td class="c">${d.masuk||'-'}</td><td class="c">${d.pulang||'-'}</td><td class="c">${d.status}${d.koreksi?'*':''}</td><td>${esc(d.kegiatan)||'-'}</td><td class="c">${d.jarak!=null?Math.round(d.jarak)+' m':'-'}</td></tr>`).join('')||'<tr><td colspan="7" class="c">Belum ada data</td></tr>'}</tbody></table><p style="font-size:9pt">* data telah dikoreksi oleh guru pembimbing</p>
+  ${ttd([['Pembimbing Industri',''],['Guru Pembimbing',(g||{}).nama],['Peserta PKL',p.nama]])}</div>`;
+}
+function printHistory(){printDoc(jurnalHTML(currentUser))}
+function rekapRows(S,withGuru){return S.map((x,i)=>`<tr><td class="c">${i+1}</td><td>${esc(x.p.nama)}</td><td>${esc(x.p.kelas)}</td><td>${esc(x.p.perusahaan)}</td>${withGuru?`<td>${esc((guruOf(x.p)||{}).nama||'-')}</td>`:''}<td class="c">${x.st.hadir}</td><td class="c">${x.st.izin}</td><td class="c">${x.st.alpa}</td><td class="c">${x.st.m.Kehadiran}%</td><td class="c">${x.st.skor}%</td><td class="c">${x.n.avg||'-'}</td></tr>`).join('')}
+const rekapHead=g=>`<thead><tr><th>No</th><th>Nama</th><th>Kelas</th><th>Perusahaan</th>${g?'<th>Pembimbing</th>':''}<th>Hadir</th><th>Izin</th><th>Alpa</th><th>% Hadir</th><th>Keaktifan</th><th>Nilai</th></tr></thead>`;
+function printGuru(){
+  const sis=siswaOf(guru);if(!sis.length)return showToast('Belum ada siswa bimbingan','error');
+  localStorage.setItem('g_ttd',JSON.stringify({nip:$('g-nip').value,ks:$('g-ks').value,ksn:$('g-ksn').value}));
+  const S=sis.map(p=>({p,st:stats(p),n:nilaiOf(p.code)})).sort((a,b)=>b.st.skor-a.st.skor),avg=MET.map((k,i)=>Math.round(S.reduce((a,x)=>a+x.st.vals[i],0)/S.length));
+  const bar=chartImg(barSkor(S),700,Math.max(240,S.length*26+70)),rad=chartImg(radarCfg(avg,'Rata-rata siswa bimbingan'),520,380);
+  const M=S.flatMap(x=>monRows(x.p.code).map(r=>({p:x.p,j:J(r.laporan)}))).sort((a,b)=>a.j.tgl<b.j.tgl?-1:1);
+  printDoc(`<div class="pr">${kop('LAPORAN GURU PEMBIMBING PRAKTIK KERJA INDUSTRI')}<table class="nb"><tr><td width="25%">Guru Pembimbing</td><td>: ${esc(guru.nama)}</td></tr><tr><td>NIP</td><td>: ${esc($('g-nip').value)||'-'}</td></tr><tr><td>Jumlah Siswa</td><td>: ${S.length}</td></tr></table>
+  <h2>A. Rekapitulasi Siswa Bimbingan</h2><table>${rekapHead(false)}<tbody>${rekapRows(S,false)}</tbody></table>
+  <h2>B. Grafik Keaktifan</h2><img class="ch" src="${bar}"><div class="row"><div><h3>Radar Rata-rata Keaktifan</h3><img class="ch" src="${rad}"></div><div><h3>Nilai Rata-rata per Indikator</h3><table><tr><th>Indikator</th><th>Rata-rata</th></tr>${MET.map((k,i)=>`<tr><td>${k}</td><td class="c">${avg[i]}%</td></tr>`).join('')}</table></div></div>
+  <h2>C. Rekap Kunjungan Monitoring</h2><table><thead><tr><th>No</th><th>Tanggal</th><th>Siswa</th><th>DUDI</th><th>Kondisi</th><th>Kesesuaian</th><th>Sikap</th><th>Tindak Lanjut</th></tr></thead><tbody>${M.map((m,i)=>`<tr><td class="c">${i+1}</td><td>${fdate(m.j.tgl)}</td><td>${esc(m.p.nama)}</td><td>${esc(m.p.perusahaan)}</td><td>${esc(m.j.kondisi)}</td><td>${esc(m.j.kesesuaian)}</td><td class="c">${esc(m.j.sikap)}</td><td>${esc(m.j.tindak)}</td></tr>`).join('')||'<tr><td colspan="8" class="c">Belum ada kunjungan</td></tr>'}</tbody></table>
+  ${ttd([['Mengetahui,<br>Kepala Sekolah',$('g-ks').value,$('g-ksn').value&&'NIP. '+$('g-ksn').value],['Guru Pembimbing',guru.nama,$('g-nip').value&&'NIP. '+$('g-nip').value]])}</div>`);
+}
+function printAdminReport(){
+  const S=pesertaAll().map(p=>({p,st:stats(p),n:nilaiOf(p.code)})).sort((a,b)=>a.p.kelas<b.p.kelas?-1:a.p.kelas>b.p.kelas?1:a.p.nama<b.p.nama?-1:1);
+  if(!S.length)return showToast('Belum ada data peserta','error');
+  const kl={};S.forEach(x=>{const k=kl[x.p.kelas]||(kl[x.p.kelas]={n:0,h:0,s:0});k.n++;k.h+=x.st.m.Kehadiran;k.s+=x.st.skor});const ks=Object.keys(kl);
+  const tot=S.reduce((a,x)=>[a[0]+x.st.hadir,a[1]+x.st.izin,a[2]+x.st.alpa],[0,0,0]);
+  const c1=chartImg({type:'bar',data:{labels:ks,datasets:[{label:'Rata-rata Kehadiran (%)',data:ks.map(k=>Math.round(kl[k].h/kl[k].n)),backgroundColor:COL.H,suffix:'%'},{label:'Rata-rata Keaktifan (%)',data:ks.map(k=>Math.round(kl[k].s/kl[k].n)),backgroundColor:COL.B,suffix:'%'}]},options:{scales:{y:{min:0,max:100}},plugins:{legend:{position:'bottom'}}}},760,360);
+  const c2=chartImg({type:'doughnut',data:{labels:[`Hadir (${tot[0]})`,`Izin/Sakit (${tot[1]})`,`Alpa (${tot[2]})`],datasets:[{data:tot,backgroundColor:[COL.H,COL.I,COL.A]}]},options:{plugins:{legend:{position:'bottom'}}}},420,360);
+  printDoc(`<div class="pr">${kop('LAPORAN REKAP PRESENSI PKL')}<p class="c">Dicetak ${tglIndo(new Date())} · Total peserta ${S.length}</p>
+  <h2>A. Grafik Rekapitulasi</h2><div class="row"><div style="flex:1.7"><img class="ch" src="${c1}"></div><div><img class="ch" src="${c2}"></div></div>
+  <table><tr><th>Kelas</th><th>Jumlah Siswa</th><th>Rata-rata Kehadiran</th><th>Rata-rata Keaktifan</th></tr>${ks.map(k=>`<tr class="c"><td>${esc(k)}</td><td>${kl[k].n}</td><td>${Math.round(kl[k].h/kl[k].n)}%</td><td>${Math.round(kl[k].s/kl[k].n)}%</td></tr>`).join('')}</table>
+  <h2>B. Rekap per Siswa</h2><table>${rekapHead(true)}<tbody>${rekapRows(S,true)}</tbody></table>
+  ${ttd([['Admin PKL',$('admin-ttd-nama').value,$('admin-ttd-nip').value&&'NIP. '+$('admin-ttd-nip').value],['Kepala Sekolah',$('kepsek-nama').value,$('kepsek-nip').value&&'NIP. '+$('kepsek-nip').value]])}</div>`,true);
+}
+
+// ---------- ADMIN ----------
+function fillPembimbing(){$('admin-pembimbing').innerHTML='<option value="">(Belum ditentukan)</option>'+guruAll().map(g=>`<option value="${g.code}">${esc(g.nama)}</option>`).join('')}
+async function loadReportData(){await refreshData();renderAdminTable();renderGuruTable()}
+function switchAdminTab(t){
+  ['add','guru','report'].forEach(x=>{$('tab-'+x).classList.toggle('active',x===t);$('admin-'+x).style.display=x===t?'block':'none'});
+  if(t==='report')loadReportData();if(t==='guru')refreshData().then(renderGuruTable);if(t==='add')fillPembimbing();
+}
+function renderAdminTable(){
+  const gs=guruAll();
+  $('admin-table-body').innerHTML=pesertaAll().map((p,i)=>{
+    const st=stats(p),lm=rowsOf(p.code,'Masuk').slice(-1)[0]||{};
+    return `<tr><td>${i+1}</td><td class="font-bold">${esc(p.nama)}</td><td>${esc(p.kelas)}</td><td>${esc(p.hp)||'-'}</td><td>${esc(p.perusahaan)}</td><td class="text-xs font-mono">${esc(p.koordinatPerusahaan)||'-'}</td><td class="text-xs font-mono">${esc(lm.koordinatPresensi)||'-'}</td><td>${esc(lm.jarak)||'-'}</td><td class="font-mono font-bold text-blue-600">${p.code}</td><td>${fdate(p.mulai)}</td><td>${fdate(p.selesai)}</td>
+    <td><select class="input-field !py-1 !text-xs" onchange="setPembimbing('${p.code}',this.value)"><option value="">-</option>${gs.map(g=>`<option value="${g.code}" ${g.code===p.pembimbing?'selected':''}>${esc(g.nama)}</option>`).join('')}</select></td>
+    <td><span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs font-bold">${st.hadir} hari · ${st.skor}%</span></td>
+    <td class="no-print"><button onclick="askResetPeserta('${p.code}')" class="text-orange-500 text-xs">Reset</button><button onclick="askDeletePeserta('${p.code}')" class="text-red-500 text-xs ml-2">Hapus</button></td></tr>`}).join('')||'<tr><td colspan="14" class="text-center text-gray-400">Belum ada peserta</td></tr>';
+}
+function renderGuruTable(){
+  $('guru-body').innerHTML=guruAll().map(g=>`<tr><td>${esc(g.nama)}</td><td>${esc(g.hp)||'-'}</td><td class="font-mono font-bold text-blue-600">${g.code}</td><td>${siswaOf(g).length}</td><td><a class="text-emerald-600 text-xs font-bold" target="_blank" href="${wa(g.hp,`Anda terdaftar sebagai Guru Pembimbing PKL SMKN 1 Nglipar.\nKode login: *${g.code}*`)}">Kirim Kode WA</a><button onclick="askDeletePeserta('${g.code}')" class="text-red-500 text-xs ml-3">Hapus</button></td></tr>`).join('')||'<tr><td colspan="5" class="text-center text-gray-400">Belum ada guru</td></tr>';
+}
+function setPembimbing(code,g){const p=DB.rows.find(r=>r.status==='PESERTA'&&r.code===code);if(p)p.pembimbing=g;sendToSpreadsheet({action:'setPembimbing',kode:code,pembimbing:g});showToast('Pembimbing diperbarui')}
+function addGuru(){
+  const nama=$('guru-nama').value.trim(),hp=$('guru-hp').value.trim();if(!nama)return showToast('Isi nama guru','error');
+  const code=uniqueCode();post({tanggal:'',waktu:'',nama,kelas:'',hp,perusahaan:'',koordinatPerusahaan:'',koordinatPresensi:'',jarak:'',status:'GURU',kegiatan:'',mulai:'',selesai:'',code,pembimbing:'',laporan:''});
+  $('guru-code-out').innerHTML=`Kode login <b class="font-mono text-xl">${code}</b> untuk ${esc(nama)}`;$('guru-nama').value='';$('guru-hp').value='';renderGuruTable();showToast('Guru ditambahkan');
+}
+function addPeserta(){
+  const nama=$('admin-nama').value.trim(),kd=$('admin-kelas').value;if(!kd)return showToast('Pilih kelas terlebih dahulu','error');
+  const[kelas,jurusan]=kd.split('|'),hp=$('admin-hp').value.trim(),perusahaan=$('admin-perusahaan').value.trim(),koordinat=$('admin-koordinat').value.trim(),bpjs=$('admin-bpjs').value.trim(),mulai=$('admin-mulai').value,selesai=$('admin-selesai').value;
+  if(!nama||!perusahaan||!mulai||!selesai)return showToast('Lengkapi semua data wajib','error');
+  const code=uniqueCode();lastGeneratedPhone=hp;
+  post({tanggal:'',waktu:'',nama,kelas,hp,perusahaan,koordinatPerusahaan:koordinat,koordinatPresensi:'',jarak:'',status:'PESERTA',kegiatan:'',mulai,selesai,code,pembimbing:$('admin-pembimbing').value,laporan:JSON.stringify({bpjs,jurusan})});
+  $('generated-code').textContent=code;$('generated-code').dataset.hp=hp;$('generated-code-section').style.display='block';showToast(`Peserta ${nama} berhasil ditambahkan!`);
+  ['admin-nama','admin-kelas','admin-hp','admin-perusahaan','admin-koordinat','admin-bpjs','admin-mulai','admin-selesai'].forEach(id=>$(id).value='');
+}
+function deletePeserta(code){DB.rows=DB.rows.filter(r=>r.code!==code);sendToSpreadsheet({action:'deleteKode',kode:code});renderAdminTable();renderGuruTable();showToast('Data berhasil dihapus')}
+function resetPeserta(code){DB.rows=DB.rows.filter(r=>r.code!==code||r.status==='PESERTA'||r.status==='GURU');sendToSpreadsheet({action:'resetKode',kode:code});renderAdminTable();showToast('Riwayat peserta berhasil direset')}
+function resetAllData(){DB.rows=[];sendToSpreadsheet({action:'clearAll'});renderAdminTable();renderGuruTable();showToast('Semua data berhasil dihapus')}
+
+// init
+if(!localStorage.getItem('pkl_theme')){}
+</script>
+</body>
+</html>
