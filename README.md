@@ -1,2 +1,2 @@
 # PKL
-PKL untuk SMK N 1 Sanden
+PKL untuk SMK N 1 Nglipar
