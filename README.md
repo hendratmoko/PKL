@@ -91,7 +91,7 @@ Semua peran masuk lewat kolom **INPUT KODE** di halaman login. Sistem mengenali 
 
 | Peran | Asal kode |
 |---|---|
-| Admin | `ADMIN_CODE` di `index.html`. |
+| Admin | `ADMIN_CODE` di `index.html` = AAA000. |
 | Guru | Dibuat admin di tab **Guru Pembimbing**. |
 | Siswa | Dibuat otomatis saat admin menambah peserta. |
 
