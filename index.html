@@ -253,6 +253,8 @@
      <div id="days-remaining" class="text-xs font-bold text-blue-700 bg-blue-50 dark:bg-blue-950/50 dark:text-blue-300 px-4 py-2 rounded-full border border-blue-100 dark:border-blue-900"></div>
     </div>
    </div>
+   <div id="remind-banner" class="no-print mb-3 rounded-xl p-3 text-sm font-semibold" style="display:none;background:#fef3c7;color:#92400e;border:1px solid #fcd34d"></div>
+   <div id="notif-row" class="no-print mb-3 text-xs text-gray-500 dark:text-slate-400"></div>
    <div class="flex flex-wrap items-center gap-2 mb-4 no-print"><div id="s-tabs" class="flex flex-wrap gap-2 flex-1"></div><button onclick="handleLogout()" class="btn-3d btn-3d-danger text-xs"><i data-lucide="log-out" class="w-4 h-4"></i> Keluar</button></div>
    <div class="card mb-4 no-print tabpane" data-g="s" data-p="presensi">
     <h3 class="font-bold text-blue-950 dark:text-white text-sm mb-4 flex items-center gap-2"><i data-lucide="clipboard-check" class="w-5 h-5 text-blue-600"></i> Form Presensi PKL</h3>
@@ -269,9 +271,9 @@
       Belum mendapatkan lokasi
      </div><button onclick="getLocation()" class="btn-3d btn-3d-primary mt-3"> <i data-lucide="map-pin" class="w-4 h-4"></i> Ambil Lokasi</button>
     </div>
-    <div class="flex flex-wrap gap-2 mb-2 justify-center"><button onclick="absenMasuk()" id="btn-masuk" class="btn-3d btn-3d-success"> <i data-lucide="log-in" class="w-4 h-4"></i> Absen Masuk </button> <button onclick="absenPulang()" id="btn-pulang" class="btn-3d btn-3d-primary" style="display:none"> <i data-lucide="log-out" class="w-4 h-4"></i> Absen Pulang </button>
+    <div class="flex flex-wrap gap-2 mb-2 justify-center"><button onclick="absenMasuk()" id="btn-masuk" class="btn-3d btn-3d-success"> <i data-lucide="log-in" class="w-4 h-4"></i> Absen Masuk </button>
     </div>
-    <div id="kegiatan-section" style="display:none" class="mb-4 mt-4 fade-in"><label class="block text-xs font-bold text-gray-600 dark:text-slate-300 mb-2">Kegiatan Hari Ini</label> <textarea id="kegiatan-input" rows="3" class="input-field" placeholder="Tuliskan jurnal kegiatan yang Anda lakukan hari ini..."></textarea> <button onclick="submitKegiatan()" class="btn-3d btn-3d-success mt-2">Simpan Kegiatan</button>
+    <div id="kegiatan-section" style="display:none" class="mb-4 mt-4 fade-in"><label class="block text-xs font-bold text-gray-600 dark:text-slate-300 mb-2">Kegiatan Hari Ini <span class="font-normal text-gray-500">(wajib diisi saat Absen Pulang)</span></label> <textarea id="kegiatan-input" rows="3" class="input-field" placeholder="Tuliskan jurnal kegiatan yang Anda lakukan hari ini..."></textarea> <p class="text-[11px] text-gray-500 dark:text-slate-400 mt-1">Untuk Absen Pulang: ambil foto selfie &amp; lokasi baru di atas, lalu isi kegiatan.</p> <button onclick="absenPulang()" id="btn-pulang" class="btn-3d btn-3d-primary mt-2"> <i data-lucide="log-out" class="w-4 h-4"></i> Absen Pulang </button>
     </div>
     <div class="flex flex-wrap gap-2 mb-2 justify-center"><button onclick="showIzinForm()" id="btn-izin" class="btn-3d btn-3d-warning"> <i data-lucide="file-text" class="w-4 h-4"></i> Izin tidak PKL </button>
     </div>
@@ -279,9 +281,10 @@
     </div>
    </div>
    <div class="card mb-4 tabpane" data-g="s" data-p="riwayat" style="display:none">
-    <div class="flex flex-wrap items-center justify-between gap-2 mb-3"><h3 class="font-bold text-blue-950 dark:text-white text-sm flex items-center gap-2"><i data-lucide="history" class="w-5 h-5 text-blue-600"></i> Riwayat Presensi</h3><button onclick="printHistory()" class="btn-3d btn-3d-primary text-xs"><i data-lucide="printer" class="w-4 h-4"></i> Cetak Laporan Jurnal</button></div>
+    <div class="flex flex-wrap items-center justify-between gap-2 mb-3"><h3 class="font-bold text-blue-950 dark:text-white text-sm flex items-center gap-2"><i data-lucide="history" class="w-5 h-5 text-blue-600"></i> Riwayat Presensi</h3><div class="flex gap-2 flex-wrap"><button onclick="exportFoto()" class="btn-3d btn-3d-success text-xs"><i data-lucide="download" class="w-4 h-4"></i> Unduh Semua Foto</button><button onclick="printHistory()" class="btn-3d btn-3d-primary text-xs"><i data-lucide="printer" class="w-4 h-4"></i> Cetak Laporan Jurnal</button></div></div>
     <div id="stu-stats" class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-3"></div>
-    <div class="table-container" style="max-height:60vh"><table id="history-table" style="min-width:760px"><thead><tr><th>Tanggal</th><th>Masuk</th><th>Pulang</th><th>Status</th><th>Kegiatan</th><th>Jarak</th></tr></thead><tbody id="history-body"></tbody></table></div>
+    <p class="text-[11px] text-gray-500 dark:text-slate-400 mb-3">📷 Foto presensi hanya tersimpan di HP ini (tidak diunggah ke server). Jangan hapus data browser; gunakan “Unduh Semua Foto” sebagai cadangan atau untuk dikirim ke guru pembimbing.</p>
+    <div class="table-container" style="max-height:60vh"><table id="history-table" style="min-width:920px"><thead><tr><th>Tanggal</th><th>Masuk</th><th>Pulang</th><th>Status</th><th>Kegiatan</th><th>Jarak</th><th>Foto</th></tr></thead><tbody id="history-body"></tbody></table></div>
    </div>
    <div class="tabpane no-print" data-g="s" data-p="laporan" id="s-lap" style="display:none"></div>
    <div class="tabpane no-print" data-g="s" data-p="pesan" id="s-pesan" style="display:none"></div>
@@ -347,6 +350,7 @@
     </div>
     <div class="flex flex-wrap justify-between items-center gap-2 mb-3 no-print"><button onclick="printAdminReport()" class="btn-3d btn-3d-primary"> <i data-lucide="printer"></i> Cetak Laporan </button>
     </div>
+    <div id="admin-dev-alert" class="no-print mb-3"></div>
     <div id="admin-print-header" style="display:none">
      <table style="width:100%;border:none;margin-bottom:10px">
       <tbody>
@@ -371,7 +375,7 @@
      <hr style="border:2px solid black">
     </div>
     <div class="table-container">
-     <table id="admin-table" class="min-w-[1900px]">
+     <table id="admin-table" class="min-w-[2150px]">
       <thead>
        <tr>
         <th style="min-width:50px">No</th>
@@ -387,6 +391,7 @@
         <th style="min-width:120px">Selesai</th>
         <th style="min-width:160px">Pembimbing</th>
         <th style="min-width:140px">Kehadiran &amp; Keaktifan</th>
+        <th style="min-width:220px">Perangkat</th>
         <th style="min-width:120px" class="no-print">Aksi</th>
        </tr>
       </thead>
@@ -421,9 +426,12 @@
     <div><h2 class="text-lg font-bold text-blue-900 dark:text-white">Panel Guru Pembimbing</h2><p id="g-info" class="text-xs text-gray-500 dark:text-slate-400"></p></div>
     <div class="flex gap-2"><button onclick="gRefresh()" class="btn-3d btn-3d-primary text-xs">Muat Ulang</button><button onclick="handleLogout()" class="btn-3d btn-3d-danger text-xs">Keluar</button></div>
    </div>
+   <div id="g-remind" class="no-print mb-3 rounded-xl p-3 text-xs font-semibold" style="display:none;background:#fef3c7;color:#92400e;border:1px solid #fcd34d"></div>
+   <div id="g-notif-row" class="no-print mb-3 text-xs text-gray-500 dark:text-slate-400"></div>
    <div class="card mb-3 no-print"><label class="block text-xs font-bold mb-1">Siswa Bimbingan</label><select id="g-sis" class="input-field" onchange="renderGuruTab()"></select></div>
    <div id="g-tabs" class="flex flex-wrap gap-2 mb-3 no-print"></div>
    <div class="tabpane no-print" data-g="g" data-p="ringkasan">
+    <div id="g-dev"></div>
     <div class="card mb-3"><div class="flex flex-wrap items-center gap-3 mb-3"><label class="text-xs font-bold">Tanggal</label><input type="date" id="g-date" class="input-field" style="width:auto" onchange="renderRingkasan()"></div><div id="g-cards" class="grid grid-cols-2 sm:grid-cols-4 gap-3"></div></div>
     <div class="grid md:grid-cols-2 gap-3 mb-3"><div class="card"><h3 class="font-bold text-sm mb-2">✅ Siswa Hadir</h3><div id="g-hadir"></div></div><div class="card"><h3 class="font-bold text-sm mb-2">❌ Siswa Tidak Hadir</h3><div id="g-absen"></div></div></div>
     <div class="card mb-3"><h3 class="font-bold text-sm mb-2">Grafik Keaktifan Siswa</h3><div id="ch-bar-wrap" style="position:relative;height:300px"><canvas id="ch-bar"></canvas></div></div>
@@ -437,6 +445,7 @@
     <div class="grid sm:grid-cols-2 gap-3"><input id="g-nip" class="input-field" placeholder="NIP Guru"><input id="g-ks" class="input-field" placeholder="Nama Kepala Sekolah"><input id="g-ksn" class="input-field" placeholder="NIP Kepala Sekolah"></div>
     <button onclick="printGuru()" class="btn-3d btn-3d-primary mt-4"><i data-lucide="printer" class="w-4 h-4"></i> Cetak Laporan Guru (dengan grafik)</button></div></div>
   </div>
+  <div id="foto-modal" class="modal-overlay" style="display:none" onclick="if(event.target===this)closeFoto()"><div class="modal-content fade-in"><img id="foto-big" style="width:100%;border-radius:14px"><p id="foto-cap" class="text-xs mt-2 mb-3"></p><div class="flex gap-2 justify-center"><button onclick="downloadFoto()" class="btn-3d btn-3d-success text-xs">Unduh Foto</button><button onclick="closeFoto()" class="btn-3d btn-3d-primary text-xs">Tutup</button></div></div></div>
   <div id="koreksi-modal" class="modal-overlay" style="display:none"><div class="modal-content fade-in" style="text-align:left;max-width:420px">
    <h3 class="font-bold mb-1">Koreksi Presensi</h3><p id="k-info" class="text-xs mb-3 text-gray-500"></p>
    <div class="grid grid-cols-2 gap-2"><div class="col-span-2"><label class="text-xs font-semibold">Tanggal</label><input type="date" id="k-tgl" class="input-field"></div>
@@ -880,7 +889,7 @@ function days(code){
   const keg=r=>r.kegiatan&&r.kegiatan!=='-'?r.kegiatan:'';
   R.forEach(r=>{const d=g(r.tanggal);
     if(r.status==='Masuk'){d.masuk=r.waktu;d.gps=r.koordinatPresensi;d.jarak=parseJarak(r.jarak);d.status='Hadir'}
-    else if(r.status==='Pulang'){d.pulang=r.waktu;if(!d.gps)d.gps=r.koordinatPresensi}
+    else if(r.status==='Pulang'){d.pulang=r.waktu;if(!d.gps)d.gps=r.koordinatPresensi;if(keg(r))d.kegiatan=keg(r)}
     else if(r.status==='Kegiatan'){d.kegiatan=keg(r)}
     else if(r.status==='Izin'){d.kegiatan=keg(r);d.status=d.status||'Izin'}});
   R.filter(r=>r.status==='KOREKSI').sort((a,b)=>(J(a.laporan).ts||0)-(J(b.laporan).ts||0)).forEach(r=>{
@@ -966,7 +975,7 @@ async function handleLogin(){
   if(!ok&&code!==ADMIN_CODE){showModal('Gagal Terhubung','Tidak dapat mengambil data dari server. Periksa koneksi internet / URL Apps Script.');return}
   if(code===ADMIN_CODE){isAdmin=true;showToast('Login Admin Berhasil');showPage('admin');fillPembimbing();renderAdminTable();renderGuruTable();return}
   const g=guruAll().find(x=>x.code===code);
-  if(g){guru=g;showToast(`Selamat datang ${g.nama}`);showPage('guru');initGuru();startPoll();return}
+  if(g){guru=g;showToast(`Selamat datang ${g.nama}`);showPage('guru');initGuru();startPoll();updateNotifUI();remindTick();return}
   const p=pesertaAll().find(x=>x.code===code);
   if(!p){showModal('Kode Tidak Ditemukan','Kode login tidak terdaftar.\n\nSilakan hubungi Admin PKL.');$('login-code').value='';return}
   currentUser=Object.assign({},p,{koordinat:p.koordinatPerusahaan});
@@ -978,9 +987,11 @@ async function handleLogin(){
   buildTabs('s',[['presensi','Presensi'],['riwayat','Riwayat'],['laporan','Laporan PKL'],['pesan','Pesan']],'s-tabs');
   $('s-pesan').innerHTML=chatPane('s');
   checkAttendanceState();setTab('s','presensi');updateBadges();startPoll();
+  try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist()}catch(e){}
+  loadPhotos(p.code).then(renderHistory);updateNotifUI();remindTick();
 }
 function handleLogout(){
-  currentUser=null;isAdmin=false;guru=null;stopCamera();capturedPhotoData=null;currentGPS=null;clearInterval(pollT);
+  currentUser=null;isAdmin=false;guru=null;stopCamera();resetCapture();clearInterval(pollT);['remind-banner','g-remind'].forEach(i=>{const e=$(i);if(e)e.style.display='none'});
   $('login-code').value='';$('login-code').placeholder='INPUT KODE';showPage('login');
 }
 function showPage(p){['login','dashboard','admin','guru'].forEach(x=>$('page-'+x).classList.toggle('hidden',x!==p));lucide.createIcons();window.scrollTo(0,0)}
@@ -989,6 +1000,7 @@ async function pollTick(){
   if(document.hidden||!(await refreshData()))return;
   if(currentUser){renderHistory();updateBadges();if(curTab.s==='pesan')renderChat('s')}
   else if(guru){updateBadges();if(curTab.g==='pesan')renderChat('g');if(curTab.g==='ringkasan')renderRingkasan()}
+  remindTick();
 }
 async function gRefresh(){await refreshData();renderGuruTab();updateBadges();showToast('Data diperbarui')}
 
@@ -997,35 +1009,51 @@ function checkAttendanceState(){
   const d=days(currentUser.code).find(x=>x.date===TODAY())||{},sh=(id,v,t)=>$(id).style.display=v?(t||'inline-flex'):'none';
   const done=d.status&&d.status!=='Hadir',hasIn=d.status==='Hadir'&&d.masuk;
   sh('btn-masuk',!d.status);sh('btn-izin',!d.status);
-  sh('kegiatan-section',hasIn&&!d.kegiatan,'block');sh('btn-pulang',hasIn&&d.kegiatan&&!d.pulang);
+  sh('kegiatan-section',hasIn&&!d.pulang,'block');if(hasIn&&!d.pulang&&d.kegiatan&&!$('kegiatan-input').value)$('kegiatan-input').value=d.kegiatan;
   $('izin-section').style.display='none';
 }
 function koord(){return `${currentGPS.lat.toFixed(6)},${currentGPS.lng.toFixed(6)}`}
 function jarakNow(){if(!currentUser.koordinat)return '-';const[a,b]=currentUser.koordinat.split(',').map(Number);return a&&b?Math.round(checkDistance(currentGPS.lat,currentGPS.lng,a,b))+' meter':'-'}
-function absenMasuk(){
-  if(!validatePresensi())return;
-  post(mk(currentUser,{status:'Masuk',koordinatPresensi:koord(),jarak:jarakNow()}));
-  $('btn-masuk').style.display='none';$('btn-izin').style.display='none';$('kegiatan-section').style.display='block';
-  renderHistory();showToast('Absen Masuk berhasil!');
+const meta=ph=>JSON.stringify({dev:deviceId(),ph:ph||''});
+function resetCapture(){
+  capturedPhotoData=null;currentGPS=null;
+  const im=$('captured-photo');if(im){im.style.display='none';im.removeAttribute('src')}
+  const g=$('gps-status');if(g)g.textContent='Belum mendapatkan lokasi';
 }
-function submitKegiatan(){
-  const k=$('kegiatan-input').value.trim();if(!k){showToast('Tuliskan kegiatan hari ini','error');return}
-  post(mk(currentUser,{status:'Kegiatan',kegiatan:k}));
-  $('kegiatan-section').style.display='none';$('btn-pulang').style.display='inline-flex';$('kegiatan-input').value='';
-  renderHistory();showToast('Jurnal kegiatan disimpan!');
+async function savePhoto(jenis){
+  const date=TODAY(),time=hms(new Date()),img=capturedPhotoData,hash=await sha(img);
+  const rec={id:`${currentUser.code}|${date}|${jenis}`,code:currentUser.code,date,jenis,time,img,hash};
+  try{await fotoPut(rec);(PH[currentUser.code]=PH[currentUser.code]||{})[date+'|'+jenis]=rec}
+  catch(e){console.error(e);showToast('Foto gagal disimpan di perangkat','error')}
+  return hash;
 }
-function absenPulang(){
+async function absenMasuk(){
   if(!validatePresensi())return;
-  post(mk(currentUser,{status:'Pulang',koordinatPresensi:koord(),jarak:jarakNow()}));
-  $('btn-pulang').style.display='none';$('btn-izin').style.display='none';renderHistory();showToast('Absen Pulang berhasil!');
+  const kp=koord(),jr=jarakNow();
+  $('btn-masuk').style.display='none';$('btn-izin').style.display='none';
+  const ph=await savePhoto('masuk');
+  post(mk(currentUser,{status:'Masuk',koordinatPresensi:kp,jarak:jr,laporan:meta(ph)}));
+  resetCapture();$('kegiatan-section').style.display='block';
+  renderHistory();remindTick();showToast('Absen Masuk berhasil! Foto tersimpan di HP ini.');
+}
+async function absenPulang(){
+  const k=$('kegiatan-input').value.trim();
+  if(!k){showToast('Tuliskan kegiatan hari ini sebelum Absen Pulang','error');return}
+  if(!validatePresensi())return;
+  const kp=koord(),jr=jarakNow();
+  $('kegiatan-section').style.display='none';
+  const ph=await savePhoto('pulang');
+  post(mk(currentUser,{status:'Pulang',kegiatan:k,koordinatPresensi:kp,jarak:jr,laporan:meta(ph)}));
+  $('kegiatan-input').value='';resetCapture();
+  renderHistory();remindTick();showToast('Absen Pulang berhasil! Kegiatan & foto tersimpan.');
 }
 function submitIzin(){
   const k=$('izin-input').value.trim();
   if(!currentGPS){showModal('Lokasi Diperlukan','Silakan ambil lokasi GPS sebelum mengirim form izin.');return}
   if(!k){showToast('Tuliskan keterangan izin','error');return}
-  post(mk(currentUser,{status:'Izin',kegiatan:k,koordinatPresensi:koord(),jarak:jarakNow()}));
+  post(mk(currentUser,{status:'Izin',kegiatan:k,koordinatPresensi:koord(),jarak:jarakNow(),laporan:meta('')}));
   $('izin-section').style.display='none';$('btn-masuk').style.display='none';$('btn-izin').style.display='none';$('izin-input').value='';
-  renderHistory();showToast('Surat izin berhasil dikirim!');
+  renderHistory();remindTick();showToast('Surat izin berhasil dikirim!');
 }
 const stCol=s=>s==='Hadir'?'#10b981':s==='Alpa'?'#ef4444':s==='Belum Absen'?'#64748b':'#f59e0b';
 const chip=(l,v,c)=>`<div class="rounded-xl p-3 text-center" style="background:${c}22;color:${c}"><div class="text-2xl font-extrabold">${v}</div><div class="text-[11px] font-semibold">${l}</div></div>`;
@@ -1033,7 +1061,7 @@ function renderHistory(){
   if(!currentUser||!$('history-body'))return;
   const st=stats(currentUser);
   $('stu-stats').innerHTML=chip('Hadir',st.hadir,'#10b981')+chip('Izin/Sakit',st.izin,'#f59e0b')+chip('Alpa',st.alpa,'#ef4444')+chip('Keaktifan',st.skor+'%','#2563eb');
-  $('history-body').innerHTML=st.fd.slice().reverse().map(d=>`<tr><td>${fdate(d.date)}</td><td>${d.masuk||'-'}</td><td>${d.pulang||'-'}</td><td><b style="color:${stCol(d.status)}">${d.status}</b>${d.koreksi?' <span class="text-[10px] text-blue-500">(dikoreksi guru)</span>':''}</td><td style="white-space:normal;min-width:220px">${esc(d.kegiatan)||'-'}</td><td>${d.jarak!=null?Math.round(d.jarak)+' m':'-'}</td></tr>`).join('')||'<tr><td colspan="6" class="text-center text-gray-400">Belum ada riwayat</td></tr>';
+  $('history-body').innerHTML=st.fd.slice().reverse().map(d=>`<tr><td>${fdate(d.date)}</td><td>${d.masuk||'-'}</td><td>${d.pulang||'-'}</td><td><b style="color:${stCol(d.status)}">${d.status}</b>${d.koreksi?' <span class="text-[10px] text-blue-500">(dikoreksi guru)</span>':''}</td><td style="white-space:normal;min-width:220px">${esc(d.kegiatan)||'-'}</td><td>${d.jarak!=null?Math.round(d.jarak)+' m':'-'}</td><td>${fotoCell(currentUser.code,d.date)}</td></tr>`).join('')||'<tr><td colspan="7" class="text-center text-gray-400">Belum ada riwayat</td></tr>';
 }
 
 // ---------- laporan siswa (template + cicil) ----------
@@ -1131,7 +1159,7 @@ function bcWA(){
 const gSel=()=>pesertaAll().find(p=>p.code===$('g-sis').value);
 function initGuru(){
   $('g-info').textContent=`${guru.nama} | Kode ${guru.code} | ${siswaOf(guru).length} siswa bimbingan`;
-  $('g-sis').innerHTML='<option value="">— Semua siswa / pilih siswa —</option>'+siswaOf(guru).map(p=>`<option value="${p.code}">${esc(p.nama)} (${esc(p.kelas)})</option>`).join('');
+  const F0=devFlags();$('g-sis').innerHTML='<option value="">— Semua siswa / pilih siswa —</option>'+siswaOf(guru).map(p=>`<option value="${p.code}">${F0[p.code]?'⚠ ':''}${esc(p.nama)} (${esc(p.kelas)})</option>`).join('');
   $('g-date').value=TODAY();
   const t=J(localStorage.getItem('g_ttd'));$('g-nip').value=t.nip||'';$('g-ks').value=t.ks||'';$('g-ksn').value=t.ksn||'';
   buildTabs('g',[['ringkasan','Ringkasan'],['riwayat','Riwayat & Koreksi'],['nilai','Penilaian'],['monitoring','Monitoring'],['pesan','Pesan'],['cetak','Cetak']],'g-tabs');
@@ -1140,10 +1168,12 @@ function initGuru(){
 function renderGuruTab(){({ringkasan:renderRingkasan,riwayat:renderGRiwayat,nilai:renderNilai,monitoring:renderMon,pesan:()=>renderChat('g')}[curTab.g]||(()=>{}))()}
 const need=el=>{if(!$('g-sis').value){$(el).innerHTML='<div class="card text-sm text-gray-500">Pilih siswa pada kotak “Siswa Bimbingan” di atas.</div>';return false}return true};
 function renderRingkasan(){
-  const D=$('g-date').value||TODAY(),S=siswaOf(guru).map(p=>({p,d:dayStatus(p,D),st:stats(p)})).filter(x=>x.d);
+  const F=devFlags(),D=$('g-date').value||TODAY(),S=siswaOf(guru).map(p=>({p,d:dayStatus(p,D),st:stats(p)})).filter(x=>x.d);
   const H=S.filter(x=>x.d.status==='Hadir'),I=S.filter(x=>x.d.status==='Izin'||x.d.status==='Sakit'),T=S.filter(x=>x.d.status!=='Hadir');
+  {const fl=siswaOf(guru).filter(p=>F[p.code]);
+  $('g-dev').innerHTML=fl.length?`<div class="card mb-3" style="border:2px solid #ef4444"><h3 class="font-bold text-sm mb-1" style="color:#ef4444">⚠ Indikator Perangkat Dipakai Bersama</h3><p class="text-xs mb-2">Perangkat yang sama dipakai presensi oleh lebih dari ${DEVICE_LIMIT} siswa. Mohon dicek kewajarannya.</p>${fl.map(p=>`<div class="text-xs py-1 border-b border-slate-200"><b>${esc(p.nama)}</b> — satu perangkat dengan: ${[...F[p.code]].map(c=>esc(nameOf(c))).join(', ')}</div>`).join('')}</div>`:''}
   $('g-cards').innerHTML=chip('Siswa Aktif',S.length,'#2563eb')+chip('Hadir',H.length,'#10b981')+chip('Izin/Sakit',I.length,'#f59e0b')+chip('Tidak Hadir',T.length-I.length,'#ef4444');
-  $('g-hadir').innerHTML=H.map(x=>`<div class="text-xs py-1 border-b border-slate-200">✅ <b>${esc(x.p.nama)}</b> — masuk ${x.d.masuk||'-'}${x.d.pulang?', pulang '+x.d.pulang:''}${x.d.jarak!=null?` · ${Math.round(x.d.jarak)} m`:''}</div>`).join('')||'<p class="text-xs text-gray-500">Belum ada.</p>';
+  $('g-hadir').innerHTML=H.map(x=>`<div class="text-xs py-1 border-b border-slate-200">✅ <b>${esc(x.p.nama)}</b>${F[x.p.code]?' <span title="Perangkat dipakai bersama" style="color:#ef4444">⚠</span>':''} — masuk ${x.d.masuk||'-'}${x.d.pulang?', pulang '+x.d.pulang:''}${x.d.jarak!=null?` · ${Math.round(x.d.jarak)} m`:''}</div>`).join('')||'<p class="text-xs text-gray-500">Belum ada.</p>';
   $('g-absen').innerHTML=T.map(x=>{const u=wa(x.p.hp,`Halo ${x.p.nama}, hari ini (${fdate(D)}) Anda belum presensi PKL. Mohon segera presensi / beri keterangan. Terima kasih.`);
     return `<div class="text-xs py-1 border-b border-slate-200">❌ <b>${esc(x.p.nama)}</b> — <span style="color:${stCol(x.d.status)};font-weight:700">${x.d.status}</span>${x.d.kegiatan?': '+esc(x.d.kegiatan):''} ${u?`<a href="${u}" target="_blank" class="text-emerald-600 font-bold">[WA]</a>`:''}</div>`}).join('')||'<p class="text-xs text-gray-500">Semua hadir 🎉</p>';
   const A=siswaOf(guru).map(p=>({p,st:stats(p)})).sort((a,b)=>b.st.skor-a.st.skor);
@@ -1153,10 +1183,13 @@ function renderRingkasan(){
   mkChart('ch-radar',sel?radarCfg(stats(sel).vals,sel.nama,avg):radarCfg(avg,'Rata-rata semua siswa'));
 }
 function renderGRiwayat(){
-  if(!need('g-riw'))return;const p=gSel(),st=stats(p);
+  if(!need('g-riw'))return;const p=gSel(),st=stats(p),F=devFlags();
+  if(!PH[p.code])loadPhotos(p.code).then(()=>{if(curTab.g==='riwayat'&&$('g-sis').value===p.code)renderGRiwayat()});
   $('g-riw').innerHTML=`<div class="card"><div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-3">${chip('Hadir',st.hadir,'#10b981')+chip('Izin/Sakit',st.izin,'#f59e0b')+chip('Alpa',st.alpa,'#ef4444')+chip('Keaktifan',st.skor+'%','#2563eb')}</div>
+  ${F[p.code]?`<div class="mb-3 p-3 rounded-xl text-xs font-semibold" style="background:#fee2e2;color:#991b1b;border:1px solid #fca5a5">⚠ Perangkat siswa ini dipakai presensi bersama: ${[...F[p.code]].map(c=>esc(nameOf(c))).join(', ')}</div>`:''}
+  <div class="mb-3 p-3 rounded-xl text-xs" style="background:rgba(100,116,139,.12)"><b>📷 Foto presensi</b> disimpan di HP siswa. Jika siswa mengunduh &amp; mengirim berkas foto (.json), impor di sini untuk melihatnya (otomatis dicocokkan dengan catatan server):<input type="file" accept=".json,application/json" onchange="importFoto(this)" class="block mt-2"></div>
   <div class="flex justify-between items-center mb-2"><p class="text-xs text-gray-500">Klik “Koreksi” untuk memperbaiki presensi yang salah (riwayat koreksi tetap tercatat).</p><button class="btn-3d btn-3d-warning text-xs" onclick="openKoreksi(TODAY())">+ Koreksi Tanggal</button></div>
-  <div class="table-container" style="max-height:60vh"><table style="min-width:820px"><thead><tr><th>Tanggal</th><th>Masuk</th><th>Pulang</th><th>Status</th><th>Jarak</th><th>Kegiatan / Keterangan</th><th>Aksi</th></tr></thead><tbody>${st.fd.slice().reverse().map(d=>`<tr><td>${fdate(d.date)}</td><td>${d.masuk||'-'}</td><td>${d.pulang||'-'}</td><td><b style="color:${stCol(d.status)}">${d.status}</b>${d.koreksi?'<div class="text-[10px] text-blue-500">dikoreksi</div>':''}</td><td>${d.jarak!=null?Math.round(d.jarak)+' m':'-'}</td><td style="white-space:normal;min-width:220px">${esc(d.kegiatan)||'-'}</td><td><button class="text-blue-600 text-xs font-bold" onclick="openKoreksi('${d.date}')">Koreksi</button></td></tr>`).join('')}</tbody></table></div></div>`;
+  <div class="table-container" style="max-height:60vh"><table style="min-width:960px"><thead><tr><th>Tanggal</th><th>Masuk</th><th>Pulang</th><th>Status</th><th>Jarak</th><th>Foto</th><th>Kegiatan / Keterangan</th><th>Aksi</th></tr></thead><tbody>${st.fd.slice().reverse().map(d=>`<tr><td>${fdate(d.date)}</td><td>${d.masuk||'-'}</td><td>${d.pulang||'-'}</td><td><b style="color:${stCol(d.status)}">${d.status}</b>${d.koreksi?'<div class="text-[10px] text-blue-500">dikoreksi</div>':''}</td><td>${d.jarak!=null?Math.round(d.jarak)+' m':'-'}</td><td>${fotoCell(p.code,d.date)}</td><td style="white-space:normal;min-width:220px">${esc(d.kegiatan)||'-'}</td><td><button class="text-blue-600 text-xs font-bold" onclick="openKoreksi('${d.date}')">Koreksi</button></td></tr>`).join('')}</tbody></table></div></div>`;
 }
 function openKoreksi(date){
   const p=gSel();if(!p)return showToast('Pilih siswa dahulu','error');
@@ -1174,7 +1207,7 @@ function saveKoreksi(){
 }
 const ASP=[['disiplin','Disiplin & Kehadiran','number'],['kompetensi','Kompetensi Teknis','number'],['kerjasama','Kerja Sama','number'],['inisiatif','Inisiatif & Tanggung Jawab','number'],['komunikasi','Komunikasi','number'],['laporan','Laporan & Jurnal','number']];
 function renderNilai(){
-  if(!need('g-nilai'))return;const p=gSel(),n=nilaiOf(p.code);
+  if(!need('g-nilai'))return;const p=gSel(),n=nilaiOf(p.code);if(!PH[p.code])loadPhotos(p.code);
   $('g-nilai').innerHTML=`<div class="card"><h3 class="font-bold text-sm mb-3">Penilaian: ${esc(p.nama)} ${n.avg?`— Rata-rata <b>${n.avg}</b> · ${predikat(n.avg)}`:''}</h3>
   <div class="grid sm:grid-cols-2 gap-3">${ASP.map(a=>fld('n',a,(n.a||{})[a[0]])).join('')}${fld('n',['cat','Catatan Guru','ta'],n.catatan)}</div>
   <div class="flex flex-wrap gap-2 mt-4"><button onclick="saveNilai()" class="btn-3d btn-3d-success">Simpan Nilai</button><button onclick="printDoc(jurnalHTML(gSel()))" class="btn-3d btn-3d-primary">Cetak Jurnal Siswa</button><button onclick="printDoc(laporanHTML(gSel()))" class="btn-3d btn-3d-primary">Cetak Laporan Akhir Siswa</button></div></div>`;
@@ -1231,7 +1264,7 @@ function jurnalHTML(p){
   <h2>A. Ringkasan Kehadiran & Keaktifan</h2><table><tr><th>Hari Kerja</th><th>Hadir</th><th>Izin/Sakit</th><th>Alpa</th><th>% Kehadiran</th><th>Skor Keaktifan</th><th>Nilai Akhir</th></tr><tr class="c"><td>${st.el}</td><td>${st.hadir}</td><td>${st.izin}</td><td>${st.alpa}</td><td>${st.m.Kehadiran}%</td><td>${st.skor}%</td><td>${n.avg?n.avg+' ('+predikat(n.avg).charAt(0)+')':'-'}</td></tr></table>
   <div class="row"><div><h3>Grafik Radar Keaktifan</h3><img class="ch" src="${rad}"></div><div><h3>Grafik Kehadiran per Minggu</h3>${bar?`<img class="ch" src="${bar}">`:'-'}</div></div>
   <table><tr>${MET.map(k=>`<th>${k}</th>`).join('')}</tr><tr class="c">${st.vals.map(v=>`<td>${v}%</td>`).join('')}</tr></table>
-  <h2>B. Rincian Jurnal Harian</h2><table><thead><tr><th width="4%">No</th><th width="11%">Tanggal</th><th width="8%">Masuk</th><th width="8%">Pulang</th><th width="9%">Status</th><th>Kegiatan / Keterangan</th><th width="8%">Jarak</th></tr></thead><tbody>${st.fd.map((d,i)=>`<tr><td class="c">${i+1}</td><td>${fdate(d.date)}</td><td class="c">${d.masuk||'-'}</td><td class="c">${d.pulang||'-'}</td><td class="c">${d.status}${d.koreksi?'*':''}</td><td>${esc(d.kegiatan)||'-'}</td><td class="c">${d.jarak!=null?Math.round(d.jarak)+' m':'-'}</td></tr>`).join('')||'<tr><td colspan="7" class="c">Belum ada data</td></tr>'}</tbody></table><p style="font-size:9pt">* data telah dikoreksi oleh guru pembimbing</p>
+  <h2>B. Rincian Jurnal Harian</h2><table><thead><tr><th width="4%">No</th><th width="11%">Tanggal</th><th width="8%">Masuk</th><th width="8%">Pulang</th><th width="9%">Status</th><th>Kegiatan / Keterangan</th><th width="8%">Jarak</th></tr></thead><tbody>${st.fd.map((d,i)=>`<tr><td class="c">${i+1}</td><td>${fdate(d.date)}</td><td class="c">${d.masuk||'-'}</td><td class="c">${d.pulang||'-'}</td><td class="c">${d.status}${d.koreksi?'*':''}</td><td>${esc(d.kegiatan)||'-'}</td><td class="c">${d.jarak!=null?Math.round(d.jarak)+' m':'-'}</td></tr>`).join('')||'<tr><td colspan="7" class="c">Belum ada data</td></tr>'}</tbody></table><p style="font-size:9pt">* data telah dikoreksi oleh guru pembimbing</p>${fotoLampiran(p)}
   ${ttd([['Pembimbing Industri',''],['Guru Pembimbing',(g||{}).nama],['Peserta PKL',p.nama]])}</div>`;
 }
 function printHistory(){printDoc(jurnalHTML(currentUser))}
@@ -1271,13 +1304,15 @@ function switchAdminTab(t){
   if(t==='report')loadReportData();if(t==='guru')refreshData().then(renderGuruTable);if(t==='add')fillPembimbing();
 }
 function renderAdminTable(){
+  const F=devFlags();renderDevAlert();
   const gs=guruAll();
   $('admin-table-body').innerHTML=pesertaAll().map((p,i)=>{
     const st=stats(p),lm=rowsOf(p.code,'Masuk').slice(-1)[0]||{};
     return `<tr><td>${i+1}</td><td class="font-bold">${esc(p.nama)}</td><td>${esc(p.kelas)}</td><td>${esc(p.hp)||'-'}</td><td>${esc(p.perusahaan)}</td><td class="text-xs font-mono">${esc(p.koordinatPerusahaan)||'-'}</td><td class="text-xs font-mono">${esc(lm.koordinatPresensi)||'-'}</td><td>${esc(lm.jarak)||'-'}</td><td class="font-mono font-bold text-blue-600">${p.code}</td><td>${fdate(p.mulai)}</td><td>${fdate(p.selesai)}</td>
     <td><select class="input-field !py-1 !text-xs" onchange="setPembimbing('${p.code}',this.value)"><option value="">-</option>${gs.map(g=>`<option value="${g.code}" ${g.code===p.pembimbing?'selected':''}>${esc(g.nama)}</option>`).join('')}</select></td>
     <td><span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs font-bold">${st.hadir} hari · ${st.skor}%</span></td>
-    <td class="no-print"><button onclick="askResetPeserta('${p.code}')" class="text-orange-500 text-xs">Reset</button><button onclick="askDeletePeserta('${p.code}')" class="text-red-500 text-xs ml-2">Hapus</button></td></tr>`}).join('')||'<tr><td colspan="14" class="text-center text-gray-400">Belum ada peserta</td></tr>';
+    <td style="white-space:normal">${devBadge(p.code,F)}</td>
+    <td class="no-print"><button onclick="askResetPeserta('${p.code}')" class="text-orange-500 text-xs">Reset</button><button onclick="askDeletePeserta('${p.code}')" class="text-red-500 text-xs ml-2">Hapus</button></td></tr>`}).join('')||'<tr><td colspan="15" class="text-center text-gray-400">Belum ada peserta</td></tr>';
 }
 function renderGuruTable(){
   $('guru-body').innerHTML=guruAll().map(g=>`<tr><td>${esc(g.nama)}</td><td>${esc(g.hp)||'-'}</td><td class="font-mono font-bold text-blue-600">${g.code}</td><td>${siswaOf(g).length}</td><td><a class="text-emerald-600 text-xs font-bold" target="_blank" href="${wa(g.hp,`Anda terdaftar sebagai Guru Pembimbing PKL SMKN 1 Nglipar.\nKode login: *${g.code}*`)}">Kirim Kode WA</a><button onclick="askDeletePeserta('${g.code}')" class="text-red-500 text-xs ml-3">Hapus</button></td></tr>`).join('')||'<tr><td colspan="5" class="text-center text-gray-400">Belum ada guru</td></tr>';
@@ -1302,6 +1337,158 @@ function resetPeserta(code){DB.rows=DB.rows.filter(r=>r.code!==code||r.status===
 function resetAllData(){DB.rows=[];sendToSpreadsheet({action:'clearAll'});renderAdminTable();renderGuruTable();showToast('Semua data berhasil dihapus')}
 
 // init
+
+// ===================== V3: PERANGKAT, FOTO LOKAL, PENGINGAT =====================
+const DEVICE_LIMIT=2;            // ditandai jika 1 perangkat dipakai > DEVICE_LIMIT siswa
+const REM_IN=7*60+30, REM_OUT=16*60; // pengingat 07:30 & 16:00
+let PH={};                       // cache foto: PH[kode]['YYYY-MM-DD|masuk'] = {img,hash,...}
+let fotoCur=null;
+
+// ---------- ID perangkat ----------
+function deviceId(){
+  let id='';try{id=localStorage.getItem('pkl_dev')||''}catch(e){}
+  if(!id){const m=document.cookie.match(/(?:^|; )pkl_dev=([^;]+)/);id=m?m[1]:''}
+  if(!id)id='D'+((window.crypto&&crypto.randomUUID)?crypto.randomUUID().replace(/-/g,'').slice(0,12):Math.random().toString(36).slice(2,14));
+  try{localStorage.setItem('pkl_dev',id)}catch(e){}
+  try{document.cookie='pkl_dev='+id+';max-age=63072000;path=/;SameSite=Lax'}catch(e){}
+  return id;
+}
+const nameOf=c=>(pesertaAll().find(p=>p.code===c)||{}).nama||c;
+function deviceUse(){
+  const m={};
+  DB.rows.forEach(r=>{if(r.status!=='Masuk'&&r.status!=='Pulang'&&r.status!=='Izin')return;const d=J(r.laporan).dev;if(d)(m[d]=m[d]||new Set()).add(r.code)});
+  return m;
+}
+function devFlags(){ // kode -> Set(kode siswa lain pada perangkat yang sama)
+  const m={},u=deviceUse();
+  for(const d in u){if(u[d].size<=DEVICE_LIMIT)continue;const cs=[...u[d]];cs.forEach(c=>{(m[c]=m[c]||new Set());cs.forEach(o=>{if(o!==c)m[c].add(o)})})}
+  return m;
+}
+function devBadge(code,F){
+  const s=F[code];if(!s)return '<span class="text-xs text-gray-400">—</span>';
+  return `<span class="px-2 py-1 rounded text-xs font-bold" style="background:#fee2e2;color:#b91c1c">⚠ Dipakai ${s.size+1} siswa</span><div class="text-[11px] mt-1" style="min-width:170px">${[...s].map(c=>esc(nameOf(c))).join(', ')}</div>`;
+}
+function renderDevAlert(){
+  const el=$('admin-dev-alert');if(!el)return;
+  const u=deviceUse(),G=Object.keys(u).filter(d=>u[d].size>DEVICE_LIMIT).map(d=>[...u[d]]);
+  el.innerHTML=G.length?`<div class="rounded-xl p-3 text-xs" style="background:#fee2e2;color:#991b1b;border:1px solid #fca5a5"><b>⚠ ${G.length} perangkat dipakai presensi oleh lebih dari ${DEVICE_LIMIT} siswa:</b>${G.map(g=>`<div class="mt-1">• ${g.map(c=>esc(nameOf(c))).join(', ')} <span style="opacity:.7">(${g.length} siswa)</span></div>`).join('')}</div>`:'';
+}
+
+// ---------- foto di perangkat siswa (IndexedDB) ----------
+const FDB=()=>new Promise((res,rej)=>{const q=indexedDB.open('pkl_foto',1);q.onupgradeneeded=()=>q.result.createObjectStore('foto',{keyPath:'id'});q.onsuccess=()=>res(q.result);q.onerror=()=>rej(q.error)});
+async function fotoPut(o){const db=await FDB();return new Promise((res,rej)=>{const t=db.transaction('foto','readwrite');t.objectStore('foto').put(o);t.oncomplete=res;t.onerror=()=>rej(t.error)})}
+async function fotoAll(code){const db=await FDB();return new Promise((res,rej)=>{const r=db.transaction('foto').objectStore('foto').getAll(IDBKeyRange.bound(code+'|',code+'|\uffff'));r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)})}
+async function loadPhotos(code){let a=[];try{a=await fotoAll(code)}catch(e){}const m={};a.forEach(f=>m[f.date+'|'+f.jenis]=f);PH[code]=m;return m}
+async function sha(s){try{const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));return [...new Uint8Array(b)].slice(0,8).map(x=>x.toString(16).padStart(2,'0')).join('')}catch(e){return ''}}
+function fotoOk(code,date,j,f){ // true=cocok, false=tidak cocok, null=tidak ada pembanding
+  if(!f.hash)return null;
+  const r=rowsOf(code,j==='masuk'?'Masuk':'Pulang').filter(x=>x.tanggal===date).pop(),h=r&&J(r.laporan).ph;
+  return h?h===f.hash:null;
+}
+function fotoCell(code,date){
+  const m=PH[code]||{};
+  return ['masuk','pulang'].map(j=>{
+    const f=m[date+'|'+j];if(!f)return '';
+    const v=fotoOk(code,date,j,f),tag=v===false?'<span title="Foto tidak cocok dengan catatan server" style="color:#ef4444">⚠</span>':v?'<span style="color:#10b981">✓</span>':'';
+    return `<span class="inline-block text-center mr-1"><img src="${f.img}" onclick="viewFoto('${code}','${date}','${j}')" style="width:44px;height:44px;object-fit:cover;border-radius:8px;cursor:pointer"><div style="font-size:9px">${j==='masuk'?'Masuk':'Pulang'} ${tag}</div></span>`;
+  }).join('')||'-';
+}
+function fotoLampiran(p){
+  const m=PH[p.code]||{},ks=Object.keys(m).sort();if(!ks.length)return '';
+  return `<h2>C. Lampiran Foto Presensi</h2><div style="display:flex;flex-wrap:wrap;gap:6px">${ks.map(k=>{const f=m[k];return `<div style="width:23%;text-align:center;font-size:8pt;page-break-inside:avoid"><img src="${f.img}" style="width:100%"><br>${fdate(f.date)} ${f.jenis==='masuk'?'Masuk':'Pulang'} ${esc(f.time||'')}</div>`}).join('')}</div>`;
+}
+function viewFoto(code,date,j){
+  const f=(PH[code]||{})[date+'|'+j];if(!f)return;fotoCur=f;
+  $('foto-big').src=f.img;$('foto-cap').textContent=`${nameOf(code)} — ${j==='masuk'?'Absen Masuk':'Absen Pulang'} ${fdate(date)} ${f.time||''}`;
+  $('foto-modal').style.display='flex';
+}
+function closeFoto(){$('foto-modal').style.display='none'}
+function dl(href,name){const a=document.createElement('a');a.href=href;a.download=name;document.body.appendChild(a);a.click();a.remove()}
+function downloadFoto(){if(!fotoCur)return;dl(fotoCur.img,`Foto_${nameOf(fotoCur.code).replace(/\s+/g,'_')}_${fotoCur.date}_${fotoCur.jenis}.jpg`)}
+async function exportFoto(){
+  let a=[];try{a=await fotoAll(currentUser.code)}catch(e){}
+  if(!a.length)return showToast('Belum ada foto tersimpan di HP ini','error');
+  const o={v:1,code:currentUser.code,nama:currentUser.nama,photos:a.map(f=>({date:f.date,jenis:f.jenis,time:f.time,img:f.img}))};
+  const u=URL.createObjectURL(new Blob([JSON.stringify(o)],{type:'application/json'}));
+  dl(u,`FotoPresensi_${currentUser.nama.replace(/\s+/g,'_')}.json`);setTimeout(()=>URL.revokeObjectURL(u),5000);
+  showToast(`${a.length} foto diunduh. Kirim berkas ini ke guru pembimbing bila diminta.`);
+}
+async function importFoto(inp){
+  const f=inp.files[0];if(!f)return;
+  try{
+    const o=JSON.parse(await f.text()),p=siswaOf(guru).find(x=>x.code===o.code);
+    if(!p||!Array.isArray(o.photos))throw new Error('invalid');
+    let n=0;
+    for(const x of o.photos){
+      if(!x||!/^data:image\/jpeg;base64,[A-Za-z0-9+\/=]+$/.test(x.img||'')||!/^\d{4}-\d\d-\d\d$/.test(x.date||'')||(x.jenis!=='masuk'&&x.jenis!=='pulang'))continue;
+      await fotoPut({id:`${p.code}|${x.date}|${x.jenis}`,code:p.code,date:x.date,jenis:x.jenis,time:String(x.time||'').slice(0,8),img:x.img,hash:await sha(x.img)});n++;
+    }
+    await loadPhotos(p.code);renderGRiwayat();showToast(`${n} foto ${p.nama} diimpor`);
+  }catch(e){showToast('Berkas tidak valid atau bukan siswa bimbingan Anda','error')}
+  inp.value='';
+}
+
+// ---------- pengingat 07:30 & 16:00 ----------
+const nowMin=()=>{const n=new Date();return n.getHours()*60+n.getMinutes()};
+function activeToday(p){const t=TODAY(),w=new Date().getDay();return w>0&&w<6&&(!p.mulai||t>=p.mulai)&&(!p.selesai||t<=p.selesai)}
+function remindOf(p){ // 'in' = belum absen masuk (>=07:30), 'out' = belum absen pulang (>=16:00)
+  if(!activeToday(p))return '';
+  const d=days(p.code).find(x=>x.date===TODAY())||{};
+  if(!d.status)return nowMin()>=REM_IN?'in':'';
+  if(d.status==='Hadir'&&d.masuk&&!d.pulang)return nowMin()>=REM_OUT?'out':'';
+  return '';
+}
+async function pushNotif(title,body,tag){
+  try{
+    if(!('Notification' in window)||Notification.permission!=='granted')return false;
+    let reg=null;
+    if('serviceWorker' in navigator)reg=await Promise.race([navigator.serviceWorker.ready,new Promise(r=>setTimeout(()=>r(null),1500))]);
+    if(reg){await reg.showNotification(title,{body,tag,icon:'LOGO%20NGLIPAR.png',badge:'LOGO%20NGLIPAR.png',vibrate:[200,100,200],requireInteraction:true});return true}
+    new Notification(title,{body,tag,icon:'LOGO%20NGLIPAR.png'});return true;
+  }catch(e){return false}
+}
+function fireOnce(key,title,msg){
+  let seen='';try{seen=localStorage.getItem(key)}catch(e){}
+  if(seen)return;try{localStorage.setItem(key,'1')}catch(e){}
+  pushNotif(title,msg,key);
+  try{if(navigator.vibrate)navigator.vibrate([200,100,200])}catch(e){}
+  if(!document.hidden)showModal(title,msg);
+}
+function updateNotifUI(){
+  const p='Notification' in window?Notification.permission:'unsupported';
+  const h=p==='granted'?'🔔 Notifikasi pengingat aktif (jam 07.30 &amp; 16.00).'
+   :p==='denied'?'🔕 Notifikasi diblokir di browser. Aktifkan lewat pengaturan situs agar pengingat muncul di layar HP.'
+   :p==='default'?'<button onclick="askNotif()" class="btn-3d btn-3d-primary text-xs">🔔 Aktifkan Notifikasi Pengingat</button> <span>Pengingat jam 07.30 &amp; 16.00 jika belum presensi.</span>'
+   :'Browser ini tidak mendukung notifikasi; pengingat tampil di dalam aplikasi.';
+  ['notif-row','g-notif-row'].forEach(i=>{const e=$(i);if(e)e.innerHTML=h});
+}
+async function askNotif(){
+  try{const r=await Notification.requestPermission();updateNotifUI();if(r==='granted')pushNotif('Notifikasi aktif','Pengingat presensi PKL akan muncul jam 07.30 dan 16.00 jika Anda belum presensi.','test')}catch(e){}
+}
+async function remindTick(){
+  const day=TODAY();
+  if(currentUser){
+    const s=remindOf(currentUser),b=$('remind-banner');
+    if(!s){b.style.display='none';return}
+    const msg=s==='in'?'Anda belum Absen Masuk hari ini (pengingat jam 07.30). Segera presensi, atau ajukan izin bila tidak PKL.':'Sudah lewat jam 16.00 dan Anda belum Absen Pulang. Isi kegiatan hari ini lalu tekan Absen Pulang.';
+    b.innerHTML=`⏰ ${msg} <button onclick="setTab('s','presensi')" class="underline ml-1">Buka Presensi</button>`;b.style.display='block';
+    fireOnce(`rem_${currentUser.code}_${day}_${s}`,'⏰ Pengingat Presensi PKL',msg);
+  }else if(guru){
+    if(document.hidden){await refreshData();if(!guru)return}
+    const S=siswaOf(guru).map(p=>({p,s:remindOf(p)})),A=S.filter(x=>x.s==='in').map(x=>x.p.nama),B=S.filter(x=>x.s==='out').map(x=>x.p.nama),g=$('g-remind'),parts=[];
+    if(A.length)parts.push(`Belum Absen Masuk (${A.length}): ${A.map(esc).join(', ')}`);
+    if(B.length)parts.push(`Belum Absen Pulang (${B.length}): ${B.map(esc).join(', ')}`);
+    if(!parts.length){g.style.display='none';return}
+    g.innerHTML='⏰ '+parts.join('<br>⏰ ');g.style.display='block';
+    const short=a=>a.slice(0,5).join(', ')+(a.length>5?`, +${a.length-5} lainnya`:'');
+    if(A.length)fireOnce(`grem_${guru.code}_${day}_in`,'⏰ Siswa belum Absen Masuk',`${A.length} siswa: ${short(A)}`);
+    if(B.length)fireOnce(`grem_${guru.code}_${day}_out`,'⏰ Siswa belum Absen Pulang',`${B.length} siswa: ${short(B)}`);
+  }
+}
+setInterval(remindTick,30000);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)remindTick()});
+if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
+
 if(!localStorage.getItem('pkl_theme')){}
 </script>
 </body>
